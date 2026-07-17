@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "615187267684",
+    "project_id": "anipick-34d6e",
+    "storage_bucket": "anipick-34d6e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615187267684:android:735a5f2db743648c94df71",
+        "android_client_info": {
+          "package_name": "com.jparkbro.anipick"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCBVoroi6FXg79G9mbjjfaI3O1A6p_EyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
