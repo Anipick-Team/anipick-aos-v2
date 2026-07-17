@@ -27,11 +27,12 @@ dependencyResolutionManagement {
 }
 
 include(":app")
+include(":core:common")
 include(":core:data")
-include(":core:model")
-include(":core:designsystem")
-include(":core:network")
-include(":core:ui")
 include(":core:database")
 include(":core:datastore")
+include(":core:designsystem")
+include(":core:model")
 include(":core:navigation")
+include(":core:network")
+include(":core:ui")

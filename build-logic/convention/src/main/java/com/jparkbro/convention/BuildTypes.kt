@@ -71,7 +71,7 @@ private fun BuildType.configureDebugBuildType(
     buildConfigField("String", "APP_VERSION", "\"$appVersion\"")
     buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
     buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
-    buildConfigField("String", "BASE_URL", "\"https://anipick.p-e.kr/api/\"")
+    buildConfigField("String", "BASE_URL", "\"https://anipick.p-e.kr/api\"")
 }
 
 private fun BuildType.configureReleaseBuildType(
@@ -83,7 +83,7 @@ private fun BuildType.configureReleaseBuildType(
     buildConfigField("String", "APP_VERSION", "\"$appVersion\"")
     buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
     buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
-    buildConfigField("String", "BASE_URL", "\"https://anipick.p-e.kr/api/\"")
+    buildConfigField("String", "BASE_URL", "\"https://anipick.p-e.kr/api\"")
 
     proguardFiles(
         commonExtension.getDefaultProguardFile("proguard-android-optimize.txt")

@@ -26,7 +26,8 @@ class AndroidLibraryConventionPlugin: Plugin<Project> {
             }
 
             dependencies {
-//                add("implementation", project(":core:model"))
+                add("implementation", project(":core:model"))
+                add("implementation", project(":core:common"))
 
                 add("implementation", project.libs.findBundle("koin").get())
                 add("implementation", project.libs.findLibrary("timber").get())
