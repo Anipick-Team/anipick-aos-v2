@@ -17,6 +17,38 @@ val ArrowRight: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_arrow_right)
 
+val BottomNav1Selected: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_bottom_nav_1_selected)
+
+val BottomNav1Unselected: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_bottom_nav_1_unselected)
+
+val BottomNav2Selected: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_bottom_nav_2_selected)
+
+val BottomNav2Unselected: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_bottom_nav_2_unselected)
+
+val BottomNav3Selected: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_bottom_nav_3_selected)
+
+val BottomNav3Unselected: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_bottom_nav_3_unselected)
+
+val BottomNav4Selected: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_bottom_nav_4_selected)
+
+val BottomNav4Unselected: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_bottom_nav_4_unselected)
+
 val Check: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_check)
