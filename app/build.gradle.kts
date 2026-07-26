@@ -36,4 +36,10 @@ dependencies {
     implementation(projects.core.navigation)
     implementation(projects.core.network)
     implementation(projects.core.ui)
+
+    implementation(projects.feature.auth.api)
+    implementation(projects.feature.auth.impl)
+
+    implementation(projects.feature.splash.api)
+    implementation(projects.feature.splash.impl)
 }

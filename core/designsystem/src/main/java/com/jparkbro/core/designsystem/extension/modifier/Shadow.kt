@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-private val DefaultShadowColor = Color.Black.copy(alpha = 0.2f)
 
 /** 자신의 위쪽 바깥에 그림자를 그린다. 하단 고정 바(바텀 내비게이션 등)가 콘텐츠 위에 떠 있는 느낌을 줄 때 사용. */
 fun Modifier.topEdgeShadow(
@@ -44,3 +43,5 @@ fun Modifier.bottomEdgeShadow(
         size = Size(size.width, shadowHeightPx),
     )
 }
+
+private val DefaultShadowColor = Color.Black.copy(alpha = 0.2f)

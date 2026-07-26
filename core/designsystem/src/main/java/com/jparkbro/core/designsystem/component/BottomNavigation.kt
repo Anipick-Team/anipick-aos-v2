@@ -51,7 +51,7 @@ fun AniPickBottomNavigation(
             modifier = Modifier
                 .fillMaxWidth(),
             thickness = 2.dp,
-            color = AniPickTheme.colors.gray2
+            color = AniPickTheme.colors.gray
         )
         Row(
             modifier = Modifier

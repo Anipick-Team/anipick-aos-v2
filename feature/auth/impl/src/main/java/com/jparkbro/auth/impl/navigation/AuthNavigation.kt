@@ -1,0 +1,40 @@
+package com.jparkbro.auth.impl.navigation
+
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import com.jparkbro.auth.api.AuthNavKey
+import com.jparkbro.auth.impl.email.login.EmailLoginRoot
+import com.jparkbro.auth.impl.email.signup.EmailSignupRoot
+import com.jparkbro.auth.impl.login.LoginRoot
+import com.jparkbro.auth.impl.password.reset.PasswordResetRoot
+import com.jparkbro.auth.impl.password.verification.PasswordVerificationRoot
+import com.jparkbro.auth.impl.preferencesetup.PreferenceSetupRoot
+import kr.agromarket.at.core.navigation.Navigator
+
+fun EntryProviderScope<NavKey>.authEntry(
+    navigator: Navigator
+) {
+    entry<AuthNavKey.Login> {
+        LoginRoot(
+            onNavigateToHome = {  },
+            onNavigateToEmailLogin = { navigator.navigate(AuthNavKey.Email.Login) },
+            onNavigateToEmailSignup = { navigator.navigate(AuthNavKey.Email.Signup) },
+            onNavigateToPreferenceSetup = { navigator.navigate(AuthNavKey.PreferenceSetup) },
+        )
+    }
+    entry<AuthNavKey.Email.Login> {
+        EmailLoginRoot()
+    }
+    entry<AuthNavKey.Email.Signup> {
+        EmailSignupRoot()
+    }
+    entry<AuthNavKey.Password.Verification> {
+        PasswordVerificationRoot()
+    }
+    entry<AuthNavKey.Password.Reset> {
+        PasswordResetRoot()
+    }
+    entry<AuthNavKey.PreferenceSetup> {
+        PreferenceSetupRoot()
+    }
+}
