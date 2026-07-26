@@ -37,9 +37,16 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.ui)
 
-    implementation(projects.feature.auth.api)
-    implementation(projects.feature.auth.impl)
-
     implementation(projects.feature.splash.api)
     implementation(projects.feature.splash.impl)
+    implementation(projects.feature.auth.api)
+    implementation(projects.feature.auth.impl)
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.home.impl)
+    implementation(projects.feature.ranking.api)
+    implementation(projects.feature.ranking.impl)
+    implementation(projects.feature.explore.api)
+    implementation(projects.feature.explore.impl)
+    implementation(projects.feature.mypage.api)
+    implementation(projects.feature.mypage.impl)
 }

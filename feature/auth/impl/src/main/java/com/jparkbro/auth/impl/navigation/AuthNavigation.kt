@@ -1,5 +1,7 @@
 package com.jparkbro.auth.impl.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.jparkbro.auth.api.AuthNavKey
@@ -11,11 +13,14 @@ import com.jparkbro.auth.impl.password.verification.PasswordVerificationRoot
 import com.jparkbro.auth.impl.preferencesetup.PreferenceSetupRoot
 import kr.agromarket.at.core.navigation.Navigator
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 fun EntryProviderScope<NavKey>.authEntry(
-    navigator: Navigator
+    navigator: Navigator,
+    sharedTransitionScope: SharedTransitionScope,
 ) {
     entry<AuthNavKey.Login> {
         LoginRoot(
+            sharedTransitionScope = sharedTransitionScope,
             onNavigateToHome = {  },
             onNavigateToEmailLogin = { navigator.navigate(AuthNavKey.Email.Login) },
             onNavigateToEmailSignup = { navigator.navigate(AuthNavKey.Email.Signup) },

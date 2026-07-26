@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">애니픽</string>
+
+    <!-- Bottom Navigation -->
+    <string name="home">홈</string>
+    <string name="ranking">랭킹</string>
+    <string name="explore">탐색</string>
+    <string name="my_page">마이</string>
+</resources>

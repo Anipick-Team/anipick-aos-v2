@@ -26,26 +26,48 @@ class Navigator(val state: NavigationState) {
     }
 
     /**
-     * 이전 화면으로 돌아갑니다.
+     * 현재 스택을 비우고 [key] 하나만 남도록 이동합니다.
+     * 스플래시 → 로그인, 로그인 완료 → 홈처럼 "한 번 지나가면 뒤로가기로도
+     * 다시 돌아오면 안 되는" 전환에 [navigate] 대신 사용합니다.
      *
-     * @return 뒤로 이동했다면 true, 이미 시작 화면이라 더 이상 갈 곳이 없다면 false.
+     * @param key 목적지 키. 탑레벨 키(예: 홈)면 탑레벨 스택 전체를, 아니면 현재
+     *            탭의 서브 스택을 비우고 이 키 하나만 남깁니다.
+     */
+    fun navigateAndClearStack(key: NavKey) {
+        if (key in state.topLevelKeys) {
+            state.topLevelStack.apply {
+                clear()
+                add(key)
+            }
+        } else {
+            state.currentSubStack.apply {
+                clear()
+                add(key)
+            }
+        }
+    }
+
+    /**
+     * 이전 화면으로 돌아갑니다.
+     * "여기가 더 갈 곳 없는 바닥인지"를 값 비교가 아니라 스택 크기로 판단합니다 —
+     * [navigateAndClearStack]으로 스택 내용이 바뀌어도 항상 정확히 동작하도록.
+     *
+     * @return 뒤로 이동했다면 true, 더 이상 갈 곳이 없다면 false.
      *         false인 경우 호출부에서 액티비티 종료 등을 처리해야 합니다.
      */
     fun goBack(): Boolean {
-        return when (state.currentKey) {
-            // 시작 화면이면 더 이상 뒤로 갈 수 없음
-            state.startKey -> false
-            // 현재 탭의 루트 화면인 경우: 이전 탭으로 이동
-            state.currentTopLevelKey -> {
-                state.topLevelStack.removeLastOrNull()
-                true
-            }
-            // 탭 내부의 서브 화면인 경우: 서브 스택에서 제거
-            else -> {
-                state.currentSubStack.removeLastOrNull()
-                true
-            }
+        // 서브 스택에 쌓인 화면이 있으면 그것부터 제거
+        if (state.currentSubStack.size > 1) {
+            state.currentSubStack.removeLastOrNull()
+            return true
         }
+        // 서브 스택은 앵커 하나뿐 - 탑레벨 스택에 이전 탭이 있는지 확인
+        if (state.topLevelStack.size > 1) {
+            state.topLevelStack.removeLastOrNull()
+            return true
+        }
+        // 더 이상 갈 곳 없음
+        return false
     }
 
     /**

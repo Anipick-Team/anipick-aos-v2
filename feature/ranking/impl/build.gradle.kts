@@ -1,0 +1,11 @@
+plugins {
+    alias(libs.plugins.anipick.android.feature.impl)
+}
+
+android {
+    namespace = "com.jparkbro.ranking.impl"
+}
+
+dependencies {
+    implementation(projects.feature.ranking.api)
+}

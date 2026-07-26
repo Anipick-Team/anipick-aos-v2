@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
+/** 화면 전환 시 [AniPickBrandHeader]를 shared element로 이어붙일 때 쓰는 공용 key */
+const val AniPickBrandHeaderKey = "ani_pick_brand_header"
+
 @Composable
 fun AniPickBrandHeader(
     modifier: Modifier = Modifier,
