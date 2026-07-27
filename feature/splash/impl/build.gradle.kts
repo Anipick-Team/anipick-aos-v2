@@ -9,4 +9,5 @@ android {
 dependencies {
     implementation(projects.feature.splash.api)
     implementation(projects.feature.auth.api)
+    implementation(projects.feature.home.api)
 }

@@ -36,10 +36,10 @@ fun Modifier.bottomEdgeShadow(
     drawRect(
         brush = Brush.verticalGradient(
             colors = listOf(Color.Transparent, color),
-            startY = shadowHeightPx,
-            endY = 0f,
+            startY = size.height + shadowHeightPx,
+            endY = size.height,
         ),
-        topLeft = Offset(0f, shadowHeightPx),
+        topLeft = Offset(0f, size.height),
         size = Size(size.width, shadowHeightPx),
     )
 }

@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -23,10 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.ui.UiText
+import com.jparkbro.home.api.HomeNavKey
 
 @Composable
 internal fun AniPickBottomNavigation(
@@ -34,27 +39,28 @@ internal fun AniPickBottomNavigation(
     onNavigate: (NavKey) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BOTTOM_NAV_ITEMS.forEach { (navKey, item) ->
-        val isSelected = currentKey::class == navKey::class
-
-        Box(
-            modifier = modifier
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AniPickTheme.colors.white)
+            .windowInsetsPadding(WindowInsets.navigationBars),
+    ) {
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth(),
+            thickness = 2.dp,
+            color = AniPickTheme.colors.gray
+        )
+        Row(
+            modifier = Modifier
                 .fillMaxWidth()
-                .background(AniPickTheme.colors.white)
-                .height(78.dp),
+                .height(78.dp)
+                .padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            HorizontalDivider(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                thickness = 2.dp,
-                color = AniPickTheme.colors.gray
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            BOTTOM_NAV_ITEMS.forEach { (navKey, item) ->
+                val isSelected = currentKey::class == navKey::class
+
                 AniPickBottomNavigationItem(
                     item = item,
                     isSelected = isSelected,
@@ -104,4 +110,13 @@ fun AniPickBottomNavigationItem(
             color = contentColor
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AniPickBottomNavigationPreview() {
+    AniPickBottomNavigation(
+        currentKey = HomeNavKey.Main,
+        onNavigate = {}
+    )
 }

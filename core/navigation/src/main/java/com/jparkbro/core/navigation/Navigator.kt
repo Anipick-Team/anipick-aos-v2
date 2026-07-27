@@ -82,17 +82,13 @@ class Navigator(val state: NavigationState) {
     }
 
     /**
-     * 메인 탭(Top level)으로 이동 로직
+     * 메인 탭(Top level)으로 이동 로직.
+     * 탭끼리는 서로 히스토리를 안 쌓아야 하므로, 항상 탑레벨 스택을 비우고
+     * 이동할 탭 하나만 남깁니다 (탭 전환 = push가 아니라 replace).
      */
     private fun goToTopLevel(key: NavKey) {
         state.topLevelStack.apply {
-            if (key == state.startKey) {
-                // 시작 화면으로 가는 경우 스택을 모두 비워 앱 종료 직전 상태로 만듦
-                clear()
-            } else {
-                // 이미 스택에 있는 탭이라면 위치만 조정
-                remove(key)
-            }
+            clear()
             add(key)
         }
     }

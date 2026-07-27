@@ -2,6 +2,7 @@ package com.jparkbro.home.api
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import kr.agromarket.at.core.navigation.Navigator
 
 sealed interface HomeNavKey : NavKey {
 
@@ -10,4 +11,8 @@ sealed interface HomeNavKey : NavKey {
 
     @Serializable
     data object Detail : HomeNavKey
+}
+
+fun Navigator.navigateToHomeMain() {
+    navigateAndClearStack(HomeNavKey.Main)
 }
