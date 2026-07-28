@@ -50,6 +50,7 @@ kotlinxSerializationJson = "1.11.0"
 
 # 코루틴 (Coroutines)
 kotlinxCoroutinesAndroid = "1.11.0"
+kotlinxCoroutinesCore = "1.11.0"
 
 # 이미지 로딩 (Coil)
 coilCompose = "3.5.0"
@@ -164,6 +165,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 
 # 코루틴 (Coroutines)
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 
 # Gradle (build-logic convention plugin 의존성)
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

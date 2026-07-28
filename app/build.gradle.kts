@@ -27,7 +27,11 @@ dependencies {
     implementation(libs.app.update)
     implementation(libs.app.update.ktx)
 
+    // Kakao (KakaoSdk.init 호출용)
+    implementation(libs.kakao.user)
+
     // Module
+    implementation(projects.core.common)
     implementation(projects.core.data)
     implementation(projects.core.database)
     implementation(projects.core.datastore)
