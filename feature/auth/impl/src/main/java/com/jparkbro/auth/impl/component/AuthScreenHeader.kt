@@ -25,8 +25,6 @@ internal fun AuthScreenHeader(
 ) {
     Column(
         modifier = modifier
-            .padding(top = 20.dp)
-            .padding(horizontal = 20.dp)
     ) {
         Icon(
             imageVector = ChevronLeft,
