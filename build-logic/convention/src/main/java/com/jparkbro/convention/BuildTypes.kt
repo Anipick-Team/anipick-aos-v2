@@ -72,6 +72,8 @@ private fun BuildType.configureDebugBuildType(
     buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
     buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
     buildConfigField("String", "BASE_URL", "\"https://anipick.p-e.kr/api\"")
+
+    manifestPlaceholders["KAKAO_APP_KEY"] = kakaoAppKey
 }
 
 private fun BuildType.configureReleaseBuildType(
@@ -84,6 +86,8 @@ private fun BuildType.configureReleaseBuildType(
     buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
     buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
     buildConfigField("String", "BASE_URL", "\"https://anipick.p-e.kr/api\"")
+
+    manifestPlaceholders["KAKAO_APP_KEY"] = kakaoAppKey
 
     proguardFiles(
         commonExtension.getDefaultProguardFile("proguard-android-optimize.txt")
