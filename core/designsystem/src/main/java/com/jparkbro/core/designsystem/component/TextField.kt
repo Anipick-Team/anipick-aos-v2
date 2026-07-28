@@ -58,7 +58,7 @@ fun AniPickBaseTextField(
     actions: @Composable (() -> Unit)? = null,
     showPassword: Boolean = false,
     maxLength: Int? = null,
-    height: Dp = 48.dp
+    height: Dp = 46.dp
 ) {
     val isNumericType = type == TextFieldType.PHONE || type == TextFieldType.NUMBER || type == TextFieldType.DATE
 
