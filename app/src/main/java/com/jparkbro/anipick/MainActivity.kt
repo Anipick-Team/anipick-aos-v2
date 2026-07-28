@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -17,10 +18,17 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.jparkbro.anipick.navigation.AniPickBottomNavigation
 import com.jparkbro.anipick.navigation.AppNavDisplay
 import com.jparkbro.anipick.navigation.TOP_LEVEL_ITEMS
+import com.jparkbro.auth.api.AuthNavKey
+import com.jparkbro.auth.api.navigateToLogin
+import com.jparkbro.core.common.auth.TokenProvider
 import com.jparkbro.core.designsystem.theme.AniPick_v2Theme
 import com.jparkbro.splash.api.SplashNavKey
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kr.agromarket.at.core.navigation.Navigator
 import kr.agromarket.at.core.navigation.rememberNavigationState
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
 
@@ -56,6 +64,18 @@ class MainActivity : ComponentActivity() {
                     topLevelKeys = TOP_LEVEL_ITEMS.keys,
                 )
                 val navigator = remember(navigationState) { Navigator(navigationState) }
+
+                val tokenProvider = koinInject<TokenProvider>()
+                LaunchedEffect(tokenProvider) {
+                    tokenProvider.isLoggedIn
+                        .distinctUntilChanged()
+                        .drop(1) // 콜드 스타트 시점의 최초 상태는 무시 (Splash가 자체적으로 처리)
+                        .filter { isLoggedIn -> !isLoggedIn }
+                        .collect {
+                            // refreshToken까지 만료되어 세션이 끊긴 경우: 로그인 화면으로 강제 이동
+                            navigator.navigateToLogin()
+                        }
+                }
 
                 Scaffold(
                     contentWindowInsets = WindowInsets(0.dp),

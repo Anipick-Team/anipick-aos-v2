@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.jparkbro.core.designsystem.component.AniPickBrandHeader
@@ -48,7 +49,7 @@ private fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(AniPickTheme.colors.white),
+            .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
         AniPickBrandHeader(modifier = modifier)

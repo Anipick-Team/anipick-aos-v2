@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
@@ -48,7 +49,10 @@ internal fun LoginRoot(
     val activity = context.requireActivity()
 
     ObserveAsEvents(viewModel.events) { event ->
-
+        when (event) {
+            LoginEvent.NavigateToHome -> onNavigateToHome()
+            LoginEvent.NavigateToPreferenceSetup -> onNavigateToPreferenceSetup()
+        }
     }
 
     val headerModifier = with(sharedTransitionScope) {
@@ -60,7 +64,7 @@ internal fun LoginRoot(
 
     LoginScreen(
         activity = activity,
-        headerModifier = headerModifier,
+        modifier = headerModifier,
         onAction = { action ->
             when (action) {
                 LoginAction.OnEmailLoginClick -> onNavigateToEmailLogin()
@@ -74,19 +78,18 @@ internal fun LoginRoot(
 @Composable
 private fun LoginScreen(
     activity: Activity,
-    headerModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     onAction: (LoginAction) -> Unit
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding()
-            .background(AniPickTheme.colors.white),
+            .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(100.dp, Alignment.CenterVertically)
     ) {
-        AniPickBrandHeader(modifier = headerModifier)
+        AniPickBrandHeader(modifier = modifier)
 
         LoginActions(
             activity = activity,
@@ -98,7 +101,7 @@ private fun LoginScreen(
             style = AniPickTheme.typography.caption1,
             color = AniPickTheme.colors.black,
             modifier = Modifier
-                .background(AniPickTheme.colors.white)
+                .background(Color.White)
                 .border(1.dp, AniPickTheme.colors.black, RoundedCornerShape((21.5).dp))
                 .clip(RoundedCornerShape((21.5).dp))
                 .clickable(
