@@ -18,4 +18,14 @@ class KtorAuthNetworkDataSource(
             body = OAuthLoginRequest(code = code),
         )
     }
+
+    override suspend fun loginWithEmail(
+        email: String,
+        password: String,
+    ): Result<OAuthLoginResponse, DataError.Network> {
+        return httpClient.post(
+            route = "/users/login",
+            body = EmailLoginRequest(email = email, password = password),
+        )
+    }
 }

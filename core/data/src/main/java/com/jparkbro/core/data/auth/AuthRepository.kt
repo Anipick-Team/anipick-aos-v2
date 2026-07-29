@@ -4,6 +4,7 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 
 interface AuthRepository {
-    suspend fun loginWithKakao(accessToken: String): Result<Unit, DataError.Network>
-    suspend fun loginWithGoogle(idToken: String): Result<Unit, DataError.Network>
+    suspend fun loginWithKakao(accessToken: String): Result<Boolean, DataError.Network>
+    suspend fun loginWithGoogle(idToken: String): Result<Boolean, DataError.Network>
+    suspend fun loginWithEmail(email: String, password: String): Result<Boolean, DataError.Network>
 }

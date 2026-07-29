@@ -19,7 +19,7 @@ sealed interface AuthNavKey : NavKey {
 
     object Password {
         @Serializable
-        data class Verification(val email: String) : AuthNavKey
+        data object Verification : AuthNavKey
 
         @Serializable
         data class Reset(val token: String) : AuthNavKey

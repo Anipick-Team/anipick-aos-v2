@@ -14,6 +14,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.util.network.UnresolvedAddressException
 import io.ktor.utils.io.CancellationException
 import kotlinx.serialization.SerializationException
+import timber.log.Timber
 
 /**
  * GET 요청을 보내고 결과를 [Result]로 감싼다. 예외를 던지지 않고 [safeCall]이 실패를 [DataError.Network]로 변환한다.
@@ -61,38 +62,47 @@ suspend inline fun <reified Request, reified Response : Any> HttpClient.post(
 }
 
 /**
- * Ktor 요청 실행 중 발생할 수 있는 예외를 잡아서 [DataError.Network]로 변환한다.
+ * Ktor 요청 실행과 응답 파싱 중 발생할 수 있는 예외를 잡아서 [DataError.Network]로 변환한다.
  * [CancellationException]은 코루틴 취소 메커니즘이 정상 동작해야 하므로 잡되 다시 던진다.
  */
 suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, DataError.Network> {
-    val response = try {
-        execute()
+    return try {
+        responseToResult(execute())
     } catch (e: UnresolvedAddressException) {
         e.printStackTrace()
-        return Result.Failure(DataError.Network.NO_INTERNET)
+        Result.Failure(DataError.Network.NO_INTERNET)
     } catch (e: SerializationException) {
         e.printStackTrace()
-        return Result.Failure(DataError.Network.SERIALIZATION)
+        Result.Failure(DataError.Network.SERIALIZATION)
     } catch (e: Exception) {
         if (e is CancellationException) throw e
         e.printStackTrace()
-        return Result.Failure(DataError.Network.UNKNOWN)
+        Result.Failure(DataError.Network.UNKNOWN)
     }
-
-    return responseToResult(response)
 }
 
-/** HTTP 상태 코드를 [DataError.Network] 케이스로 매핑한다. 2xx는 응답 바디를 [T]로 역직렬화해서 성공 처리. */
+/**
+ * HTTP status가 아니라 [ApiResponse.code]로 성공/실패를 판단한다. 이 서버는 비즈니스 실패도 HTTP 200으로
+ * 감싸서 {code, value} 형태로 내려주므로, code == 200일 때만 성공이고 그 외(100, 101 ...)는 전부 실패다.
+ * 실패 시 [ApiResponse.value](실패 사유)를 [DataError.Network.Api]에 그대로 실어서, 호출부가 다이얼로그나
+ * 에러 메시지로 바로 보여줄 수 있게 한다.
+ */
 suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<T, DataError.Network> {
-    return when (response.status.value) {
-        in 200..299 -> Result.Success(response.body<T>())
-        401 -> Result.Failure(DataError.Network.UNAUTHORIZED)
-        408 -> Result.Failure(DataError.Network.REQUEST_TIMEOUT)
-        409 -> Result.Failure(DataError.Network.CONFLICT)
-        413 -> Result.Failure(DataError.Network.PAYLOAD_TOO_LARGE)
-        429 -> Result.Failure(DataError.Network.TOO_MANY_REQUESTS)
-        in 500..599 -> Result.Failure(DataError.Network.SERVER_ERROR)
-        else -> Result.Failure(DataError.Network.UNKNOWN)
+    val body = response.body<ApiResponse<T>>()
+
+    if (body.code != 200) {
+        Timber.e("API 실패: code=${body.code}, value=${body.errorValue}, errorReason=${body.errorReason}")
+        return Result.Failure(
+            DataError.Network.Api(code = body.code, message = body.errorValue, reason = body.errorReason)
+        )
+    }
+
+    val result = body.result
+    return if (result != null) {
+        Result.Success(result)
+    } else {
+        Timber.e("API 실패 (code=200인데 result 없음): value=${body.value}")
+        Result.Failure(DataError.Network.UNKNOWN)
     }
 }
 
