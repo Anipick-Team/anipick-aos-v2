@@ -1,6 +1,7 @@
 package com.jparkbro.auth.impl.login
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
@@ -26,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.component.AniPickBrandHeader
@@ -69,6 +71,10 @@ internal fun LoginRoot(
             when (action) {
                 LoginAction.OnEmailLoginClick -> onNavigateToEmailLogin()
                 LoginAction.OnEmailSignupClick -> onNavigateToEmailSignup()
+                LoginAction.OnProblemClick -> {
+                    val intent = Intent(Intent.ACTION_VIEW, "https://forms.gle/SJ7mbQfyfoe2HDLd7".toUri())
+                    context.startActivity(intent)
+                }
                 else -> viewModel.onAction(action)
             }
         }
