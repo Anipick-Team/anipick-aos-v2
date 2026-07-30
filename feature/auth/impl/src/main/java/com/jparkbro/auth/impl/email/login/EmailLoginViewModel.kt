@@ -7,6 +7,7 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.data.auth.AuthRepository
+import com.jparkbro.core.ui.GlobalSnackbarManager
 import com.jparkbro.core.ui.validation.EmailPatternValidator
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ import timber.log.Timber
 
 class EmailLoginViewModel(
     private val authRepository: AuthRepository,
+    private val globalSnackbarManager: GlobalSnackbarManager,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(EmailLoginState())
@@ -111,7 +113,7 @@ class EmailLoginViewModel(
                 }
             }
             DataError.Network.NO_INTERNET -> {
-                _state.update { it.copy(loginError = "네트워크 연결을 확인해주세요.") }
+                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
             }
             else -> {
                 _state.update { it.copy(loginError = "알 수 없는 오류가 발생했습니다.") }

@@ -38,7 +38,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * @param duration 스낵바가 화면에 유지되는 시간(ms). 퇴장 애니메이션 시간은 별도(300ms 고정).
  */
 @Composable
-fun AniPickSnackBar(
+fun AniPickSnackbar(
     message: String,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -103,7 +103,7 @@ fun AniPickSnackBar(
 @Preview(showBackground = true)
 @Composable
 private fun AniPickSnackBarPreview() {
-    AniPickSnackBar(
+    AniPickSnackbar(
         message = "네트워크 연결을 확인해주세요.",
         onDismiss = {},
     )

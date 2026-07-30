@@ -7,24 +7,19 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.anipick.navigation.AniPickBottomNavigation
 import com.jparkbro.anipick.navigation.AppNavDisplay
 import com.jparkbro.anipick.navigation.TOP_LEVEL_ITEMS
-import com.jparkbro.auth.api.AuthNavKey
 import com.jparkbro.auth.api.navigateToLogin
 import com.jparkbro.core.common.auth.TokenProvider
-import com.jparkbro.core.designsystem.component.AniPickSnackBar
+import com.jparkbro.core.designsystem.component.AniPickSnackbar
 import com.jparkbro.core.designsystem.theme.AniPick_v2Theme
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import com.jparkbro.splash.api.SplashNavKey
@@ -100,7 +95,7 @@ class MainActivity : ComponentActivity() {
                     )
 
                     snackbarMessages.firstOrNull()?.let { message ->
-                        AniPickSnackBar(
+                        AniPickSnackbar(
                             message = message,
                             onDismiss = { globalSnackbarManager.dismissCurrent() },
                         )
