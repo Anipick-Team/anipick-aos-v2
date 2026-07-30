@@ -6,6 +6,7 @@ import com.jparkbro.auth.impl.di.authModule
 import com.jparkbro.core.data.di.dataModule
 import com.jparkbro.core.datastore.di.datastoreModule
 import com.jparkbro.core.network.di.networkModule
+import com.jparkbro.core.ui.di.uiModule
 import com.jparkbro.home.impl.di.homeModule
 import com.jparkbro.splash.impl.di.splashModule
 import com.kakao.sdk.common.KakaoSdk
@@ -33,6 +34,7 @@ class AniPickApplication: Application() {
                 networkModule,
                 datastoreModule,
                 dataModule,
+                uiModule,
 
                 authModule,
                 splashModule,
