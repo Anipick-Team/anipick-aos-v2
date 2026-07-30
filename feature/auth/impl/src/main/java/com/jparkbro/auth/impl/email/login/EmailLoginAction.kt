@@ -6,4 +6,5 @@ sealed interface EmailLoginAction {
     data object OnEmailSignupClick : EmailLoginAction
     data object OnFindPasswordClick : EmailLoginAction
     data object OnBackClick : EmailLoginAction
+    data object OnDialogDismiss : EmailLoginAction
 }

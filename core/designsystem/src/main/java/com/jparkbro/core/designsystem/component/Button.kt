@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,6 +28,7 @@ fun AniPickButton(
     modifier: Modifier = Modifier,
     size: ButtonSize = ButtonSize.L,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
 ) {
     val height = when (size) {
         ButtonSize.L -> 52.dp
@@ -35,6 +38,11 @@ fun AniPickButton(
         ButtonSize.L -> AniPickTheme.typography.body2
         ButtonSize.S -> AniPickTheme.typography.caption1
     }
+    val indicatorSize = when (size) {
+        ButtonSize.L -> 20.dp
+        ButtonSize.S -> 16.dp
+    }
+    val contentColor = if (enabled) AniPickTheme.colors.white else AniPickTheme.colors.textGray
 
     Box(
         modifier = modifier
@@ -42,17 +50,25 @@ fun AniPickButton(
             .clip(RoundedCornerShape(8.dp))
             .background(if (enabled) AniPickTheme.colors.primary else AniPickTheme.colors.gray)
             .clickable(
-                enabled = enabled,
+                enabled = enabled && !isLoading,
                 onClick = onClick
             )
             .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = text,
-            style = textStyle,
-            color = if (enabled) AniPickTheme.colors.white else AniPickTheme.colors.textGray
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(indicatorSize),
+                color = contentColor,
+                strokeWidth = 2.dp,
+            )
+        } else {
+            Text(
+                text = text,
+                style = textStyle,
+                color = contentColor
+            )
+        }
     }
 }
 
@@ -80,6 +96,13 @@ private fun AniPickButtonPreview() {
             text = "중복확인",
             onClick = {},
             size = ButtonSize.S
+        )
+        AniPickButton(
+            text = "로그인",
+            onClick = {},
+            size = ButtonSize.L,
+            isLoading = true,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

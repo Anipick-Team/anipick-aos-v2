@@ -8,5 +8,7 @@ data class EmailLoginState(
     val emailError: String? = null,
     val showPassword: Boolean = false,
     val isLoading: Boolean = false,
-    val loginError: String? = null
+    val loginError: String? = null,
+    val showAccountDeletedDialog: Boolean = false,
+    val isLoginEnabled: Boolean = false,
 )

@@ -76,10 +76,10 @@ fun AniPickBaseTextField(
         TextFieldType.TEXT -> null
     }
 
-    val resolvedKeyboardOptions = if (isNumericType) {
-        keyboardOptions.copy(keyboardType = KeyboardType.Number)
-    } else {
-        keyboardOptions
+    val resolvedKeyboardOptions = when {
+        isNumericType -> keyboardOptions.copy(keyboardType = KeyboardType.Number)
+        type == TextFieldType.PASSWORD -> keyboardOptions.copy(keyboardType = KeyboardType.Password)
+        else -> keyboardOptions
     }
 
     BasicTextField(
