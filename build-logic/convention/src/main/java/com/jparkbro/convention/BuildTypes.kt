@@ -29,11 +29,13 @@ internal fun Project.configureApplicationBuildTypes(
                 isMinifyEnabled = true
                 isShrinkResources = true
                 signingConfig = signingConfigs.getByName("release")
+                proguardFiles(file("proguard-rules.pro"))
             }
         } else {
             buildTypes.getByName("release") {
                 isMinifyEnabled = true
                 isShrinkResources = true
+                proguardFiles(file("proguard-rules.pro"))
             }
         }
     }
