@@ -5,6 +5,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.jparkbro.auth.api.AuthNavKey
+import com.jparkbro.auth.api.navigateToPreferenceSetup
 import com.jparkbro.auth.impl.email.login.EmailLoginRoot
 import com.jparkbro.auth.impl.email.signup.EmailSignupRoot
 import com.jparkbro.auth.impl.login.LoginRoot
@@ -25,13 +26,13 @@ fun EntryProviderScope<NavKey>.authEntry(
             onNavigateToHome = navigator::navigateToHomeMain,
             onNavigateToEmailLogin = { navigator.navigate(AuthNavKey.Email.Login) },
             onNavigateToEmailSignup = { navigator.navigate(AuthNavKey.Email.Signup) },
-            onNavigateToPreferenceSetup = { navigator.navigate(AuthNavKey.PreferenceSetup) },
+            onNavigateToPreferenceSetup = navigator::navigateToPreferenceSetup,
         )
     }
     entry<AuthNavKey.Email.Login> {
         EmailLoginRoot(
             onNavigateToHome = navigator::navigateToHomeMain,
-            onNavigateToPreferenceSetup = { navigator.navigate(AuthNavKey.PreferenceSetup) },
+            onNavigateToPreferenceSetup = navigator::navigateToPreferenceSetup,
             onNavigateToEmailSignup = { navigator.navigate(AuthNavKey.Email.Signup) },
             onNavigateToPasswordVerification = { navigator.navigate(AuthNavKey.Password.Verification) },
             onBackClick = navigator::goBack,
@@ -39,7 +40,7 @@ fun EntryProviderScope<NavKey>.authEntry(
     }
     entry<AuthNavKey.Email.Signup> {
         EmailSignupRoot(
-            onNavigateToPreferenceSetup = { navigator.navigate(AuthNavKey.PreferenceSetup) },
+            onNavigateToPreferenceSetup = navigator::navigateToPreferenceSetup,
             onBackClick = navigator::goBack,
         )
     }

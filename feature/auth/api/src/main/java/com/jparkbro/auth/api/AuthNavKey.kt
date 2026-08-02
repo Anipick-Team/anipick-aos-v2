@@ -32,3 +32,7 @@ sealed interface AuthNavKey : NavKey {
 fun Navigator.navigateToLogin() {
     navigateAndClearStack(AuthNavKey.Login)
 }
+
+fun Navigator.navigateToPreferenceSetup() {
+    navigateAndClearStack(AuthNavKey.PreferenceSetup)
+}
