@@ -2,6 +2,7 @@ package com.jparkbro.core.network.auth
 
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
+import com.jparkbro.core.network.patch
 import com.jparkbro.core.network.post
 import io.ktor.client.HttpClient
 
@@ -51,6 +52,17 @@ class KtorAuthNetworkDataSource(
         return httpClient.post(
             route = "/auth/email/verify",
             body = EmailVerificationCheckRequest(email = email, code = code),
+        )
+    }
+
+    override suspend fun resetPassword(
+        email: String,
+        newPassword: String,
+        checkNewPassword: String,
+    ): Result<Unit, DataError.Network> {
+        return httpClient.patch(
+            route = "/auth/password/reset",
+            body = PasswordResetRequest(email = email, newPassword = newPassword, checkNewPassword = checkNewPassword),
         )
     }
 }

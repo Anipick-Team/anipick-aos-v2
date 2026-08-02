@@ -54,6 +54,14 @@ class AuthRepositoryImpl(
         return authNetworkDataSource.verifyEmailCode(email, code)
     }
 
+    override suspend fun resetPassword(
+        email: String,
+        newPassword: String,
+        checkNewPassword: String,
+    ): Result<Unit, DataError.Network> {
+        return authNetworkDataSource.resetPassword(email, newPassword, checkNewPassword)
+    }
+
     private suspend fun login(provider: AuthProvider, code: String): Result<Boolean, DataError.Network> {
         return authNetworkDataSource.loginWithOAuth(provider, code)
             .map { response ->

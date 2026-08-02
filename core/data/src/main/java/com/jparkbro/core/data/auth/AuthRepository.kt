@@ -14,4 +14,9 @@ interface AuthRepository {
     ): Result<Boolean, DataError.Network>
     suspend fun sendEmailVerification(email: String): Result<Unit, DataError.Network>
     suspend fun verifyEmailCode(email: String, code: String): Result<Unit, DataError.Network>
+    suspend fun resetPassword(
+        email: String,
+        newPassword: String,
+        checkNewPassword: String,
+    ): Result<Unit, DataError.Network>
 }
