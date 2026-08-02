@@ -6,6 +6,7 @@ import com.jparkbro.auth.impl.login.LoginViewModel
 import com.jparkbro.auth.impl.password.reset.PasswordResetViewModel
 import com.jparkbro.auth.impl.password.verification.PasswordVerificationViewModel
 import com.jparkbro.auth.impl.preferencesetup.PreferenceSetupViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -14,6 +15,6 @@ val authModule = module {
     viewModelOf(::EmailLoginViewModel)
     viewModelOf(::EmailSignupViewModel)
     viewModelOf(::PasswordVerificationViewModel)
-    viewModelOf(::PasswordResetViewModel)
+    viewModel { params -> PasswordResetViewModel(email = params.get(), authRepository = get(), globalSnackbarManager = get()) }
     viewModelOf(::PreferenceSetupViewModel)
 }
