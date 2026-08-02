@@ -62,7 +62,9 @@ suspend inline fun <reified Request, reified Response : Any> HttpClient.post(
 }
 
 /**
- * Ktor 요청 실행과 응답 파싱 중 발생할 수 있는 예외를 잡아서 [DataError.Network]로 변환한다.
+ * 1. 통신 자체 성공/실패 — 요청을 보내고 응답을 받아오는 것 자체가 실패한 경우(연결 불가, 응답 파싱 불가 등)를
+ * 잡아서 [DataError.Network]로 변환한다. 여기를 통과하면 최소한 서버로부터 유효한 응답 body는 받았다는 뜻이고,
+ * 그 다음 판단(비즈니스 성공/실패)은 [responseToResult]가 맡는다.
  * [CancellationException]은 코루틴 취소 메커니즘이 정상 동작해야 하므로 잡되 다시 던진다.
  */
 suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, DataError.Network> {
@@ -82,27 +84,33 @@ suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, 
 }
 
 /**
- * HTTP status가 아니라 [ApiResponse.code]로 성공/실패를 판단한다. 이 서버는 비즈니스 실패도 HTTP 200으로
- * 감싸서 {code, value} 형태로 내려주므로, code == 200일 때만 성공이고 그 외(100, 101 ...)는 전부 실패다.
- * 실패 시 [ApiResponse.value](실패 사유)를 [DataError.Network.Api]에 그대로 실어서, 호출부가 다이얼로그나
- * 에러 메시지로 바로 보여줄 수 있게 한다.
+ * 통신 자체는 성공했다는 전제 하에(=여기 도달했다는 것 자체가 body 파싱까지는 성공했다는 뜻), HTTP status가
+ * 아니라 [ApiResponse.code]로 비즈니스 성공/실패를 판단한다. 이 서버는 비즈니스 실패도 HTTP 200으로 감싸서
+ * {code, value} 형태로 내려주므로, code == 200일 때만 성공이고 그 외(100, 101 ...)는 전부 실패다.
  */
 suspend inline fun <reified T> responseToResult(response: HttpResponse): Result<T, DataError.Network> {
     val body = response.body<ApiResponse<T>>()
 
-    if (body.code != 200) {
-        Timber.e("API 실패: code=${body.code}, value=${body.errorValue}, errorReason=${body.errorReason}")
-        return Result.Failure(
-            DataError.Network.Api(code = body.code, message = body.errorValue, reason = body.errorReason)
-        )
-    }
-
-    val result = body.result
-    return if (result != null) {
-        Result.Success(result)
-    } else {
-        Timber.e("API 실패 (code=200인데 result 없음): value=${body.value}")
-        Result.Failure(DataError.Network.UNKNOWN)
+    return when {
+        // 2. code == 200(성공) — result가 없이 성공만 알려주는 엔드포인트(T == Unit)는 Unit을 직접 만들어서
+        //    반환하고, 그 외에는 result를 그대로 반환한다.
+        body.code == 200 -> {
+            if (T::class == Unit::class) {
+                @Suppress("UNCHECKED_CAST")
+                Result.Success(Unit as T)
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                Result.Success(body.result as T)
+            }
+        }
+        // 3. code != 200 — 비즈니스 실패. 실패 사유를 DataError.Network.Api에 그대로 실어서, 호출부가
+        //    다이얼로그나 에러 메시지로 바로 보여줄 수 있게 한다
+        else -> {
+            Timber.e("API 실패: code=${body.code}, value=${body.errorValue}, errorReason=${body.errorReason}")
+            Result.Failure(
+                DataError.Network.Api(code = body.code, message = body.errorValue, reason = body.errorReason)
+            )
+        }
     }
 }
 

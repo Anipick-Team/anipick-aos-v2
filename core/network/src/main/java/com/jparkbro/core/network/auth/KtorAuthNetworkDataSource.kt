@@ -39,4 +39,18 @@ class KtorAuthNetworkDataSource(
             body = EmailSignupRequest(email = email, password = password, termsAndConditions = termsAndConditions),
         )
     }
+
+    override suspend fun sendEmailVerification(email: String): Result<Unit, DataError.Network> {
+        return httpClient.post(
+            route = "/auth/email/send",
+            body = EmailVerificationSendRequest(email = email),
+        )
+    }
+
+    override suspend fun verifyEmailCode(email: String, code: String): Result<Unit, DataError.Network> {
+        return httpClient.post(
+            route = "/auth/email/verify",
+            body = EmailVerificationCheckRequest(email = email, code = code),
+        )
+    }
 }

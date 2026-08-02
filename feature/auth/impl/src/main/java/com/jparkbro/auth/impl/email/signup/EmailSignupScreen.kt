@@ -177,7 +177,7 @@ private fun EmailSignupScreen(
                                     )
                                 },
                                 showPassword = state.showPassword,
-                                maxLength = 50,
+                                maxLength = 20,
                             )
                         },
                     )

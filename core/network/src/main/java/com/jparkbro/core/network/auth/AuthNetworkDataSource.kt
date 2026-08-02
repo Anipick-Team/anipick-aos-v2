@@ -11,4 +11,6 @@ interface AuthNetworkDataSource {
         password: String,
         termsAndConditions: Boolean,
     ): Result<OAuthLoginResponse, DataError.Network>
+    suspend fun sendEmailVerification(email: String): Result<Unit, DataError.Network>
+    suspend fun verifyEmailCode(email: String, code: String): Result<Unit, DataError.Network>
 }

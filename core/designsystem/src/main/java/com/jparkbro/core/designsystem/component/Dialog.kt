@@ -95,7 +95,7 @@ private fun AniPickDialogContent(
             )
             Text(
                 text = message,
-                style = AniPickTheme.typography.body2,
+                style = AniPickTheme.typography.caption1,
                 color = AniPickTheme.colors.textGray,
             )
         }

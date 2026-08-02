@@ -44,10 +44,13 @@ fun EntryProviderScope<NavKey>.authEntry(
         )
     }
     entry<AuthNavKey.Password.Verification> {
-        PasswordVerificationRoot()
+        PasswordVerificationRoot(
+            onNavigateToPasswordReset = { email -> navigator.navigate(AuthNavKey.Password.Reset(email)) },
+            onBackClick = navigator::goBack,
+        )
     }
-    entry<AuthNavKey.Password.Reset> {
-        PasswordResetRoot()
+    entry<AuthNavKey.Password.Reset> { key ->
+        PasswordResetRoot(email = key.email)
     }
     entry<AuthNavKey.PreferenceSetup> {
         PreferenceSetupRoot()

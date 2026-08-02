@@ -46,6 +46,14 @@ class AuthRepositoryImpl(
             }
     }
 
+    override suspend fun sendEmailVerification(email: String): Result<Unit, DataError.Network> {
+        return authNetworkDataSource.sendEmailVerification(email)
+    }
+
+    override suspend fun verifyEmailCode(email: String, code: String): Result<Unit, DataError.Network> {
+        return authNetworkDataSource.verifyEmailCode(email, code)
+    }
+
     private suspend fun login(provider: AuthProvider, code: String): Result<Boolean, DataError.Network> {
         return authNetworkDataSource.loginWithOAuth(provider, code)
             .map { response ->
