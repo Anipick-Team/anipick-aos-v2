@@ -38,7 +38,10 @@ fun EntryProviderScope<NavKey>.authEntry(
         )
     }
     entry<AuthNavKey.Email.Signup> {
-        EmailSignupRoot()
+        EmailSignupRoot(
+            onNavigateToPreferenceSetup = { navigator.navigate(AuthNavKey.PreferenceSetup) },
+            onBackClick = navigator::goBack,
+        )
     }
     entry<AuthNavKey.Password.Verification> {
         PasswordVerificationRoot()

@@ -6,4 +6,9 @@ import com.jparkbro.core.common.result.Result
 interface AuthNetworkDataSource {
     suspend fun loginWithOAuth(provider: AuthProvider, code: String): Result<OAuthLoginResponse, DataError.Network>
     suspend fun loginWithEmail(email: String, password: String): Result<OAuthLoginResponse, DataError.Network>
+    suspend fun signUpWithEmail(
+        email: String,
+        password: String,
+        termsAndConditions: Boolean,
+    ): Result<OAuthLoginResponse, DataError.Network>
 }

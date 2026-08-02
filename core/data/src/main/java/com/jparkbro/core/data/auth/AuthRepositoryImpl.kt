@@ -31,6 +31,21 @@ class AuthRepositoryImpl(
             }
     }
 
+    override suspend fun signUpWithEmail(
+        email: String,
+        password: String,
+        termsAndConditions: Boolean,
+    ): Result<Boolean, DataError.Network> {
+        return authNetworkDataSource.signUpWithEmail(email, password, termsAndConditions)
+            .map { response ->
+                tokenProvider.saveTokens(
+                    accessToken = response.token.accessToken,
+                    refreshToken = response.token.refreshToken,
+                )
+                response.reviewCompletedYn
+            }
+    }
+
     private suspend fun login(provider: AuthProvider, code: String): Result<Boolean, DataError.Network> {
         return authNetworkDataSource.loginWithOAuth(provider, code)
             .map { response ->
