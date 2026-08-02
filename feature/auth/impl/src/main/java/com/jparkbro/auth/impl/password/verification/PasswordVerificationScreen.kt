@@ -33,6 +33,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun PasswordVerificationRoot(
+    onNavigateToLogin: () -> Unit,
     onNavigateToPasswordReset: (email: String) -> Unit,
     onBackClick: () -> Unit,
     viewModel: PasswordVerificationViewModel = koinViewModel()
@@ -42,6 +43,7 @@ internal fun PasswordVerificationRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is PasswordVerificationEvent.NavigateToPasswordReset -> onNavigateToPasswordReset(event.email)
+            PasswordVerificationEvent.NavigateToLogin -> onNavigateToLogin()
         }
     }
 

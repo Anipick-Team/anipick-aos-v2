@@ -51,6 +51,10 @@ class PasswordVerificationViewModel(
             PasswordVerificationAction.OnAlertDismiss -> {
                 _state.update { it.copy(showSnsLoginAlert = false) }
             }
+            PasswordVerificationAction.OnSnsLoginClick -> {
+                _state.update { it.copy(showSnsLoginAlert = false) }
+                viewModelScope.launch { _events.send(PasswordVerificationEvent.NavigateToLogin) }
+            }
             else -> Unit
         }
     }
