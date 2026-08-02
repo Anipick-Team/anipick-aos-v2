@@ -138,7 +138,7 @@ private fun PasswordVerificationScreen(
                                 },
                                 maxLength = 6,
                                 actions = {
-                                    state.codeExpiresInSeconds?.let { remainingSeconds ->
+                                    state.codeExpiresInSeconds?.takeIf { it > 0 }?.let { remainingSeconds ->
                                         val minutes = remainingSeconds / 60
                                         val seconds = remainingSeconds % 60
                                         Text(

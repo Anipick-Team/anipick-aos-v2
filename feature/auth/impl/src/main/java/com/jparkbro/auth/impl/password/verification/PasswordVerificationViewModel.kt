@@ -138,6 +138,7 @@ class PasswordVerificationViewModel(
                 when (error.code) {
                     112 -> _state.update { it.copy(emailError = error.message) }
                     113, 114, 115 -> _state.update { it.copy(codeError = error.message) }
+                    122 -> _state.update { it.copy(showSnsLoginAlert = true) }
                     else -> globalSnackbarManager.showSnackbar(error.message ?: "알 수 없는 오류가 발생했습니다.")
                 }
             }
@@ -208,7 +209,12 @@ class PasswordVerificationViewModel(
                 delay(1_000.milliseconds)
                 remainingSeconds--
             }
-            _state.update { it.copy(codeExpiresInSeconds = 0) }
+            _state.update {
+                it.copy(
+                    codeExpiresInSeconds = 0,
+                    codeError = "유효 시간이 만료되었습니다. 재발송 후 다시 시도해주세요.",
+                )
+            }
         }
     }
 
