@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -123,9 +124,12 @@ private fun PasswordVerificationScreen(
                         textField = {
                             AniPickBaseTextField(
                                 state = state.codeState,
-                                type = TextFieldType.NUMBER,
+                                type = TextFieldType.TEXT,
                                 placeholder = "인증번호를 입력해주세요",
-                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                ),
                                 onKeyboardAction = {
                                     focusManager.clearFocus()
                                     if (state.isVerifyEnabled) {
@@ -192,7 +196,7 @@ private fun VerificationCodeRequestButton(
         is VerificationCodeRequestState.Cooldown -> {
             val minutes = requestState.remainingSeconds / 60
             val seconds = requestState.remainingSeconds % 60
-            "%d:%02d".format(minutes, seconds)
+            "전송됨 %d:%02d".format(minutes, seconds)
         }
         VerificationCodeRequestState.Available -> "재발송하기"
     }

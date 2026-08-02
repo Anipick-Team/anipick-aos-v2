@@ -1,5 +1,7 @@
 package com.jparkbro.auth.impl.password.verification
 
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jparkbro.core.common.result.DataError
@@ -7,12 +9,16 @@ import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.data.auth.AuthRepository
 import com.jparkbro.core.ui.GlobalSnackbarManager
+import com.jparkbro.core.ui.validation.EmailPatternValidator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,6 +39,11 @@ class PasswordVerificationViewModel(
     private var resendCooldownJob: Job? = null
     private var codeExpiryJob: Job? = null
 
+    init {
+        observeEmailValidation()
+        observeVerifyEnabled()
+    }
+
     fun onAction(action: PasswordVerificationAction) {
         when (action) {
             PasswordVerificationAction.OnRequestVerificationCodeClick -> requestVerificationCode()
@@ -41,6 +52,61 @@ class PasswordVerificationViewModel(
                 _state.update { it.copy(showSnsLoginAlert = false) }
             }
             else -> Unit
+        }
+    }
+
+    private fun observeEmailValidation() {
+        viewModelScope.launch {
+            snapshotFlow { _state.value.emailState.text.toString() }
+                .distinctUntilChanged()
+                .collect { email ->
+                    val emailError = if (email.isNotEmpty() && !EmailPatternValidator.matches(email)) {
+                        "올바른 이메일 형식이 아닙니다."
+                    } else {
+                        null
+                    }
+                    _state.update { it.copy(emailError = emailError) }
+                    resetCodeSessionIfActive()
+                }
+        }
+    }
+
+    /**
+     * 이미 인증번호를 받은 상태(발송 성공 이후)에서 이메일을 수정하면, 화면에 남아있는 카운트다운/재발송
+     * 상태/입력했던 인증번호가 전부 "예전 이메일" 기준이라 오해를 살 수 있어서 초기화한다.
+     * 아직 한 번도 발송 안 한 상태(Idle)에서 타이핑하는 중이면 아무 것도 하지 않는다.
+     */
+    private fun resetCodeSessionIfActive() {
+        val current = _state.value
+        val hasActiveCodeSession = current.codeExpiresInSeconds != null ||
+            current.codeRequestState !is VerificationCodeRequestState.Idle
+        if (!hasActiveCodeSession) return
+
+        codeExpiryJob?.cancel()
+        resendCooldownJob?.cancel()
+        current.codeState.setTextAndPlaceCursorAtEnd("")
+        _state.update {
+            it.copy(
+                codeRequestState = VerificationCodeRequestState.Idle,
+                codeExpiresInSeconds = null,
+                codeError = null,
+            )
+        }
+    }
+
+    private fun observeVerifyEnabled() {
+        viewModelScope.launch {
+            combine(
+                snapshotFlow { _state.value.emailState.text.toString() },
+                snapshotFlow { _state.value.codeState.text.toString() },
+                _state.map { it.isLoading }.distinctUntilChanged(),
+            ) { email, code, isLoading ->
+                email.isNotEmpty() && EmailPatternValidator.matches(email) && code.isNotEmpty() && !isLoading
+            }
+                .distinctUntilChanged()
+                .collect { isVerifyEnabled ->
+                    _state.update { it.copy(isVerifyEnabled = isVerifyEnabled) }
+                }
         }
     }
 
@@ -58,6 +124,9 @@ class PasswordVerificationViewModel(
                 }
                 .onFailure { error ->
                     Timber.e("인증번호 발송 실패: $error")
+                    // 실패해도 이미 한 번 시도한 거라 "인증번호 받기"가 아니라 "재발송" 상태로 바로 보낸다.
+                    resendCooldownJob?.cancel()
+                    _state.update { it.copy(codeRequestState = VerificationCodeRequestState.Available) }
                     handleSendFailure(error)
                 }
         }
@@ -66,7 +135,11 @@ class PasswordVerificationViewModel(
     private fun handleSendFailure(error: DataError.Network) {
         when (error) {
             is DataError.Network.Api -> {
-                _state.update { it.copy(emailError = error.message) }
+                when (error.code) {
+                    112 -> _state.update { it.copy(emailError = error.message) }
+                    113, 114, 115 -> _state.update { it.copy(codeError = error.message) }
+                    else -> globalSnackbarManager.showSnackbar(error.message ?: "알 수 없는 오류가 발생했습니다.")
+                }
             }
             DataError.Network.NO_INTERNET -> {
                 globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
