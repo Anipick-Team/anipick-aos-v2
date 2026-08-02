@@ -108,7 +108,7 @@ private fun LoginScreen(
             color = AniPickTheme.colors.black,
             modifier = Modifier
                 .background(Color.White)
-                .border(1.dp, AniPickTheme.colors.black, RoundedCornerShape((21.5).dp))
+                .border(1.dp, AniPickTheme.colors.textGray, RoundedCornerShape((21.5).dp))
                 .clip(RoundedCornerShape((21.5).dp))
                 .clickable(
                     onClick = { onAction(LoginAction.OnProblemClick) }
