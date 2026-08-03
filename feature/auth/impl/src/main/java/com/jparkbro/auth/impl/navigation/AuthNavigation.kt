@@ -21,7 +21,7 @@ fun EntryProviderScope<NavKey>.authEntry(
     navigator: Navigator,
     sharedTransitionScope: SharedTransitionScope,
 ) {
-    entry<AuthNavKey.Login> {
+    entry<AuthNavKey.Login>(clazzContentKey = { "AuthNavKey.Login" }) {
         LoginRoot(
             sharedTransitionScope = sharedTransitionScope,
             onNavigateToHome = navigator::navigateToHomeMain,
@@ -30,7 +30,7 @@ fun EntryProviderScope<NavKey>.authEntry(
             onNavigateToPreferenceSetup = navigator::navigateToPreferenceSetup,
         )
     }
-    entry<AuthNavKey.Email.Login> {
+    entry<AuthNavKey.Email.Login>(clazzContentKey = { "AuthNavKey.Email.Login" }) {
         EmailLoginRoot(
             onNavigateToHome = navigator::navigateToHomeMain,
             onNavigateToPreferenceSetup = navigator::navigateToPreferenceSetup,
