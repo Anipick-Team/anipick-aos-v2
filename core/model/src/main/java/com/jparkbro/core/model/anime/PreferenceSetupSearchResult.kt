@@ -1,4 +1,6 @@
-package com.jparkbro.core.model
+package com.jparkbro.core.model.anime
+
+import com.jparkbro.core.model.pagination.Cursor
 
 data class PreferenceSetupSearchResult(
     val count: Int,

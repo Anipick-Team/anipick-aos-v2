@@ -1,4 +1,4 @@
-package com.jparkbro.core.model
+package com.jparkbro.core.model.anime
 
 data class Anime(
     val animeId: Long? = null,

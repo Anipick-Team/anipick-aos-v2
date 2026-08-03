@@ -1,8 +1,8 @@
 package com.jparkbro.core.network.common
 
-import com.jparkbro.core.model.Genre
-import com.jparkbro.core.model.Metadata
-import com.jparkbro.core.model.Season
+import com.jparkbro.core.model.metadata.Genre
+import com.jparkbro.core.model.metadata.Metadata
+import com.jparkbro.core.model.metadata.Season
 import kotlinx.serialization.Serializable
 
 @Serializable

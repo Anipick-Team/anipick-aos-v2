@@ -1,10 +1,10 @@
 package com.jparkbro.auth.impl.preferencesetup
 
 import androidx.compose.foundation.text.input.TextFieldState
-import com.jparkbro.core.model.Anime
-import com.jparkbro.core.model.Cursor
-import com.jparkbro.core.model.Genre
-import com.jparkbro.core.model.Season
+import com.jparkbro.core.model.anime.Anime
+import com.jparkbro.core.model.metadata.Genre
+import com.jparkbro.core.model.metadata.Season
+import com.jparkbro.core.model.pagination.Cursor
 
 data class PreferenceSetupState(
     val searchFieldState: TextFieldState = TextFieldState(),
@@ -15,6 +15,8 @@ data class PreferenceSetupState(
     val cursor: Cursor? = null,
     val ratings: List<AnimeRating> = emptyList(),
     val isSearchLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val isLastPage: Boolean = false,
     val isCompleting: Boolean = false,
 ) {
     val ratedCount: Int get() = ratings.size

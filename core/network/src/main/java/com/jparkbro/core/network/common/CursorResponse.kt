@@ -1,6 +1,6 @@
 package com.jparkbro.core.network.common
 
-import com.jparkbro.core.model.Cursor
+import com.jparkbro.core.model.pagination.Cursor
 import kotlinx.serialization.Serializable
 
 @Serializable

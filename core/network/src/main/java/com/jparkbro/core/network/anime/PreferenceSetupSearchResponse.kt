@@ -1,6 +1,6 @@
 package com.jparkbro.core.network.anime
 
-import com.jparkbro.core.model.Anime
+import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.network.common.CursorResponse
 import kotlinx.serialization.Serializable
 

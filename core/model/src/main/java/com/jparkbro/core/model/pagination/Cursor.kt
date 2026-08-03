@@ -1,4 +1,4 @@
-package com.jparkbro.core.model
+package com.jparkbro.core.model.pagination
 
 data class Cursor(
     val lastId: Long? = null,

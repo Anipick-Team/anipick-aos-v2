@@ -1,4 +1,4 @@
-package com.jparkbro.core.model
+package com.jparkbro.core.model.metadata
 
 data class Genre(
     val id: Int,

@@ -4,7 +4,7 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
 import com.jparkbro.core.common.result.onSuccess
-import com.jparkbro.core.model.Metadata
+import com.jparkbro.core.model.metadata.Metadata
 import com.jparkbro.core.network.common.CommonNetworkDataSource
 import com.jparkbro.core.network.common.toMetadata
 import kotlinx.coroutines.sync.Mutex
