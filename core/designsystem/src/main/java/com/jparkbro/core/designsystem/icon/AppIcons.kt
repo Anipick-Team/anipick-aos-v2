@@ -65,6 +65,10 @@ val ChevronRight: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_chevron_right)
 
+val ChevronUp: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_chevron_up)
+
 val ChevronsDown: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_chevrons_down)

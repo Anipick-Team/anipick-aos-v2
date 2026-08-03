@@ -60,6 +60,8 @@ fun EntryProviderScope<NavKey>.authEntry(
         )
     }
     entry<AuthNavKey.PreferenceSetup> {
-        PreferenceSetupRoot()
+        PreferenceSetupRoot(
+            onNavigateToHome = navigator::navigateToHomeMain,
+        )
     }
 }
