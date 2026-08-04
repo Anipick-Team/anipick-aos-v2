@@ -58,8 +58,6 @@ fun AppNavDisplay(
             onBack = navigator::goBack,
             sharedTransitionScope = this@SharedTransitionLayout,
             transitionSpec = {
-                // Splash에서 나가는 전환, 바텀 네비게이션 탭 루트끼리 오가는 전환(홈<->랭킹<->탐색<->마이페이지)은
-                // 슬라이드 없이 fade만 쓴다. 그 외(상세, 검색 등 하위 화면 이동)는 기존 슬라이드 그대로.
                 if (isFadeTransition()) {
                     fadeIn(tween(FADE_DURATION_MILLIS)) togetherWith fadeOut(tween(FADE_DURATION_MILLIS))
                 } else {

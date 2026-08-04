@@ -46,7 +46,9 @@ class EmailLoginViewModel(
             EmailLoginAction.OnDialogDismiss -> {
                 _state.update { it.copy(showAccountDeletedDialog = false) }
             }
-            else -> Unit
+            EmailLoginAction.OnEmailSignupClick,
+            EmailLoginAction.OnFindPasswordClick,
+            EmailLoginAction.OnBackClick -> Unit
         }
     }
 

@@ -45,7 +45,7 @@ class PasswordResetViewModel(
                 _state.update { it.copy(showPassword = !it.showPassword) }
             }
             PasswordResetAction.OnResetClick -> resetPassword()
-            else -> Unit
+            PasswordResetAction.OnBackClick -> Unit
         }
     }
 

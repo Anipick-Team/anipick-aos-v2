@@ -39,7 +39,9 @@ class LoginViewModel(
         when (action) {
             is LoginAction.OnKakaoLoginClick -> { kakaoLogin(action.activity) }
             is LoginAction.OnGoogleLoginClick -> { googleLogin(action.activity) }
-            else -> Unit
+            LoginAction.OnEmailLoginClick,
+            LoginAction.OnEmailSignupClick,
+            LoginAction.OnProblemClick -> Unit
         }
     }
 

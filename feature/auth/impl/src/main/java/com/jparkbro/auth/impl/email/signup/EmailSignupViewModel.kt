@@ -64,7 +64,10 @@ class EmailSignupViewModel(
                 _state.update { it.copy(isPrivacyPolicyChecked = !it.isPrivacyPolicyChecked) }
             }
             EmailSignupAction.OnSignUpClick -> signUp()
-            else -> Unit
+
+            EmailSignupAction.OnBackClick,
+            EmailSignupAction.OnTermsOfServiceDetailClick,
+            EmailSignupAction.OnPrivacyPolicyDetailClick -> Unit
         }
     }
 
@@ -115,13 +118,14 @@ class EmailSignupViewModel(
     private fun signUp() {
         val email = _state.value.emailState.text.toString()
         val password = _state.value.passwordState.text.toString()
+        val termsAndConditions = _state.value.isAgreeAll
 
         viewModelScope.launch {
             _state.update {
                 it.copy(isLoading = true, emailError = null, passwordError = null, termsError = null)
             }
 
-            authRepository.signUpWithEmail(email, password, termsAndConditions = true)
+            authRepository.signUpWithEmail(email, password, termsAndConditions)
                 .onSuccess {
                     _state.update { it.copy(isLoading = false) }
                     _events.send(EmailSignupEvent.NavigateToPreferenceSetup)

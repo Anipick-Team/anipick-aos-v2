@@ -16,12 +16,19 @@ import com.jparkbro.auth.impl.preferencesetup.PreferenceSetupRoot
 import com.jparkbro.home.api.navigateToHomeMain
 import kr.agromarket.at.core.navigation.Navigator
 
+const val LOGIN_CONTENT_KEY = "AuthNavKey.Login"
+const val EMAIL_LOGIN_CONTENT_KEY = "AuthNavKey.Email.Login"
+const val EMAIL_SIGNUP_CONTENT_KEY = "AuthNavKey.Email.Signup"
+const val PASSWORD_VERIFICATION_CONTENT_KEY = "AuthNavKey.Password.Verification"
+const val PASSWORD_RESET_CONTENT_KEY = "AuthNavKey.Password.Reset"
+const val PREFERENCE_SETUP_CONTENT_KEY = "AuthNavKey.PreferenceSetup"
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun EntryProviderScope<NavKey>.authEntry(
     navigator: Navigator,
     sharedTransitionScope: SharedTransitionScope,
 ) {
-    entry<AuthNavKey.Login>(clazzContentKey = { "AuthNavKey.Login" }) {
+    entry<AuthNavKey.Login>(clazzContentKey = { LOGIN_CONTENT_KEY }) {
         LoginRoot(
             sharedTransitionScope = sharedTransitionScope,
             onNavigateToHome = navigator::navigateToHomeMain,
@@ -30,7 +37,7 @@ fun EntryProviderScope<NavKey>.authEntry(
             onNavigateToPreferenceSetup = navigator::navigateToPreferenceSetup,
         )
     }
-    entry<AuthNavKey.Email.Login>(clazzContentKey = { "AuthNavKey.Email.Login" }) {
+    entry<AuthNavKey.Email.Login>(clazzContentKey = { EMAIL_LOGIN_CONTENT_KEY }) {
         EmailLoginRoot(
             onNavigateToHome = navigator::navigateToHomeMain,
             onNavigateToPreferenceSetup = navigator::navigateToPreferenceSetup,
@@ -39,27 +46,27 @@ fun EntryProviderScope<NavKey>.authEntry(
             onBackClick = navigator::goBack,
         )
     }
-    entry<AuthNavKey.Email.Signup> {
+    entry<AuthNavKey.Email.Signup>(clazzContentKey = { EMAIL_SIGNUP_CONTENT_KEY }) {
         EmailSignupRoot(
             onNavigateToPreferenceSetup = navigator::navigateToPreferenceSetup,
             onBackClick = navigator::goBack,
         )
     }
-    entry<AuthNavKey.Password.Verification> {
+    entry<AuthNavKey.Password.Verification>(clazzContentKey = { PASSWORD_VERIFICATION_CONTENT_KEY }) {
         PasswordVerificationRoot(
             onNavigateToLogin = navigator::navigateToLogin,
             onNavigateToPasswordReset = { email -> navigator.navigate(AuthNavKey.Password.Reset(email)) },
             onBackClick = navigator::goBack,
         )
     }
-    entry<AuthNavKey.Password.Reset> { key ->
+    entry<AuthNavKey.Password.Reset>(clazzContentKey = { PASSWORD_RESET_CONTENT_KEY }) { key ->
         PasswordResetRoot(
             email = key.email,
             onNavigateToEmailLogin = { navigator.navigateAndClearStack(AuthNavKey.Email.Login) },
             onBackClick = navigator::goBack,
         )
     }
-    entry<AuthNavKey.PreferenceSetup> {
+    entry<AuthNavKey.PreferenceSetup>(clazzContentKey = { PREFERENCE_SETUP_CONTENT_KEY }) {
         PreferenceSetupRoot(
             onNavigateToHome = navigator::navigateToHomeMain,
         )
