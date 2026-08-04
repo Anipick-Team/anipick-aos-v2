@@ -2,6 +2,7 @@ package com.jparkbro.auth.impl.preferencesetup
 
 import androidx.compose.foundation.text.input.TextFieldState
 import com.jparkbro.core.model.anime.Anime
+import com.jparkbro.core.model.anime.AnimeRating
 import com.jparkbro.core.model.metadata.FilterType
 import com.jparkbro.core.model.metadata.Genre
 import com.jparkbro.core.model.metadata.Metadata
@@ -19,6 +20,7 @@ data class PreferenceSetupState(
     val cursor: Cursor? = null,
     val ratings: List<AnimeRating> = emptyList(),
     val isSearchLoading: Boolean = false,
+    val isSearchError: Boolean = false,
     val isLoadingMore: Boolean = false,
     val isLastPage: Boolean = false,
     val isCompleting: Boolean = false,
@@ -26,9 +28,3 @@ data class PreferenceSetupState(
     val ratedCount: Int get() = ratings.size
     val isCompleteEnabled: Boolean get() = ratings.isNotEmpty()
 }
-
-/** 평가 완료 시 서버에 `List<{ animeId, rating }>`로 그대로 전송할 항목. */
-data class AnimeRating(
-    val animeId: Long,
-    val rating: Float,
-)

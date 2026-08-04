@@ -7,6 +7,8 @@ import com.jparkbro.core.network.auth.AuthNetworkDataSource
 import com.jparkbro.core.network.auth.KtorAuthNetworkDataSource
 import com.jparkbro.core.network.common.CommonNetworkDataSource
 import com.jparkbro.core.network.common.KtorCommonNetworkDataSource
+import com.jparkbro.core.network.review.KtorReviewNetworkDataSource
+import com.jparkbro.core.network.review.ReviewNetworkDataSource
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -18,4 +20,5 @@ val networkModule = module {
     singleOf(::KtorAnimeNetworkDataSource).bind<AnimeNetworkDataSource>()
     singleOf(::KtorAuthNetworkDataSource).bind<AuthNetworkDataSource>()
     singleOf(::KtorCommonNetworkDataSource).bind<CommonNetworkDataSource>()
+    singleOf(::KtorReviewNetworkDataSource).bind<ReviewNetworkDataSource>()
 }
