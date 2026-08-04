@@ -38,7 +38,7 @@ fun AniPickFilterChip(
         Text(
             text = text,
             style = AniPickTheme.typography.caption1,
-            color = AniPickTheme.colors.black,
+            color = if (isSelected) AniPickTheme.colors.primary else AniPickTheme.colors.black,
         )
         AniPickAnimatedChevronIcon(
             isExpanded = isExpanded,
