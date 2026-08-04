@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.model.ButtonSize
@@ -29,6 +30,8 @@ fun AniPickButton(
     size: ButtonSize = ButtonSize.L,
     enabled: Boolean = true,
     isLoading: Boolean = false,
+    backgroundColor: Color = AniPickTheme.colors.primary,
+    contentColor: Color = AniPickTheme.colors.white,
 ) {
     val height = when (size) {
         ButtonSize.L -> 52.dp
@@ -42,13 +45,13 @@ fun AniPickButton(
         ButtonSize.L -> 20.dp
         ButtonSize.S -> 16.dp
     }
-    val contentColor = if (enabled) AniPickTheme.colors.white else AniPickTheme.colors.textGray
+    val resolvedContentColor = if (enabled) contentColor else AniPickTheme.colors.textGray
 
     Box(
         modifier = modifier
             .height(height)
             .clip(RoundedCornerShape(8.dp))
-            .background(if (enabled) AniPickTheme.colors.primary else AniPickTheme.colors.gray)
+            .background(if (enabled) backgroundColor else AniPickTheme.colors.gray)
             .clickable(
                 enabled = enabled && !isLoading,
                 onClick = onClick
@@ -59,14 +62,14 @@ fun AniPickButton(
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(indicatorSize),
-                color = contentColor,
+                color = resolvedContentColor,
                 strokeWidth = 2.dp,
             )
         } else {
             Text(
                 text = text,
                 style = textStyle,
-                color = contentColor
+                color = resolvedContentColor
             )
         }
     }
