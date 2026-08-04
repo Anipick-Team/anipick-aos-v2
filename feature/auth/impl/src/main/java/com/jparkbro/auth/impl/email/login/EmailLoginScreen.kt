@@ -1,7 +1,6 @@
 package com.jparkbro.auth.impl.email.login
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -21,8 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,13 +25,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jparkbro.auth.impl.component.AuthErrorText
+import com.jparkbro.auth.impl.component.AuthScaffold
 import com.jparkbro.auth.impl.component.AuthScreenHeader
+import com.jparkbro.auth.impl.component.PasswordVisibilityToggleIcon
 import com.jparkbro.core.designsystem.component.AniPickBaseTextField
 import com.jparkbro.core.designsystem.component.AniPickButton
 import com.jparkbro.core.designsystem.component.AniPickDialog
 import com.jparkbro.core.designsystem.component.AniPickLabeledField
-import com.jparkbro.core.designsystem.icon.VisibilityOff
-import com.jparkbro.core.designsystem.icon.VisibilityOn
 import com.jparkbro.core.designsystem.model.TextFieldType
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.ui.ObserveAsEvents
@@ -81,14 +77,7 @@ private fun EmailLoginScreen(
     val focusManager = LocalFocusManager.current
     val passwordFocusRequester = remember { FocusRequester() }
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { focusManager.clearFocus() })
-            },
-        containerColor = Color.White
-    ) { innerPadding ->
+    AuthScaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -123,13 +112,7 @@ private fun EmailLoginScreen(
                             )
                         },
                     )
-                    state.emailError?.let { message ->
-                        Text(
-                            text = message,
-                            style = AniPickTheme.typography.caption1,
-                            color = AniPickTheme.colors.point,
-                        )
-                    }
+                    AuthErrorText(state.emailError)
                 }
                 AniPickLabeledField(
                     label = "비밀번호",
@@ -147,14 +130,9 @@ private fun EmailLoginScreen(
                                 }
                             },
                             actions = {
-                                Icon(
-                                    imageVector = if (state.showPassword) VisibilityOn else VisibilityOff,
-                                    contentDescription = "비밀번호 표시 전환",
-                                    tint = AniPickTheme.colors.textGray,
-                                    modifier = Modifier
-                                        .clickable(
-                                            onClick = { onAction(EmailLoginAction.OnPasswordVisibilityToggle) }
-                                        )
+                                PasswordVisibilityToggleIcon(
+                                    showPassword = state.showPassword,
+                                    onToggle = { onAction(EmailLoginAction.OnPasswordVisibilityToggle) },
                                 )
                             },
                             showPassword = state.showPassword,
@@ -193,15 +171,11 @@ private fun EmailLoginScreen(
                             )
                     )
                 }
-                state.loginError?.let { message ->
-                    Text(
-                        text = message,
-                        style = AniPickTheme.typography.caption1,
-                        color = AniPickTheme.colors.point,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
+                AuthErrorText(
+                    message = state.loginError,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                )
             }
             AniPickButton(
                 text = "로그인",

@@ -3,7 +3,6 @@ package com.jparkbro.auth.impl.email.signup
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,8 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -34,14 +30,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jparkbro.auth.impl.component.AuthErrorText
+import com.jparkbro.auth.impl.component.AuthScaffold
 import com.jparkbro.auth.impl.component.AuthScreenHeader
+import com.jparkbro.auth.impl.component.PasswordVisibilityToggleIcon
+import com.jparkbro.auth.impl.component.ValidationCheckIcon
 import com.jparkbro.core.designsystem.component.AniPickBaseTextField
 import com.jparkbro.core.designsystem.component.AniPickButton
 import com.jparkbro.core.designsystem.component.AniPickLabeledField
-import com.jparkbro.core.designsystem.icon.Check
 import com.jparkbro.core.designsystem.icon.ChevronRight
-import com.jparkbro.core.designsystem.icon.VisibilityOff
-import com.jparkbro.core.designsystem.icon.VisibilityOn
 import com.jparkbro.core.designsystem.model.TextFieldType
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.ui.ObserveAsEvents
@@ -89,14 +86,7 @@ private fun EmailSignupScreen(
     val focusManager = LocalFocusManager.current
     val passwordFocusRequester = remember { FocusRequester() }
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { focusManager.clearFocus() })
-            },
-        containerColor = Color.White
-    ) { innerPadding ->
+    AuthScaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -131,13 +121,7 @@ private fun EmailSignupScreen(
                             )
                         },
                     )
-                    state.emailError?.let { message ->
-                        Text(
-                            text = message,
-                            style = AniPickTheme.typography.caption1,
-                            color = AniPickTheme.colors.point,
-                        )
-                    }
+                    AuthErrorText(state.emailError)
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -145,12 +129,7 @@ private fun EmailSignupScreen(
                     AniPickLabeledField(
                         label = "비밀번호",
                         labelTrailingContent = {
-                            Icon(
-                                imageVector = Check,
-                                contentDescription = "체크",
-                                tint = if (state.isPasswordValid) AniPickTheme.colors.primary else AniPickTheme.colors.gray,
-                                modifier = Modifier.size(24.dp),
-                            )
+                            ValidationCheckIcon(isValid = state.isPasswordValid)
                         },
                         textField = {
                             AniPickBaseTextField(
@@ -166,14 +145,9 @@ private fun EmailSignupScreen(
                                     }
                                 },
                                 actions = {
-                                    Icon(
-                                        imageVector = if (state.showPassword) VisibilityOn else VisibilityOff,
-                                        contentDescription = "비밀번호 표시 전환",
-                                        tint = AniPickTheme.colors.textGray,
-                                        modifier = Modifier
-                                            .clickable(
-                                                onClick = { onAction(EmailSignupAction.OnPasswordVisibilityToggle) }
-                                            )
+                                    PasswordVisibilityToggleIcon(
+                                        showPassword = state.showPassword,
+                                        onToggle = { onAction(EmailSignupAction.OnPasswordVisibilityToggle) },
                                     )
                                 },
                                 showPassword = state.showPassword,
@@ -181,13 +155,7 @@ private fun EmailSignupScreen(
                             )
                         },
                     )
-                    state.passwordError?.let { message ->
-                        Text(
-                            text = message,
-                            style = AniPickTheme.typography.caption1,
-                            color = AniPickTheme.colors.point,
-                        )
-                    }
+                    AuthErrorText(state.passwordError)
                 }
             }
             Column(
@@ -213,13 +181,7 @@ private fun EmailSignupScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Icon(
-                            imageVector = Check,
-                            contentDescription = "체크",
-                            tint = if (state.isAgreeAll) AniPickTheme.colors.primary else AniPickTheme.colors.gray,
-                            modifier = Modifier
-                                .size(24.dp)
-                        )
+                        ValidationCheckIcon(isValid = state.isAgreeAll)
                         Text(
                             text = "모두 동의합니다.",
                             style = AniPickTheme.typography.caption1,
@@ -247,13 +209,7 @@ private fun EmailSignupScreen(
                             onDetailClick = { onAction(EmailSignupAction.OnPrivacyPolicyDetailClick) },
                         )
                     }
-                    state.termsError?.let { message ->
-                        Text(
-                            text = message,
-                            style = AniPickTheme.typography.caption1,
-                            color = AniPickTheme.colors.point,
-                        )
-                    }
+                    AuthErrorText(state.termsError)
                 }
                 AniPickButton(
                     text = "가입하기",
@@ -293,12 +249,7 @@ private fun AgreementCheckRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = Check,
-                contentDescription = "체크",
-                tint = if (checked) AniPickTheme.colors.primary else AniPickTheme.colors.gray,
-                modifier = Modifier.size(24.dp),
-            )
+            ValidationCheckIcon(isValid = checked)
             Text(
                 text = label,
                 style = AniPickTheme.typography.caption1,

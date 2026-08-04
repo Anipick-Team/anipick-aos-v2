@@ -1,25 +1,23 @@
 package com.jparkbro.auth.impl.password.verification
 
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jparkbro.auth.impl.component.AuthErrorText
+import com.jparkbro.auth.impl.component.AuthScaffold
 import com.jparkbro.auth.impl.component.AuthScreenHeader
 import com.jparkbro.core.designsystem.component.AniPickBaseTextField
 import com.jparkbro.core.designsystem.component.AniPickButton
@@ -65,14 +63,7 @@ private fun PasswordVerificationScreen(
 ) {
     val focusManager = LocalFocusManager.current
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { focusManager.clearFocus() })
-            },
-        containerColor = Color.White
-    ) { innerPadding ->
+    AuthScaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -106,17 +97,12 @@ private fun PasswordVerificationScreen(
                         fieldTrailingContent = {
                             VerificationCodeRequestButton(
                                 requestState = state.codeRequestState,
+                                isEmailValid = state.isEmailValid,
                                 onClick = { onAction(PasswordVerificationAction.OnRequestVerificationCodeClick) },
                             )
                         },
                     )
-                    state.emailError?.let { message ->
-                        Text(
-                            text = message,
-                            style = AniPickTheme.typography.caption1,
-                            color = AniPickTheme.colors.point,
-                        )
-                    }
+                    AuthErrorText(state.emailError)
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -153,13 +139,7 @@ private fun PasswordVerificationScreen(
                             )
                         },
                     )
-                    state.codeError?.let { message ->
-                        Text(
-                            text = message,
-                            style = AniPickTheme.typography.caption1,
-                            color = AniPickTheme.colors.point,
-                        )
-                    }
+                    AuthErrorText(state.codeError)
                 }
             }
             AniPickButton(
@@ -186,10 +166,14 @@ private fun PasswordVerificationScreen(
     }
 }
 
-/** "인증번호 받기" 자리에 들어가는 버튼. [requestState]에 따라 문구/클릭 가능 여부/카운트다운 표시가 바뀐다. */
+/**
+ * "인증번호 받기" 자리에 들어가는 버튼. [requestState]에 따라 문구/카운트다운 표시가 바뀌고,
+ * [isEmailValid]까지 통과해야(이메일이 입력되고 형식이 올바라야) 클릭할 수 있다.
+ */
 @Composable
 private fun VerificationCodeRequestButton(
     requestState: VerificationCodeRequestState,
+    isEmailValid: Boolean,
     onClick: () -> Unit,
 ) {
     val label = when (requestState) {
@@ -202,8 +186,8 @@ private fun VerificationCodeRequestButton(
         }
         VerificationCodeRequestState.Available -> "재발송하기"
     }
-    val isEnabled = requestState is VerificationCodeRequestState.Idle ||
-        requestState is VerificationCodeRequestState.Available
+    val isEnabled = isEmailValid &&
+        (requestState is VerificationCodeRequestState.Idle || requestState is VerificationCodeRequestState.Available)
 
     AniPickButton(
         text = label,

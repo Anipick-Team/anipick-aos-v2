@@ -6,6 +6,7 @@ data class PasswordVerificationState(
     val emailState: TextFieldState = TextFieldState(),
     val codeState: TextFieldState = TextFieldState(),
     val emailError: String? = null,
+    val isEmailValid: Boolean = false,
     val codeError: String? = null,
     val codeRequestState: VerificationCodeRequestState = VerificationCodeRequestState.Idle,
     val codeExpiresInSeconds: Int? = null,

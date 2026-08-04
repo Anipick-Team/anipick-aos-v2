@@ -64,12 +64,13 @@ class PasswordVerificationViewModel(
             snapshotFlow { _state.value.emailState.text.toString() }
                 .distinctUntilChanged()
                 .collect { email ->
-                    val emailError = if (email.isNotEmpty() && !EmailPatternValidator.matches(email)) {
+                    val isEmailValid = email.isNotEmpty() && EmailPatternValidator.matches(email)
+                    val emailError = if (email.isNotEmpty() && !isEmailValid) {
                         "올바른 이메일 형식이 아닙니다."
                     } else {
                         null
                     }
-                    _state.update { it.copy(emailError = emailError) }
+                    _state.update { it.copy(emailError = emailError, isEmailValid = isEmailValid) }
                     resetCodeSessionIfActive()
                 }
         }
