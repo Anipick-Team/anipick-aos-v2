@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val SPLASH_MIN_DURATION_MILLIS = 2_000
+private const val SPLASH_MIN_DURATION_MILLIS = 1_500
 
 class SplashViewModel(
     private val commonRepository: CommonRepository,
