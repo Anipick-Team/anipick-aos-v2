@@ -4,13 +4,18 @@ import com.jparkbro.core.common.auth.TokenProvider
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
+import com.jparkbro.core.datastore.UserDataStore
 import com.jparkbro.core.network.auth.AuthNetworkDataSource
 import com.jparkbro.core.network.auth.AuthProvider
+import kotlinx.coroutines.flow.Flow
 
 class AuthRepositoryImpl(
     private val authNetworkDataSource: AuthNetworkDataSource,
     private val tokenProvider: TokenProvider,
+    private val userDataStore: UserDataStore,
 ) : AuthRepository {
+
+    override val nickname: Flow<String?> = userDataStore.nickname
 
     override suspend fun loginWithKakao(accessToken: String): Result<Boolean, DataError.Network> {
         return login(AuthProvider.KAKAO, accessToken)
@@ -68,6 +73,10 @@ class AuthRepositoryImpl(
                 tokenProvider.saveTokens(
                     accessToken = response.token.accessToken,
                     refreshToken = response.token.refreshToken,
+                )
+                userDataStore.saveUser(
+                    userId = response.userId,
+                    nickname = response.nickname,
                 )
                 response.reviewCompletedYn
             }
