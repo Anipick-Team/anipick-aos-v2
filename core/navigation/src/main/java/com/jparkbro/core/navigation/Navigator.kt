@@ -39,6 +39,10 @@ class Navigator(val state: NavigationState) {
                 clear()
                 add(key)
             }
+            state.subStacks[key]?.apply {
+                clear()
+                add(key)
+            }
         } else {
             state.currentSubStack.apply {
                 clear()

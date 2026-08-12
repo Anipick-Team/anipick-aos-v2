@@ -32,6 +32,10 @@ class AuthRepositoryImpl(
                     accessToken = response.token.accessToken,
                     refreshToken = response.token.refreshToken,
                 )
+                userDataStore.saveUser(
+                    userId = response.userId,
+                    nickname = response.nickname,
+                )
                 response.reviewCompletedYn
             }
     }
@@ -46,6 +50,10 @@ class AuthRepositoryImpl(
                 tokenProvider.saveTokens(
                     accessToken = response.token.accessToken,
                     refreshToken = response.token.refreshToken,
+                )
+                userDataStore.saveUser(
+                    userId = response.userId,
+                    nickname = response.nickname,
                 )
                 response.reviewCompletedYn
             }

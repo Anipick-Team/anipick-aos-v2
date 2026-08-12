@@ -2,6 +2,7 @@ package com.jparkbro.core.network.review
 
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
+import com.jparkbro.core.network.get
 import com.jparkbro.core.network.post
 import io.ktor.client.HttpClient
 
@@ -13,6 +14,22 @@ class KtorReviewNetworkDataSource(
         return httpClient.post(
             route = "reviews/bulk",
             body = reviews,
+        )
+    }
+
+    override suspend fun getRecentReviews(): Result<List<RecentReviewResponse>, DataError.Network> {
+        return httpClient.get(
+            route = "/home/reviews/recent"
+        )
+    }
+
+    override suspend fun getRecentReviewFeed(lastId: Long?, size: Int): Result<RecentReviewFeedResponse, DataError.Network> {
+        return httpClient.get(
+            route = "/api/reviews/recent",
+            queryParameters = mapOf(
+                "lastId" to lastId,
+                "size" to size,
+            )
         )
     }
 }

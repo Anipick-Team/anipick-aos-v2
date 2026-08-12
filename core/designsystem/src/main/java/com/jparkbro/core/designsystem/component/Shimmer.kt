@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,22 +34,25 @@ import com.jparkbro.core.designsystem.theme.AniPickTheme
 @Composable
 fun Modifier.shimmerBackground(shape: Shape = RoundedCornerShape(8.dp)): Modifier {
     val transition = rememberInfiniteTransition(label = "AniPickShimmer")
-    val translateAnim by transition.animateFloat(
+    val translateAnim = transition.animateFloat(
         initialValue = 0f,
-        targetValue = 1f,
+        targetValue = 1000f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
+            animation = tween(durationMillis = 800, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse,
         ),
         label = "AniPickShimmerTranslate",
     )
 
-    val baseColor = AniPickTheme.colors.backgroundGray
-    val highlightColor = AniPickTheme.colors.lightGray
+    val shimmerColors = listOf(
+        AniPickTheme.colors.gray.copy(alpha = 0.6f),
+        AniPickTheme.colors.gray.copy(alpha = 0.2f),
+        AniPickTheme.colors.gray.copy(alpha = 0.6f)
+    )
     val brush = Brush.linearGradient(
-        colors = listOf(baseColor, highlightColor, baseColor),
-        start = Offset(translateAnim * 1000f - 500f, 0f),
-        end = Offset(translateAnim * 1000f, 500f),
+        colors = shimmerColors,
+        start = Offset.Zero,
+        end = Offset(x = translateAnim.value, y = translateAnim.value),
     )
 
     return this
