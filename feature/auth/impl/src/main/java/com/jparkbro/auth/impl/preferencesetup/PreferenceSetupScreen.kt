@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,7 +33,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -56,7 +54,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -76,8 +73,8 @@ import com.jparkbro.core.designsystem.model.TextFieldType
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.metadata.FilterType
-import com.jparkbro.core.ui.AnimeFilterTab
 import com.jparkbro.core.ui.AniPickAnimeFilterBottomSheet
+import com.jparkbro.core.ui.AnimeFilterTab
 import com.jparkbro.core.ui.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 

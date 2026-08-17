@@ -1,7 +1,7 @@
 package com.jparkbro.core.network
 
 import com.jparkbro.core.common.auth.TokenProvider
-import com.jparkbro.core.network.auth.TokenRefreshResponse
+import com.jparkbro.core.network.auth.dto.TokenRefreshResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO

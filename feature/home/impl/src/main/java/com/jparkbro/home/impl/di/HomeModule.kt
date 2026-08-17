@@ -10,6 +10,11 @@ import org.koin.dsl.module
 val homeModule = module {
     viewModelOf(::HomeMainViewModel)
     viewModel { params ->
-        HomeDetailViewModel(type = params.get<HomeDetailType>(), animeRepository = get(), reviewRepository = get())
+        HomeDetailViewModel(
+            type = params.get<HomeDetailType>(),
+            animeRepository = get(),
+            reviewRepository = get(),
+            authRepository = get(),
+        )
     }
 }

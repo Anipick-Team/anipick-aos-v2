@@ -1,4 +1,4 @@
-package com.jparkbro.core.network.auth
+package com.jparkbro.core.network.auth.dto
 
 import kotlinx.serialization.Serializable
 

@@ -2,6 +2,14 @@ package com.jparkbro.core.network.auth
 
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
+import com.jparkbro.core.network.auth.dto.AuthProvider
+import com.jparkbro.core.network.auth.dto.EmailLoginRequest
+import com.jparkbro.core.network.auth.dto.EmailSignupRequest
+import com.jparkbro.core.network.auth.dto.EmailVerificationCheckRequest
+import com.jparkbro.core.network.auth.dto.EmailVerificationSendRequest
+import com.jparkbro.core.network.auth.dto.OAuthLoginRequest
+import com.jparkbro.core.network.auth.dto.OAuthLoginResponse
+import com.jparkbro.core.network.auth.dto.PasswordResetRequest
 import com.jparkbro.core.network.patch
 import com.jparkbro.core.network.post
 import io.ktor.client.HttpClient
