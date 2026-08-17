@@ -31,19 +31,24 @@ fun Modifier.topEdgeShadow(
     )
 }
 
-/** 자신의 아래쪽에 그림자를 그린다. 상단 고정 바(앱바 등)가 콘텐츠 위에 떠 있는 느낌을 줄 때 사용. */
+/**
+ * 자신의 아래쪽에 그림자를 그린다. 상단 고정 바(앱바 등)가 콘텐츠 위에 떠 있는 느낌을 줄 때 사용.
+ * 피그마 스펙(X 0 / Y 2 / Blur 12 / Spread 0 / #000000 20%) 기준 — [offsetY]가 Y, [height]가 Blur에 대응한다.
+ */
 fun Modifier.bottomEdgeShadow(
     height: Dp = 12.dp,
+    offsetY: Dp = 2.dp,
     color: Color = DefaultShadowColor,
 ): Modifier = drawBehind {
     val shadowHeightPx = height.toPx()
+    val offsetYPx = offsetY.toPx()
     drawRect(
         brush = Brush.verticalGradient(
             colors = listOf(Color.Transparent, color),
-            startY = size.height + shadowHeightPx,
-            endY = size.height,
+            startY = size.height + offsetYPx + shadowHeightPx,
+            endY = size.height + offsetYPx,
         ),
-        topLeft = Offset(0f, size.height),
+        topLeft = Offset(0f, size.height + offsetYPx),
         size = Size(size.width, shadowHeightPx),
     )
 }

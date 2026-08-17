@@ -117,6 +117,18 @@ val MoreVertical: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_more_vertical)
 
+val RankingDown: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_ranking_down)
+
+val RankingHold: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_ranking_hold)
+
+val RankingUp: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_ranking_up)
+
 val Search: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_search)
