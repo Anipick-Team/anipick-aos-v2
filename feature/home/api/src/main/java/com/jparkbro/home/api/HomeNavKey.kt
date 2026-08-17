@@ -10,9 +10,13 @@ sealed interface HomeNavKey : NavKey {
     data object Main : HomeNavKey
 
     @Serializable
-    data object Detail : HomeNavKey
+    data class Detail(val type: HomeDetailType) : HomeNavKey
 }
 
 fun Navigator.navigateToHomeMain() {
     navigateAndClearStack(HomeNavKey.Main)
+}
+
+fun Navigator.navigateToHomeDetail(type: HomeDetailType) {
+    navigate(HomeNavKey.Detail(type))
 }
