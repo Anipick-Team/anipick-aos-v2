@@ -11,6 +11,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.ui.compose.material3)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     testImplementation(libs.junit)
@@ -21,7 +22,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     // Oss Licenses
-    implementation(libs.ui.compose.material3)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.play.services.oss.licenses)
 
     // In App Update
     implementation(libs.app.update)

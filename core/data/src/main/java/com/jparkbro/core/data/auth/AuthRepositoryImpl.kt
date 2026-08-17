@@ -6,7 +6,7 @@ import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
 import com.jparkbro.core.datastore.UserDataStore
 import com.jparkbro.core.network.auth.AuthNetworkDataSource
-import com.jparkbro.core.network.auth.AuthProvider
+import com.jparkbro.core.network.auth.dto.AuthProvider
 import kotlinx.coroutines.flow.Flow
 
 class AuthRepositoryImpl(

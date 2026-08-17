@@ -33,7 +33,7 @@ import com.jparkbro.core.model.anime.Anime
  * 세로는 [cardWidth]에 맞춰 자동으로 계산되게 한다 — cardWidth=114.dp를 넣으면 세로가 약
  * 162.1dp로 나와서 114x162 쪽과도 그대로 맞는다.
  */
-private const val ANIME_CARD_ASPECT_RATIO = 128f / 182f
+internal const val ANIME_CARD_ASPECT_RATIO = 128f / 182f
 
 @Composable
 fun AniPickAnimeCard(
@@ -61,7 +61,7 @@ fun AniPickAnimeCard(
                     .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop,
             )
-            if (anime.rank != null) {
+            anime.rank?.let { rank ->
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
@@ -71,7 +71,7 @@ fun AniPickAnimeCard(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "${anime.rank}",
+                        text = "$rank",
                         style = AniPickTheme.typography.body1,
                         color = AniPickTheme.colors.white
                     )

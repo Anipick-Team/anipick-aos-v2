@@ -2,6 +2,8 @@ package com.jparkbro.core.network.auth
 
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
+import com.jparkbro.core.network.auth.dto.AuthProvider
+import com.jparkbro.core.network.auth.dto.OAuthLoginResponse
 
 interface AuthNetworkDataSource {
     suspend fun loginWithOAuth(provider: AuthProvider, code: String): Result<OAuthLoginResponse, DataError.Network>

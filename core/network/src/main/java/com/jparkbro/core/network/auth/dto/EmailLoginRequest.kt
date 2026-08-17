@@ -1,10 +1,9 @@
-package com.jparkbro.core.network.auth
+package com.jparkbro.core.network.auth.dto
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class EmailSignupRequest(
+data class EmailLoginRequest(
     val email: String,
     val password: String,
-    val termsAndConditions: Boolean,
 )
