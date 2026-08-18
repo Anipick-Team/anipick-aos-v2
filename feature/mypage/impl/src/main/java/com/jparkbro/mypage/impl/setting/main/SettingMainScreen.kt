@@ -30,7 +30,6 @@ import com.jparkbro.core.designsystem.component.AniPickShimmerBox
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
 import com.jparkbro.core.designsystem.icon.ChevronRight
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.core.model.user.AuthProvider
 import com.jparkbro.core.model.user.snsLabel
 import com.jparkbro.core.ui.ObserveAsEvents
 import com.jparkbro.mypage.api.SettingDetailType
