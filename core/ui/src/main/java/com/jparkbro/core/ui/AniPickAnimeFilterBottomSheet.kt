@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -89,10 +88,6 @@ fun AniPickAnimeFilterBottomSheet(
     }
 }
 
-/**
- * [ModalBottomSheet]는 별도의 시스템 윈도우로 떠서 Compose Preview에 내용이 렌더링되지 않는다.
- * 그래서 실제 콘텐츠를 이 컴포저블로 분리해서, Preview에서는 [ModalBottomSheet] 없이 이 함수를 직접 호출한다.
- */
 @Composable
 private fun AniPickAnimeFilterBottomSheetContent(
     years: List<Int>,
@@ -245,10 +240,6 @@ private fun AniPickAnimeFilterBottomSheetContent(
     }
 }
 
-/**
- * 년도는 오름차순(과거 -> 최신)으로 두고 맨 아래에 "전체년도"(id=null)를 덧붙인다.
- * 분기는 반대로 맨 위에 "전체분기"(id=null)를 두고, 그 아래로 1~4분기가 이어진다.
- */
 @Composable
 private fun YearSeasonTabContent(
     years: List<Int>,
@@ -273,7 +264,10 @@ private fun YearSeasonTabContent(
             items = yearItems,
             selectedItem = year,
             onSelectedItemChange = onYearChange,
-            onCenteredItemChange = { liveYear = it },
+            onCenteredItemChange = {
+                liveYear = it
+                onYearChange(it)
+            },
             itemLabel = { if (it == null) "전체년도" else "${it}년" },
             backgroundColor = wheelBackgroundColor,
             resetTrigger = resetTrigger,
@@ -282,6 +276,7 @@ private fun YearSeasonTabContent(
             items = seasonItems,
             selectedItem = season,
             onSelectedItemChange = onSeasonChange,
+            onCenteredItemChange = onSeasonChange,
             itemLabel = { it?.name ?: "전체분기" },
             backgroundColor = wheelBackgroundColor,
             resetTrigger = resetTrigger,

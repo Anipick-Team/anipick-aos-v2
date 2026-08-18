@@ -3,6 +3,7 @@ package com.jparkbro.anipick
 import android.app.Application
 import com.jparkbro.anipick.di.appModule
 import com.jparkbro.auth.impl.di.authModule
+import com.jparkbro.catalog.impl.di.catalogModule
 import com.jparkbro.core.data.di.dataModule
 import com.jparkbro.core.datastore.di.datastoreModule
 import com.jparkbro.core.network.di.networkModule
@@ -47,6 +48,7 @@ class AniPickApplication: Application() {
                 exploreModule,
                 myPageModule,
                 searchModule,
+                catalogModule,
             )
         }
     }

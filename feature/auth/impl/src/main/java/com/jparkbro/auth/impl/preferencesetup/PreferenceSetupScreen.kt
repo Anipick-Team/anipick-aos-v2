@@ -5,77 +5,56 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import com.jparkbro.core.designsystem.R
-import com.jparkbro.core.designsystem.component.AniPickBaseTextField
+import com.jparkbro.auth.impl.preferencesetup.components.PreferenceSetupAnimeItem
+import com.jparkbro.auth.impl.preferencesetup.components.PreferenceSetupAnimeItemSkeleton
 import com.jparkbro.core.designsystem.component.AniPickButton
 import com.jparkbro.core.designsystem.component.AniPickEmptyState
 import com.jparkbro.core.designsystem.component.AniPickFilterChip
-import com.jparkbro.core.designsystem.component.AniPickShimmerBox
-import com.jparkbro.core.designsystem.component.AniPickStarRatingBar
-import com.jparkbro.core.designsystem.icon.Close
-import com.jparkbro.core.designsystem.icon.Search
-import com.jparkbro.core.designsystem.model.ButtonSize
-import com.jparkbro.core.designsystem.model.TextFieldType
+import com.jparkbro.core.designsystem.component.AniPickLoadMoreIndicator
+import com.jparkbro.core.designsystem.component.AniPickSearchTextField
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.metadata.FilterType
 import com.jparkbro.core.ui.AniPickAnimeFilterBottomSheet
-import com.jparkbro.core.ui.AnimeFilterTab
 import com.jparkbro.core.ui.ObserveAsEvents
+import com.jparkbro.core.ui.toAnimeFilterTab
 import org.koin.compose.viewmodel.koinViewModel
 
 private val SEARCH_HIDE_SCROLL_THRESHOLD = 8.dp
@@ -206,40 +185,10 @@ private fun PreferenceSetupScreen(
                             color = AniPickTheme.colors.primary,
                         )
                     }
-                    AniPickBaseTextField(
+                    AniPickSearchTextField(
                         state = state.searchFieldState,
-                        type = TextFieldType.TEXT,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        onKeyboardAction = {
-                            focusManager.clearFocus()
-                            onAction(PreferenceSetupAction.OnSearchClick)
-                        },
-                        placeholder = "무엇을 검색할까요?",
-                        actions = {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Search,
-                                    tint = AniPickTheme.colors.textGray,
-                                    contentDescription = "검색",
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .clickable {
-                                            focusManager.clearFocus()
-                                            onAction(PreferenceSetupAction.OnSearchClick)
-                                        }
-                                )
-                                Icon(
-                                    imageVector = Close,
-                                    tint = AniPickTheme.colors.textGray,
-                                    contentDescription = "검색 초기화",
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .clickable { onAction(PreferenceSetupAction.OnSearchClearClick) }
-                                )
-                            }
-                        },
+                        onSearchClick = { onAction(PreferenceSetupAction.OnSearchClick) },
+                        onClearClick = { onAction(PreferenceSetupAction.OnSearchClearClick) },
                     )
                     Row(
                         modifier = Modifier,
@@ -308,18 +257,7 @@ private fun PreferenceSetupScreen(
                             }
                         }
                         if (state.isLoadingMore) {
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 16.dp),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    CircularProgressIndicator(
-                                        color = AniPickTheme.colors.primary,
-                                    )
-                                }
-                            }
+                            item { AniPickLoadMoreIndicator() }
                         }
                     }
                 }
@@ -365,238 +303,6 @@ private fun PreferenceSetupScreen(
                 onAction(PreferenceSetupAction.OnAnimeFilterConfirm(year, season, genre, type))
             },
             onDismissRequest = { onAction(PreferenceSetupAction.OnFilterSheetDismiss) },
-        )
-    }
-}
-
-private fun FilterType.toAnimeFilterTab(): AnimeFilterTab = when (this) {
-    FilterType.YEAR, FilterType.SEASON -> AnimeFilterTab.YEAR_SEASON
-    FilterType.GENRE -> AnimeFilterTab.GENRE
-    FilterType.TYPE -> AnimeFilterTab.TYPE
-}
-
-@Composable
-private fun PreferenceSetupAnimeItem(
-    anime: Anime,
-    committedRating: Float,
-    onSaveRating: (Float) -> Unit,
-    onCancelRating: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
-    var draftRating by rememberSaveable { mutableFloatStateOf(committedRating) }
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .border(2.dp, AniPickTheme.colors.backgroundGray, RoundedCornerShape(8.dp))
-                .clickable(onClick = { isExpanded = !isExpanded })
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                model = anime.coverImageUrl.ifBlank { null } ?: R.drawable.default_image_preference,
-                contentDescription = "애니메이션 커버 이미지",
-                modifier = Modifier
-                    .size(width = 132.dp, height = 88.dp),
-                contentScale = ContentScale.Crop,
-                alignment = Alignment.Center
-            )
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = anime.title,
-                        color = AniPickTheme.colors.black,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        style = AniPickTheme.typography.body2,
-                        modifier = Modifier
-                            .weight(1f)
-                    )
-                    if (committedRating != 0f) {
-                        PreferenceSetupCompactButton(
-                            onClick = { onCancelRating() },
-                            modifier = Modifier
-                                .padding(start = 8.dp)
-                        )
-                    }
-                }
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    maxLines = 1,
-                ) {
-                    anime.genres.forEach { genre ->
-                        Text(
-                            text = genre,
-                            style = AniPickTheme.typography.caption2,
-                            color = AniPickTheme.colors.primary,
-                            modifier = Modifier
-                                .background(AniPickTheme.colors.primary10, RoundedCornerShape(8.dp))
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-                if (committedRating != 0f) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        AniPickStarRatingBar(
-                            rating = committedRating,
-                            onRatingChange = {},
-                            enabled = false,
-                            starSize = 20.dp,
-                            spacing = 0.dp,
-                        )
-                        Text(
-                            text = "($committedRating)",
-                            style = AniPickTheme.typography.caption1,
-                            color = AniPickTheme.colors.point,
-                        )
-                    }
-                }
-            }
-        }
-
-        AnimatedVisibility(
-            visible = isExpanded,
-            enter = expandVertically() + fadeIn(),
-            exit = shrinkVertically() + fadeOut(),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(AniPickTheme.colors.backgroundGray, RoundedCornerShape(8.dp))
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    AniPickStarRatingBar(
-                        rating = draftRating,
-                        onRatingChange = { draftRating = it },
-                        starSize = 28.dp,
-                        spacing = 0.dp,
-                    )
-                    Text(
-                        text = "($draftRating/5.0)",
-                        style = AniPickTheme.typography.body1,
-                        color = AniPickTheme.colors.point,
-                    )
-                }
-                AniPickButton(
-                    text = "평가하기",
-                    onClick = {
-                        onSaveRating(draftRating)
-                        isExpanded = false
-                    },
-                    size = ButtonSize.S,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun PreferenceSetupAnimeItemSkeleton(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .border(2.dp, AniPickTheme.colors.backgroundGray, RoundedCornerShape(8.dp))
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AniPickShimmerBox(
-            modifier = Modifier.size(width = 132.dp, height = 88.dp)
-        )
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            AniPickShimmerBox(
-                modifier = Modifier
-                    .width(160.dp)
-                    .height(18.dp)
-            )
-            AniPickShimmerBox(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(14.dp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun PreferenceSetupCompactButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .height(28.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(AniPickTheme.colors.primary)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = "평가취소",
-            style = AniPickTheme.typography.caption2,
-            color = AniPickTheme.colors.white,
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreferenceSetupAnimeItemPreview() {
-    Column(
-        modifier = Modifier
-            .background(Color.White)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        PreferenceSetupAnimeItem(
-            anime = Anime(
-                animeId = 1L,
-                title = "귀멸의 칼날 asdfdafdsfdsfdsafdsafdsfads",
-                coverImageUrl = "",
-                genres = listOf("액션", "판타지"),
-            ),
-            committedRating = 0f,
-            onSaveRating = {},
-            onCancelRating = {},
-        )
-        PreferenceSetupAnimeItem(
-            anime = Anime(
-                animeId = 2L,
-                title = "진격의 거인",
-                coverImageUrl = "",
-                genres = listOf("액션", "드라마", "액션", "드라마", "다크판타지"),
-            ),
-            committedRating = 4.5f,
-            onSaveRating = {},
-            onCancelRating = {},
         )
     }
 }

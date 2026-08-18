@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.component.AniPickAnimatedChevronIcon
 import com.jparkbro.core.designsystem.component.AniPickAnimatedHeartIcon
 import com.jparkbro.core.designsystem.component.AniPickDropdownMenuIcon
+import com.jparkbro.core.designsystem.component.AniPickShimmerBox
 import com.jparkbro.core.designsystem.component.AniPickStarRatingBar
 import com.jparkbro.core.designsystem.icon.MoreVertical
 import com.jparkbro.core.designsystem.model.AniPickDropdownMenuItem
@@ -240,6 +243,66 @@ private fun reviewMenuItem(
     onClick = onClick,
 )
 
+@Composable
+internal fun ReviewListCardSkeleton(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(AniPickTheme.colors.white, RoundedCornerShape(8.dp))
+            .padding(horizontal = 16.dp, vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AniPickShimmerBox(modifier = Modifier.size(width = 116.dp, height = 108.dp))
+            AniPickShimmerBox(modifier = Modifier.fillMaxWidth(0.5f).height(16.dp))
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top,
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AniPickShimmerBox(modifier = Modifier.size(30.dp), shape = CircleShape)
+                AniPickShimmerBox(modifier = Modifier.width(60.dp).height(14.dp))
+            }
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                AniPickShimmerBox(modifier = Modifier.width(100.dp).height(20.dp))
+                AniPickShimmerBox(modifier = Modifier.width(60.dp).height(12.dp))
+            }
+        }
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            AniPickShimmerBox(modifier = Modifier.fillMaxWidth().height(16.dp))
+            AniPickShimmerBox(modifier = Modifier.fillMaxWidth(0.6f).height(16.dp))
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AniPickShimmerBox(modifier = Modifier.size(16.dp))
+                AniPickShimmerBox(modifier = Modifier.width(20.dp).height(12.dp))
+            }
+            AniPickShimmerBox(modifier = Modifier.size(20.dp))
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun ReviewListCardPreview() {
@@ -259,4 +322,10 @@ private fun ReviewListCardPreview() {
         isMine = false,
         isSpoiler = false,
     ))
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ReviewListCardSkeletonPreview() {
+    ReviewListCardSkeleton()
 }

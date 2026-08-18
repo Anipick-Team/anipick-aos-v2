@@ -10,8 +10,12 @@ import com.jparkbro.core.data.common.CommonRepository
 import com.jparkbro.core.data.common.CommonRepositoryImpl
 import com.jparkbro.core.data.explore.ExploreRepository
 import com.jparkbro.core.data.explore.ExploreRepositoryImpl
+import com.jparkbro.core.data.home.HomeRepository
+import com.jparkbro.core.data.home.HomeRepositoryImpl
 import com.jparkbro.core.data.ranking.RankingRepository
 import com.jparkbro.core.data.ranking.RankingRepositoryImpl
+import com.jparkbro.core.data.recommendation.RecommendationRepository
+import com.jparkbro.core.data.recommendation.RecommendationRepositoryImpl
 import com.jparkbro.core.data.review.ReviewRepository
 import com.jparkbro.core.data.review.ReviewRepositoryImpl
 import com.jparkbro.core.data.search.SearchRepository
@@ -30,7 +34,9 @@ val dataModule = module {
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
     singleOf(::CommonRepositoryImpl) { bind<CommonRepository>() }
     singleOf(::ExploreRepositoryImpl) { bind<ExploreRepository>() }
+    singleOf(::HomeRepositoryImpl) { bind<HomeRepository>() }
     singleOf(::RankingRepositoryImpl) { bind<RankingRepository>() }
+    singleOf(::RecommendationRepositoryImpl) { bind<RecommendationRepository>() }
     singleOf(::ReviewRepositoryImpl) { bind<ReviewRepository>() }
     singleOf(::SearchRepositoryImpl) { bind<SearchRepository>() }
     singleOf(::StudioRepositoryImpl) { bind<StudioRepository>() }

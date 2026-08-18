@@ -21,12 +21,6 @@ class ReviewRepositoryImpl(
         )
     }
 
-    override suspend fun getRecentReviews(): Result<List<Review>, DataError.Network> {
-        return reviewNetworkDataSource.getRecentReviews().map { responses ->
-            responses.map { it.toReview() }
-        }
-    }
-
     override suspend fun getRecentReviewFeed(lastId: Long?, size: Int): Result<CursorPage<Review>, DataError.Network> {
         return reviewNetworkDataSource.getRecentReviewFeed(lastId, size).map { response ->
             CursorPage(

@@ -4,15 +4,12 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
 import com.jparkbro.core.datastore.RecentAnimeDataStore
-import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.ComingSoonResult
 import com.jparkbro.core.model.anime.PreferenceSetupSearchResult
-import com.jparkbro.core.model.anime.RecommendationResult
 import com.jparkbro.core.model.anime.UpcomingSeasonResult
 import com.jparkbro.core.network.anime.AnimeNetworkDataSource
 import com.jparkbro.core.network.anime.dto.ComingSoonAnimesRequest
 import com.jparkbro.core.network.anime.dto.PreferenceSetupSearchRequest
-import com.jparkbro.core.network.anime.dto.RecommendationAnimesRequest
 import com.jparkbro.core.network.anime.dto.toAnime
 import com.jparkbro.core.network.common.toCursor
 import kotlinx.coroutines.flow.Flow
@@ -49,67 +46,6 @@ class AnimeRepositoryImpl(
         }
     }
 
-    override suspend fun getTrendingAnimes(): Result<List<Anime>, DataError.Network> {
-        return animeNetworkDataSource.getTrendingAnimes().map { responses ->
-            responses.map { it.toAnime() }
-        }
-    }
-
-    override suspend fun getWeeklyAnimes(day: String): Result<List<Anime>, DataError.Network> {
-        return animeNetworkDataSource.getWeeklyAnimes(day).map { responses ->
-            responses.map { it.toAnime() }
-        }
-    }
-
-    override suspend fun getRecommendationAnimes(): Result<RecommendationResult, DataError.Network> {
-        return animeNetworkDataSource.getRecommendationAnimes().map { response ->
-            RecommendationResult(
-                referenceAnimeTitle = response.referenceAnimeTitle,
-                animes = response.animes.map { it.toAnime() },
-            )
-        }
-    }
-
-    override suspend fun getRecentAnimeRecommendations(animeId: Long): Result<RecommendationResult, DataError.Network> {
-        return animeNetworkDataSource.getRecentAnimeRecommendations(animeId).map { response ->
-            RecommendationResult(
-                referenceAnimeTitle = response.referenceAnimeTitle,
-                animes = response.animes.map { it.toAnime() },
-            )
-        }
-    }
-
-    override suspend fun getRecommendationAnimesDetail(
-        lastId: Long?,
-        lastValue: String?,
-        size: Long,
-    ): Result<RecommendationResult, DataError.Network> {
-        val request = RecommendationAnimesRequest(lastId = lastId, lastValue = lastValue, size = size)
-        return animeNetworkDataSource.getRecommendationAnimesDetail(request).map { response ->
-            RecommendationResult(
-                referenceAnimeTitle = response.referenceAnimeTitle,
-                cursor = response.cursor.toCursor(),
-                animes = response.animes.map { it.toAnime() },
-            )
-        }
-    }
-
-    override suspend fun getRecentAnimeRecommendationsDetail(
-        animeId: Long,
-        lastId: Long?,
-        lastValue: String?,
-        size: Long,
-    ): Result<RecommendationResult, DataError.Network> {
-        val request = RecommendationAnimesRequest(lastId = lastId, lastValue = lastValue, size = size)
-        return animeNetworkDataSource.getRecentAnimeRecommendationsDetail(animeId, request).map { response ->
-            RecommendationResult(
-                referenceAnimeTitle = response.referenceAnimeTitle,
-                cursor = response.cursor.toCursor(),
-                animes = response.animes.map { it.toAnime() },
-            )
-        }
-    }
-
     override suspend fun getUpcomingSeasonAnimes(): Result<UpcomingSeasonResult, DataError.Network> {
         return animeNetworkDataSource.getUpcomingSeasonAnimes().map { response ->
             UpcomingSeasonResult(
@@ -117,12 +53,6 @@ class AnimeRepositoryImpl(
                 seasonYear = response.seasonYear,
                 animes = response.animes.map { it.toAnime() },
             )
-        }
-    }
-
-    override suspend fun getComingSoonAnimes(): Result<List<Anime>, DataError.Network> {
-        return animeNetworkDataSource.getComingSoonAnimes().map { responses ->
-            responses.map { it.toAnime() }
         }
     }
 
