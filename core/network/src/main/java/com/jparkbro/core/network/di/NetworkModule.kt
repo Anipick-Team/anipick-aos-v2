@@ -7,8 +7,20 @@ import com.jparkbro.core.network.auth.AuthNetworkDataSource
 import com.jparkbro.core.network.auth.KtorAuthNetworkDataSource
 import com.jparkbro.core.network.common.CommonNetworkDataSource
 import com.jparkbro.core.network.common.KtorCommonNetworkDataSource
+import com.jparkbro.core.network.explore.ExploreNetworkDataSource
+import com.jparkbro.core.network.explore.KtorExploreNetworkDataSource
+import com.jparkbro.core.network.home.HomeNetworkDataSource
+import com.jparkbro.core.network.home.KtorHomeNetworkDataSource
+import com.jparkbro.core.network.ranking.KtorRankingNetworkDataSource
+import com.jparkbro.core.network.ranking.RankingNetworkDataSource
+import com.jparkbro.core.network.recommendation.KtorRecommendationNetworkDataSource
+import com.jparkbro.core.network.recommendation.RecommendationNetworkDataSource
 import com.jparkbro.core.network.review.KtorReviewNetworkDataSource
 import com.jparkbro.core.network.review.ReviewNetworkDataSource
+import com.jparkbro.core.network.search.KtorSearchNetworkDataSource
+import com.jparkbro.core.network.search.SearchNetworkDataSource
+import com.jparkbro.core.network.user.KtorUserNetworkDataSource
+import com.jparkbro.core.network.user.UserNetworkDataSource
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -20,5 +32,11 @@ val networkModule = module {
     singleOf(::KtorAnimeNetworkDataSource).bind<AnimeNetworkDataSource>()
     singleOf(::KtorAuthNetworkDataSource).bind<AuthNetworkDataSource>()
     singleOf(::KtorCommonNetworkDataSource).bind<CommonNetworkDataSource>()
+    singleOf(::KtorExploreNetworkDataSource).bind<ExploreNetworkDataSource>()
+    singleOf(::KtorHomeNetworkDataSource).bind<HomeNetworkDataSource>()
+    singleOf(::KtorRankingNetworkDataSource).bind<RankingNetworkDataSource>()
+    singleOf(::KtorRecommendationNetworkDataSource).bind<RecommendationNetworkDataSource>()
     singleOf(::KtorReviewNetworkDataSource).bind<ReviewNetworkDataSource>()
+    singleOf(::KtorSearchNetworkDataSource).bind<SearchNetworkDataSource>()
+    singleOf(::KtorUserNetworkDataSource).bind<UserNetworkDataSource>()
 }

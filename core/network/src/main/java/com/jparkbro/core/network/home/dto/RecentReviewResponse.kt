@@ -1,4 +1,4 @@
-package com.jparkbro.core.network.review.dto
+package com.jparkbro.core.network.home.dto
 
 import com.jparkbro.core.model.review.Review
 import kotlinx.serialization.Serializable

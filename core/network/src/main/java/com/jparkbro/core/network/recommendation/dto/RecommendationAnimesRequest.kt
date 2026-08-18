@@ -1,4 +1,4 @@
-package com.jparkbro.core.network.anime.dto
+package com.jparkbro.core.network.recommendation.dto
 
 import kotlinx.serialization.Serializable
 
