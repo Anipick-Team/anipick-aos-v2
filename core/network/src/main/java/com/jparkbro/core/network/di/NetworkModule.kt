@@ -11,6 +11,8 @@ import com.jparkbro.core.network.explore.ExploreNetworkDataSource
 import com.jparkbro.core.network.explore.KtorExploreNetworkDataSource
 import com.jparkbro.core.network.home.HomeNetworkDataSource
 import com.jparkbro.core.network.home.KtorHomeNetworkDataSource
+import com.jparkbro.core.network.image.ImageNetworkDataSource
+import com.jparkbro.core.network.image.KtorImageNetworkDataSource
 import com.jparkbro.core.network.ranking.KtorRankingNetworkDataSource
 import com.jparkbro.core.network.ranking.RankingNetworkDataSource
 import com.jparkbro.core.network.recommendation.KtorRecommendationNetworkDataSource
@@ -34,6 +36,7 @@ val networkModule = module {
     singleOf(::KtorCommonNetworkDataSource).bind<CommonNetworkDataSource>()
     singleOf(::KtorExploreNetworkDataSource).bind<ExploreNetworkDataSource>()
     singleOf(::KtorHomeNetworkDataSource).bind<HomeNetworkDataSource>()
+    singleOf(::KtorImageNetworkDataSource).bind<ImageNetworkDataSource>()
     singleOf(::KtorRankingNetworkDataSource).bind<RankingNetworkDataSource>()
     singleOf(::KtorRecommendationNetworkDataSource).bind<RecommendationNetworkDataSource>()
     singleOf(::KtorReviewNetworkDataSource).bind<ReviewNetworkDataSource>()
