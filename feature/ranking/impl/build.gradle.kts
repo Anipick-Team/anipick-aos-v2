@@ -9,4 +9,5 @@ android {
 dependencies {
     implementation(projects.feature.ranking.api)
     implementation(projects.feature.search.api)
+    implementation(projects.feature.catalog.api)
 }
