@@ -8,4 +8,8 @@ android {
 
 dependencies {
     implementation(projects.feature.mypage.api)
+
+    // Oss Licenses
+    implementation(libs.androidx.appcompat)
+    implementation(libs.play.services.oss.licenses)
 }

@@ -16,7 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jparkbro.auth.impl.component.AuthErrorText
+import com.jparkbro.core.designsystem.component.AniPickErrorText
 import com.jparkbro.auth.impl.component.AuthScaffold
 import com.jparkbro.auth.impl.component.AuthScreenHeader
 import com.jparkbro.core.designsystem.component.AniPickBaseTextField
@@ -102,7 +102,9 @@ private fun PasswordVerificationScreen(
                             )
                         },
                     )
-                    AuthErrorText(state.emailError)
+                    state.emailError?.let { errorMessage ->
+                        AniPickErrorText(errorMessage)
+                    }
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -139,7 +141,9 @@ private fun PasswordVerificationScreen(
                             )
                         },
                     )
-                    AuthErrorText(state.codeError)
+                    state.codeError?.let { errorMessage ->
+                        AniPickErrorText(errorMessage)
+                    }
                 }
             }
             AniPickButton(
@@ -166,10 +170,6 @@ private fun PasswordVerificationScreen(
     }
 }
 
-/**
- * "인증번호 받기" 자리에 들어가는 버튼. [requestState]에 따라 문구/카운트다운 표시가 바뀌고,
- * [isEmailValid]까지 통과해야(이메일이 입력되고 형식이 올바라야) 클릭할 수 있다.
- */
 @Composable
 private fun VerificationCodeRequestButton(
     requestState: VerificationCodeRequestState,

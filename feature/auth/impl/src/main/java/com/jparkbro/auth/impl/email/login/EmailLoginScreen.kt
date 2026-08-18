@@ -25,10 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jparkbro.auth.impl.component.AuthErrorText
+import com.jparkbro.core.designsystem.component.AniPickErrorText
 import com.jparkbro.auth.impl.component.AuthScaffold
 import com.jparkbro.auth.impl.component.AuthScreenHeader
-import com.jparkbro.auth.impl.component.PasswordVisibilityToggleIcon
+import com.jparkbro.core.designsystem.component.AniPickPasswordVisibilityToggleIcon
 import com.jparkbro.core.designsystem.component.AniPickBaseTextField
 import com.jparkbro.core.designsystem.component.AniPickButton
 import com.jparkbro.core.designsystem.component.AniPickDialog
@@ -112,7 +112,9 @@ private fun EmailLoginScreen(
                             )
                         },
                     )
-                    AuthErrorText(state.emailError)
+                    state.emailError?.let { errorMessage ->
+                        AniPickErrorText(errorMessage)
+                    }
                 }
                 AniPickLabeledField(
                     label = "비밀번호",
@@ -130,7 +132,7 @@ private fun EmailLoginScreen(
                                 }
                             },
                             actions = {
-                                PasswordVisibilityToggleIcon(
+                                AniPickPasswordVisibilityToggleIcon(
                                     showPassword = state.showPassword,
                                     onToggle = { onAction(EmailLoginAction.OnPasswordVisibilityToggle) },
                                 )
@@ -171,7 +173,7 @@ private fun EmailLoginScreen(
                             )
                     )
                 }
-                AuthErrorText(
+                AniPickErrorText(
                     message = state.loginError,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,

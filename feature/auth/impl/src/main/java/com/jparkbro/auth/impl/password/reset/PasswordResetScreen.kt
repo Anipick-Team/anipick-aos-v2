@@ -17,11 +17,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jparkbro.auth.impl.component.AuthErrorText
+import com.jparkbro.core.designsystem.component.AniPickErrorText
 import com.jparkbro.auth.impl.component.AuthScaffold
 import com.jparkbro.auth.impl.component.AuthScreenHeader
-import com.jparkbro.auth.impl.component.PasswordVisibilityToggleIcon
-import com.jparkbro.auth.impl.component.ValidationCheckIcon
+import com.jparkbro.core.designsystem.component.AniPickPasswordVisibilityToggleIcon
+import com.jparkbro.core.designsystem.component.AniPickValidationCheckIcon
 import com.jparkbro.core.designsystem.component.AniPickBaseTextField
 import com.jparkbro.core.designsystem.component.AniPickButton
 import com.jparkbro.core.designsystem.component.AniPickLabeledField
@@ -86,7 +86,7 @@ private fun PasswordResetScreen(
                     AniPickLabeledField(
                         label = "새 비밀번호",
                         labelTrailingContent = {
-                            ValidationCheckIcon(isValid = state.isNewPasswordValid)
+                            AniPickValidationCheckIcon(isValid = state.isNewPasswordValid)
                         },
                         textField = {
                             AniPickBaseTextField(
@@ -96,7 +96,7 @@ private fun PasswordResetScreen(
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                                 onKeyboardAction = { checkPasswordFocusRequester.requestFocus() },
                                 actions = {
-                                    PasswordVisibilityToggleIcon(
+                                    AniPickPasswordVisibilityToggleIcon(
                                         showPassword = state.showPassword,
                                         onToggle = { onAction(PasswordResetAction.OnPasswordVisibilityToggle) },
                                     )
@@ -113,7 +113,7 @@ private fun PasswordResetScreen(
                     AniPickLabeledField(
                         label = "새 비밀번호 확인",
                         labelTrailingContent = {
-                            ValidationCheckIcon(isValid = state.isPasswordMatch)
+                            AniPickValidationCheckIcon(isValid = state.isPasswordMatch)
                         },
                         textField = {
                             AniPickBaseTextField(
@@ -124,7 +124,7 @@ private fun PasswordResetScreen(
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                                 onKeyboardAction = { focusManager.clearFocus() },
                                 actions = {
-                                    PasswordVisibilityToggleIcon(
+                                    AniPickPasswordVisibilityToggleIcon(
                                         showPassword = state.showPassword,
                                         onToggle = { onAction(PasswordResetAction.OnPasswordVisibilityToggle) },
                                     )
@@ -134,7 +134,9 @@ private fun PasswordResetScreen(
                             )
                         },
                     )
-                    AuthErrorText(state.error)
+                    state.error?.let { errorMessage ->
+                        AniPickErrorText(errorMessage)
+                    }
                 }
             }
             AniPickButton(

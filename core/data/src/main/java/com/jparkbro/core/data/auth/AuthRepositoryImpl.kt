@@ -4,18 +4,19 @@ import com.jparkbro.core.common.auth.TokenProvider
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
+import com.jparkbro.core.datastore.RecentAnimeDataStore
+import com.jparkbro.core.datastore.RecentSearchDataStore
 import com.jparkbro.core.datastore.UserDataStore
 import com.jparkbro.core.network.auth.AuthNetworkDataSource
 import com.jparkbro.core.network.auth.dto.AuthProvider
-import kotlinx.coroutines.flow.Flow
 
 class AuthRepositoryImpl(
     private val authNetworkDataSource: AuthNetworkDataSource,
     private val tokenProvider: TokenProvider,
     private val userDataStore: UserDataStore,
+    private val recentSearchDataStore: RecentSearchDataStore,
+    private val recentAnimeDataStore: RecentAnimeDataStore,
 ) : AuthRepository {
-
-    override val nickname: Flow<String?> = userDataStore.nickname
 
     override suspend fun loginWithKakao(accessToken: String): Result<Boolean, DataError.Network> {
         return login(AuthProvider.KAKAO, accessToken)
@@ -73,6 +74,13 @@ class AuthRepositoryImpl(
         checkNewPassword: String,
     ): Result<Unit, DataError.Network> {
         return authNetworkDataSource.resetPassword(email, newPassword, checkNewPassword)
+    }
+
+    override suspend fun clearLocalData() {
+        tokenProvider.clearTokens()
+        userDataStore.clearUser()
+        recentSearchDataStore.clearRecentSearches()
+        recentAnimeDataStore.clearRecentAnimeId()
     }
 
     private suspend fun login(provider: AuthProvider, code: String): Result<Boolean, DataError.Network> {

@@ -16,6 +16,7 @@ private val Context.userDataStore: DataStore<Preferences> by preferencesDataStor
 private object UserKeys {
     val USER_ID = longPreferencesKey("user_id")
     val NICKNAME = stringPreferencesKey("nickname")
+    val EMAIL = stringPreferencesKey("email")
 }
 
 class UserDataStoreImpl(
@@ -23,16 +24,27 @@ class UserDataStoreImpl(
 ) : UserDataStore {
     override val userId: Flow<Long?> = context.userDataStore.data.map { it[UserKeys.USER_ID] }
     override val nickname: Flow<String?> = context.userDataStore.data.map { it[UserKeys.NICKNAME] }
+    override val email: Flow<String?> = context.userDataStore.data.map { it[UserKeys.EMAIL] }
 
     override suspend fun getUserId(): Long? = userId.first()
 
     override suspend fun getNickname(): String? = nickname.first()
+
+    override suspend fun getEmail(): String? = email.first()
 
     override suspend fun saveUser(userId: Long, nickname: String) {
         context.userDataStore.edit { prefs ->
             prefs[UserKeys.USER_ID] = userId
             prefs[UserKeys.NICKNAME] = nickname
         }
+    }
+
+    override suspend fun saveNickname(nickname: String) {
+        context.userDataStore.edit { prefs -> prefs[UserKeys.NICKNAME] = nickname }
+    }
+
+    override suspend fun saveEmail(email: String) {
+        context.userDataStore.edit { prefs -> prefs[UserKeys.EMAIL] = email }
     }
 
     override suspend fun clearUser() {

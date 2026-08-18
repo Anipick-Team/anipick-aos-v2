@@ -44,14 +44,6 @@
                     android:host="oauth"/>
             </intent-filter>
         </activity>
-
-        <!-- Open Source Licenses Activity -->
-        <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/Theme.AppCompat" />
-        <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-            android:theme="@style/Theme.AppCompat" />
     </application>
 
 </manifest>

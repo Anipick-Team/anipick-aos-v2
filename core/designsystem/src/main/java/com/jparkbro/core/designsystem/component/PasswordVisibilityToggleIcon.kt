@@ -1,4 +1,4 @@
-package com.jparkbro.auth.impl.component
+package com.jparkbro.core.designsystem.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Icon
@@ -8,9 +8,8 @@ import com.jparkbro.core.designsystem.icon.VisibilityOff
 import com.jparkbro.core.designsystem.icon.VisibilityOn
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/** 비밀번호 입력 필드의 표시/숨기기 토글 아이콘. 텍스트 필드의 trailing action 자리에 들어간다. */
 @Composable
-internal fun PasswordVisibilityToggleIcon(
+fun AniPickPasswordVisibilityToggleIcon(
     showPassword: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,

@@ -16,6 +16,6 @@ sealed interface MyPageNavKey : NavKey {
         data object Main : MyPageNavKey
 
         @Serializable
-        data object Detail : MyPageNavKey
+        data class Detail(val type: SettingDetailType) : MyPageNavKey
     }
 }

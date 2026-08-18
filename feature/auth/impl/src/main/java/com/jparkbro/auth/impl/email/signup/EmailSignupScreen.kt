@@ -30,11 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jparkbro.auth.impl.component.AuthErrorText
+import com.jparkbro.core.designsystem.component.AniPickErrorText
 import com.jparkbro.auth.impl.component.AuthScaffold
 import com.jparkbro.auth.impl.component.AuthScreenHeader
-import com.jparkbro.auth.impl.component.PasswordVisibilityToggleIcon
-import com.jparkbro.auth.impl.component.ValidationCheckIcon
+import com.jparkbro.core.designsystem.component.AniPickPasswordVisibilityToggleIcon
+import com.jparkbro.core.designsystem.component.AniPickValidationCheckIcon
 import com.jparkbro.core.designsystem.component.AniPickBaseTextField
 import com.jparkbro.core.designsystem.component.AniPickButton
 import com.jparkbro.core.designsystem.component.AniPickLabeledField
@@ -121,7 +121,9 @@ private fun EmailSignupScreen(
                             )
                         },
                     )
-                    AuthErrorText(state.emailError)
+                    state.emailError?.let { errorMessage ->
+                        AniPickErrorText(errorMessage)
+                    }
                 }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -129,7 +131,7 @@ private fun EmailSignupScreen(
                     AniPickLabeledField(
                         label = "비밀번호",
                         labelTrailingContent = {
-                            ValidationCheckIcon(isValid = state.isPasswordValid)
+                            AniPickValidationCheckIcon(isValid = state.isPasswordValid)
                         },
                         textField = {
                             AniPickBaseTextField(
@@ -145,7 +147,7 @@ private fun EmailSignupScreen(
                                     }
                                 },
                                 actions = {
-                                    PasswordVisibilityToggleIcon(
+                                    AniPickPasswordVisibilityToggleIcon(
                                         showPassword = state.showPassword,
                                         onToggle = { onAction(EmailSignupAction.OnPasswordVisibilityToggle) },
                                     )
@@ -155,7 +157,9 @@ private fun EmailSignupScreen(
                             )
                         },
                     )
-                    AuthErrorText(state.passwordError)
+                    state.passwordError?.let { errorMessage ->
+                        AniPickErrorText(errorMessage)
+                    }
                 }
             }
             Column(
@@ -181,7 +185,7 @@ private fun EmailSignupScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        ValidationCheckIcon(isValid = state.isAgreeAll)
+                        AniPickValidationCheckIcon(isValid = state.isAgreeAll)
                         Text(
                             text = "모두 동의합니다.",
                             style = AniPickTheme.typography.caption1,
@@ -209,7 +213,9 @@ private fun EmailSignupScreen(
                             onDetailClick = { onAction(EmailSignupAction.OnPrivacyPolicyDetailClick) },
                         )
                     }
-                    AuthErrorText(state.termsError)
+                    state.termsError?.let { errorMessage ->
+                        AniPickErrorText(errorMessage)
+                    }
                 }
                 AniPickButton(
                     text = "가입하기",
@@ -224,12 +230,6 @@ private fun EmailSignupScreen(
     }
 }
 
-/**
- * 약관 동의 항목 한 줄(체크 아이콘 + 라벨, 선택적으로 자세히 보기 화살표).
- * "만 14세 이상"/"이용약관"/"개인정보 처리방침" 세 항목이 구조가 동일해서 하나로 뺐다.
- *
- * @param onDetailClick 약관 전문을 보여줄 상세 화면/다이얼로그로 이동하는 콜백. null이면 화살표 자체를 그리지 않는다("14세 이상" 항목처럼 상세 볼 내용이 없는 경우).
- */
 @Composable
 private fun AgreementCheckRow(
     label: String,
@@ -249,7 +249,7 @@ private fun AgreementCheckRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ValidationCheckIcon(isValid = checked)
+            AniPickValidationCheckIcon(isValid = checked)
             Text(
                 text = label,
                 style = AniPickTheme.typography.caption1,
