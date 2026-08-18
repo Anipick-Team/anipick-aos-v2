@@ -57,4 +57,6 @@ dependencies {
     implementation(projects.feature.mypage.impl)
     implementation(projects.feature.search.api)
     implementation(projects.feature.search.impl)
+    implementation(projects.feature.catalog.api)
+    implementation(projects.feature.catalog.impl)
 }
