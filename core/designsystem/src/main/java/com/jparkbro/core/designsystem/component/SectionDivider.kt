@@ -12,7 +12,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/** 얇은 회색 선(1dp) + 그 아래 두꺼운 연회색 띠(3dp)로 이루어진 섹션 구분선. */
 @Composable
 fun AniPickSectionDivider(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {

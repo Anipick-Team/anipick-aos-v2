@@ -11,7 +11,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/** 무한스크롤 다음 페이지를 불러오는 동안 리스트/그리드 맨 끝에 붙이는 공통 로딩 인디케이터. */
 @Composable
 fun AniPickLoadMoreIndicator(modifier: Modifier = Modifier) {
     Box(
