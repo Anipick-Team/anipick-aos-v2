@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,9 +64,9 @@ fun <T> AniPickWheelPicker(
     val verticalPadding = itemHeight * (visibleItemCount / 2)
     val itemHeightPx = with(density) { itemHeight.toPx() }
 
-    // 주의: items의 원소 자체가 null일 수 있다("전체년도"/"전체분기" 같은 항목). 그래서 "센터에 온
-    // 아이템 값이 null인지"가 아니라 "센터에 대응하는 index를 찾았는지"로 판단해야 한다 — 아이템 값의
-    // null과 "못 찾음"을 구분하지 않으면 null 항목을 선택했을 때 아무 일도 안 일어나는 버그가 생긴다.
+    val latestSelectedItem by rememberUpdatedState(selectedItem)
+    val latestOnSelectedItemChange by rememberUpdatedState(onSelectedItemChange)
+
     LaunchedEffect(lazyListState, items) {
         snapshotFlow { lazyListState.isScrollInProgress }
             .filter { isScrolling -> !isScrolling }
@@ -78,16 +79,13 @@ fun <T> AniPickWheelPicker(
                 }?.index
                 if (centeredIndex != null && centeredIndex in items.indices) {
                     val centeredItem = items[centeredIndex]
-                    if (centeredItem != selectedItem) {
-                        onSelectedItemChange(centeredItem)
+                    if (centeredItem != latestSelectedItem) {
+                        latestOnSelectedItemChange(centeredItem)
                     }
                 }
             }
     }
 
-    // 스크롤이 멈추기 전(드래그 중)에도 뷰포트 중앙에 온 아이템을 실시간으로 알려준다.
-    // onSelectedItemChange는 스크롤이 완전히 멈춘 뒤에만 값이 확정되므로, "지금 화면에서 가운데에
-    // 뭐가 보이는지"에 바로 반응해야 하는 UI(예: 다른 휠의 enabled 상태)는 이걸 써야 한다.
     LaunchedEffect(lazyListState, items) {
         snapshotFlow {
             val layoutInfo = lazyListState.layoutInfo
@@ -151,14 +149,6 @@ fun <T> AniPickWheelPicker(
     }
 }
 
-/**
- * [AniPickWheelPicker]의 기본 아이템 디자인. 선택된 항목의 색만 호출부에서 바꿔 끼울 수 있고
- * ([selectedColor]), 그 외는 전부 고정이다: [fraction]은 "몇 칸 떨어져 있는지"를 나타내는 값이라
- * (0 = 정중앙, 1 = 바로 옆 칸, 2 이상 = 그보다 먼 칸) — 0~1 구간에서는 [selectedColor]에서
- * [AniPickTheme.colors.gray]로, 1~2 구간에서는 그 gray에서 더 옅은 [AniPickTheme.colors.lightGray]로
- * 부드럽게(lerp) 전환된다. 글자 크기도 같은 0~1 구간에서 h3 -> body2로 줄어들고, 그 뒤로는 body2로 고정된다.
- * 전부 스크롤 중 실시간으로 갱신되는 [fraction] 기준이라 스와이프하는 동안 바로바로 따라온다.
- */
 @Composable
 fun AniPickWheelPickerDefaultItem(
     label: String,
@@ -181,7 +171,6 @@ fun AniPickWheelPickerDefaultItem(
     )
 }
 
-/** [AniPickWheelPicker]의 기본 선택 영역 표시(가운데 칸 위/아래 구분선). */
 @Composable
 fun BoxScope.AniPickWheelPickerDefaultSelectionIndicator(
     itemHeight: Dp,
