@@ -133,6 +133,10 @@ val Search: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_search)
 
+val Setting: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_setting)
+
 val Share: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_share)

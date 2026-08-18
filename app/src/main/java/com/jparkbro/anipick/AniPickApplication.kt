@@ -7,7 +7,11 @@ import com.jparkbro.core.data.di.dataModule
 import com.jparkbro.core.datastore.di.datastoreModule
 import com.jparkbro.core.network.di.networkModule
 import com.jparkbro.core.ui.di.uiModule
+import com.jparkbro.explore.impl.di.exploreModule
 import com.jparkbro.home.impl.di.homeModule
+import com.jparkbro.mypage.impl.di.myPageModule
+import com.jparkbro.ranking.impl.di.rankingModule
+import com.jparkbro.search.impl.di.searchModule
 import com.jparkbro.splash.impl.di.splashModule
 import com.kakao.sdk.common.KakaoSdk
 import org.koin.android.ext.koin.androidContext
@@ -39,6 +43,10 @@ class AniPickApplication: Application() {
                 authModule,
                 splashModule,
                 homeModule,
+                rankingModule,
+                exploreModule,
+                myPageModule,
+                searchModule,
             )
         }
     }

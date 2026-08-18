@@ -1,6 +1,7 @@
 package com.jparkbro.core.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,11 +29,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.jparkbro.core.designsystem.icon.Close
+import com.jparkbro.core.designsystem.icon.Search
 import com.jparkbro.core.designsystem.icon.VisibilityOff
 import com.jparkbro.core.designsystem.icon.VisibilityOn
 import com.jparkbro.core.designsystem.model.TextFieldType
@@ -127,6 +133,65 @@ fun AniPickBaseTextField(
                 }
             }
         },
+    )
+}
+
+/** 검색 전용 필드 - Enter/검색 아이콘으로 [onSearchClick], X 아이콘으로 [onClearClick]을 호출한다. */
+@Composable
+fun AniPickSearchTextField(
+    state: TextFieldState,
+    onSearchClick: () -> Unit,
+    onClearClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "무엇을 검색할까요?",
+) {
+    val focusManager = LocalFocusManager.current
+
+    AniPickBaseTextField(
+        state = state,
+        modifier = modifier,
+        type = TextFieldType.TEXT,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        onKeyboardAction = {
+            focusManager.clearFocus()
+            onSearchClick()
+        },
+        placeholder = placeholder,
+        actions = {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Icon(
+                    imageVector = Search,
+                    tint = AniPickTheme.colors.textGray,
+                    contentDescription = "검색",
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clickable {
+                            focusManager.clearFocus()
+                            onSearchClick()
+                        }
+                )
+                Icon(
+                    imageVector = Close,
+                    tint = AniPickTheme.colors.textGray,
+                    contentDescription = "검색 초기화",
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clickable(onClick = onClearClick)
+                )
+            }
+        },
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun AniPickSearchTextFieldPreview() {
+    AniPickSearchTextField(
+        state = rememberTextFieldState(),
+        onSearchClick = {},
+        onClearClick = {},
     )
 }
 

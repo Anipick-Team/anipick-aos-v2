@@ -3,10 +3,9 @@ plugins {
 }
 
 android {
-    namespace = "com.jparkbro.home.impl"
+    namespace = "com.jparkbro.search.impl"
 }
 
 dependencies {
-    implementation(projects.feature.home.api)
     implementation(projects.feature.search.api)
 }

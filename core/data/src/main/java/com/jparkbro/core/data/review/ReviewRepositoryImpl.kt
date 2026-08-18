@@ -4,7 +4,7 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
 import com.jparkbro.core.model.anime.AnimeRating
-import com.jparkbro.core.model.review.RecentReviewFeed
+import com.jparkbro.core.model.pagination.CursorPage
 import com.jparkbro.core.model.review.Review
 import com.jparkbro.core.network.common.toCursor
 import com.jparkbro.core.network.review.ReviewNetworkDataSource
@@ -27,12 +27,11 @@ class ReviewRepositoryImpl(
         }
     }
 
-    override suspend fun getRecentReviewFeed(lastId: Long?, size: Int): Result<RecentReviewFeed, DataError.Network> {
+    override suspend fun getRecentReviewFeed(lastId: Long?, size: Int): Result<CursorPage<Review>, DataError.Network> {
         return reviewNetworkDataSource.getRecentReviewFeed(lastId, size).map { response ->
-            RecentReviewFeed(
-                count = response.count,
+            CursorPage(
                 cursor = response.cursor.toCursor(),
-                reviews = response.reviews.map { it.toReview() },
+                items = response.reviews.map { it.toReview() },
             )
         }
     }
