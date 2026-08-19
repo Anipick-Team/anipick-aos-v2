@@ -37,4 +37,18 @@ class KtorRecommendationNetworkDataSource(
             ),
         )
     }
+
+    override suspend fun getAnimeRecommendations(
+        animeId: Long,
+        lastId: Long?,
+        size: Int,
+    ): Result<RecommendationAnimesDetailResponse, DataError.Network> {
+        return httpClient.get(
+            route = "/animes/$animeId/recommendations",
+            queryParameters = mapOf(
+                "lastId" to lastId,
+                "size" to size,
+            ),
+        )
+    }
 }

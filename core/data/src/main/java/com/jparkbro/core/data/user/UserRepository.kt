@@ -26,4 +26,11 @@ interface UserRepository {
     ): Result<Unit, DataError.Network>
 
     suspend fun withdraw(): Result<Unit, DataError.Network>
+
+    /** 업로드 성공 시 서버가 새로 발급한 imageId를 반환한다. */
+    suspend fun updateProfileImage(
+        imageBytes: ByteArray,
+        fileName: String,
+        mimeType: String,
+    ): Result<Long, DataError.Network>
 }

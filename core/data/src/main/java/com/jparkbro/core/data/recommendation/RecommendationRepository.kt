@@ -18,4 +18,11 @@ interface RecommendationRepository {
         lastValue: String? = null,
         size: Long = 18,
     ): Result<RecommendationResult, DataError.Network>
+
+    /** 애니 상세 "이 작품과 비슷한 작품" 추천 전체보기. [lastId]가 null이면 첫 페이지. */
+    suspend fun getAnimeRecommendations(
+        animeId: Long,
+        lastId: Long? = null,
+        size: Int = 18,
+    ): Result<RecommendationResult, DataError.Network>
 }

@@ -8,6 +8,7 @@ import com.jparkbro.core.data.auth.AuthRepository
 import com.jparkbro.core.datastore.UserDataStore
 import com.jparkbro.core.model.mypage.MyPageProfile
 import com.jparkbro.core.model.user.UserSetting
+import com.jparkbro.core.network.image.ImageNetworkDataSource
 import com.jparkbro.core.network.user.UserNetworkDataSource
 import com.jparkbro.core.network.user.dto.toMyPageProfile
 import com.jparkbro.core.network.user.dto.toUserSetting
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.Flow
 
 class UserRepositoryImpl(
     private val userNetworkDataSource: UserNetworkDataSource,
+    private val imageNetworkDataSource: ImageNetworkDataSource,
     private val userDataStore: UserDataStore,
     private val authRepository: AuthRepository,
 ) : UserRepository {
@@ -59,5 +61,14 @@ class UserRepositoryImpl(
     override suspend fun withdraw(): Result<Unit, DataError.Network> {
         return userNetworkDataSource.withdraw()
             .onSuccess { authRepository.clearLocalData() }
+    }
+
+    override suspend fun updateProfileImage(
+        imageBytes: ByteArray,
+        fileName: String,
+        mimeType: String,
+    ): Result<Long, DataError.Network> {
+        return imageNetworkDataSource.updateProfileImage(imageBytes, fileName, mimeType)
+            .map { it.imageId }
     }
 }

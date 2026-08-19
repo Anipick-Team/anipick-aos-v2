@@ -43,4 +43,18 @@ class RecommendationRepositoryImpl(
             )
         }
     }
+
+    override suspend fun getAnimeRecommendations(
+        animeId: Long,
+        lastId: Long?,
+        size: Int,
+    ): Result<RecommendationResult, DataError.Network> {
+        return recommendationNetworkDataSource.getAnimeRecommendations(animeId, lastId, size).map { response ->
+            RecommendationResult(
+                referenceAnimeTitle = response.referenceAnimeTitle,
+                cursor = response.cursor.toCursor(),
+                animes = response.animes.map { it.toAnime() },
+            )
+        }
+    }
 }
