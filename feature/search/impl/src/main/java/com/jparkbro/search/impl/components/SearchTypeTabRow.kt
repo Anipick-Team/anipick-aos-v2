@@ -3,7 +3,7 @@ package com.jparkbro.search.impl.components
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.jparkbro.core.designsystem.component.AniPickSecondaryTabRow
+import com.jparkbro.core.designsystem.component.AniPickPrimaryTabRow
 import com.jparkbro.core.designsystem.model.AniPickTabItem
 import com.jparkbro.search.impl.detail.SearchType
 
@@ -16,7 +16,7 @@ internal fun SearchTypeTabRow(
     onTabClick: (SearchType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AniPickSecondaryTabRow(
+    AniPickPrimaryTabRow(
         tabs = listOf(
             AniPickTabItem(label = "작품", subLabel = "${animeCount}건"),
             AniPickTabItem(label = "인물", subLabel = "${actorCount}건"),
