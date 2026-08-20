@@ -3,10 +3,10 @@ plugins {
 }
 
 android {
-    namespace = "com.jparkbro.catalog.impl"
+    namespace = "com.jparkbro.community.impl"
 }
 
 dependencies {
-    implementation(projects.feature.catalog.api)
     implementation(projects.feature.community.api)
+
 }

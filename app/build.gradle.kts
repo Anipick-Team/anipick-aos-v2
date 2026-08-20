@@ -59,4 +59,8 @@ dependencies {
     implementation(projects.feature.search.impl)
     implementation(projects.feature.catalog.api)
     implementation(projects.feature.catalog.impl)
+    implementation(projects.feature.community.api)
+    implementation(projects.feature.community.impl)
+    implementation(projects.feature.review.api)
+    implementation(projects.feature.review.impl)
 }

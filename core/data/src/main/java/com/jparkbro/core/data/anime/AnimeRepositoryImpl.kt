@@ -4,14 +4,20 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
 import com.jparkbro.core.datastore.RecentAnimeDataStore
+import com.jparkbro.core.model.anime.Anime
+import com.jparkbro.core.model.anime.AnimeDetail
 import com.jparkbro.core.model.anime.ComingSoonResult
 import com.jparkbro.core.model.anime.PreferenceSetupSearchResult
 import com.jparkbro.core.model.anime.UpcomingSeasonResult
+import com.jparkbro.core.model.character.AnimeCharacter
 import com.jparkbro.core.network.anime.AnimeNetworkDataSource
 import com.jparkbro.core.network.anime.dto.ComingSoonAnimesRequest
 import com.jparkbro.core.network.anime.dto.PreferenceSetupSearchRequest
 import com.jparkbro.core.network.anime.dto.toAnime
+import com.jparkbro.core.network.anime.dto.toAnimeDetail
+import com.jparkbro.core.network.character.dto.toAnimeCharacter
 import com.jparkbro.core.network.common.toCursor
+import com.jparkbro.core.network.series.dto.toAnime
 import kotlinx.coroutines.flow.Flow
 
 class AnimeRepositoryImpl(
@@ -41,7 +47,7 @@ class AnimeRepositoryImpl(
             PreferenceSetupSearchResult(
                 count = response.count,
                 cursor = response.cursor.toCursor(),
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
             )
         }
     }
@@ -51,7 +57,7 @@ class AnimeRepositoryImpl(
             UpcomingSeasonResult(
                 season = response.season,
                 seasonYear = response.seasonYear,
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
             )
         }
     }
@@ -67,8 +73,30 @@ class AnimeRepositoryImpl(
             ComingSoonResult(
                 count = response.count,
                 cursor = response.cursor.toCursor(),
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
             )
+        }
+    }
+
+    override suspend fun getAnimeDetailInfo(animeId: Long): Result<AnimeDetail, DataError.Network> {
+        return animeNetworkDataSource.getAnimeDetailInfo(animeId).map { it.toAnimeDetail() }
+    }
+
+    override suspend fun getAnimeDetailCast(animeId: Long): Result<List<AnimeCharacter>, DataError.Network> {
+        return animeNetworkDataSource.getAnimeDetailCast(animeId).map { responses ->
+            responses.map { it.toAnimeCharacter() }
+        }
+    }
+
+    override suspend fun getAnimeDetailSeries(animeId: Long): Result<List<Anime>, DataError.Network> {
+        return animeNetworkDataSource.getAnimeDetailSeries(animeId).map { responses ->
+            responses.map { it.toAnime() }
+        }
+    }
+
+    override suspend fun getAnimeDetailRecommendations(animeId: Long): Result<List<Anime>, DataError.Network> {
+        return animeNetworkDataSource.getAnimeDetailRecommendations(animeId).map { responses ->
+            responses.map { it.toAnime() }
         }
     }
 }

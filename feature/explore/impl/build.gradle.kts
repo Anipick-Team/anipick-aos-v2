@@ -9,4 +9,5 @@ android {
 dependencies {
     implementation(projects.feature.explore.api)
     implementation(projects.feature.search.api)
+    implementation(projects.feature.catalog.api)
 }
