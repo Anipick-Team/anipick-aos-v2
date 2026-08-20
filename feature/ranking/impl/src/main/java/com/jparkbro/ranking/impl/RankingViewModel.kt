@@ -116,7 +116,7 @@ class RankingViewModel(
             }
 
             result
-                .onSuccess { page -> applyLoadedPage(page.items, page.cursor, append = !resetCursor) }
+                .onSuccess { page -> applyLoadedPage(page.items ?: emptyList(), page.cursor, append = !resetCursor) }
                 .onFailure { error ->
                     _state.update {
                         if (resetCursor) it.copy(isLoading = false, error = error.toString())
