@@ -1,14 +1,10 @@
 package com.jparkbro.mypage.impl.setting.detail
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
@@ -38,6 +34,8 @@ import com.jparkbro.core.designsystem.model.TextFieldType
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.ui.ObserveAsEvents
 import com.jparkbro.mypage.api.SettingDetailType
+import com.jparkbro.mypage.impl.setting.detail.components.CurrentValueField
+import com.jparkbro.mypage.impl.setting.detail.components.title
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -344,41 +342,6 @@ private fun SettingDetailScreen(
             onDismiss = { onAction(SettingDetailAction.OnWithdrawDialogDismiss) },
         )
     }
-}
-
-/** "기존 닉네임"/"기존 이메일"처럼 수정 불가능한 현재 값을 라벨 + 회색 박스로 보여준다. */
-@Composable
-private fun CurrentValueField(label: String, value: String) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = label,
-            style = AniPickTheme.typography.h3,
-            color = AniPickTheme.colors.black,
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(46.dp)
-                .background(AniPickTheme.colors.lightGray, RoundedCornerShape(8.dp))
-                .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.CenterStart,
-        ) {
-            Text(
-                text = value,
-                style = AniPickTheme.typography.body2,
-                color = AniPickTheme.colors.black,
-            )
-        }
-    }
-}
-
-private fun SettingDetailType.title(): String = when (this) {
-    SettingDetailType.Nickname -> "닉네임 변경"
-    SettingDetailType.Email -> "이메일 변경"
-    SettingDetailType.Password -> "비밀번호 변경"
-    SettingDetailType.Withdrawal -> "회원 탈퇴"
 }
 
 @Composable
