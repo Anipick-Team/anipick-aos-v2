@@ -10,8 +10,8 @@ data class CursorResponse(
     val lastValue: String? = null,
 )
 
-fun CursorResponse.toCursor(): Cursor = Cursor(
-    lastId = lastId,
-    sort = sort,
-    lastValue = lastValue,
+fun CursorResponse?.toCursor(): Cursor = Cursor(
+    lastId = this?.lastId,
+    sort = this?.sort,
+    lastValue = this?.lastValue,
 )

@@ -18,10 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.icon.ChevronDown
 
-/**
- * 펼침/닫힘 상태가 바뀔 때마다 항상 같은 방향(시계 방향)으로 180도씩 더 돌아간다 —
- * 닫힘→펼침은 왼쪽을 거쳐 위로, 펼침→닫힘은 오른쪽을 거쳐 아래로 회전한다.
- */
+/** 펼침/닫힘 상태가 바뀔 때마다 항상 같은 방향(시계 방향)으로 180도씩 더 돌아가는 화살표 아이콘. */
 @Composable
 fun AniPickAnimatedChevronIcon(
     isExpanded: Boolean,
