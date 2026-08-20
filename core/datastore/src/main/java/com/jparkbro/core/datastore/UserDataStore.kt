@@ -2,6 +2,7 @@ package com.jparkbro.core.datastore
 
 import kotlinx.coroutines.flow.Flow
 
+/** 로그인한 사용자 정보를 저장하고 읽는 인터페이스 */
 interface UserDataStore {
     val userId: Flow<Long?>
     val nickname: Flow<String?>

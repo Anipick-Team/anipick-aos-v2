@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 
+/** 동적 문자열과 문자열 리소스를 함께 다루기 위한 타입 */
 sealed interface UiText {
 
     data class DynamicString(val value: String): UiText
