@@ -20,6 +20,7 @@ private object Keys {
     val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
 }
 
+/** 액세스/리프레시 토큰을 저장하고 유효성을 확인하는 클래스 */
 class TokenDataStore(
     private val context: Context,
 ) : TokenProvider {
