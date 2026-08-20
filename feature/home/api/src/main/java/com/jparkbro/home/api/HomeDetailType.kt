@@ -23,10 +23,6 @@ sealed interface HomeDetailType {
     @Serializable
     data object Weekly : HomeDetailType
 
-    /** 최근 리뷰 전체보기 — 다른 타입과 달리 애니 카드 목록이 아닌 리뷰 목록을 보여준다. */
-    @Serializable
-    data object Review : HomeDetailType
-
     /** 공개 예정 전체보기. */
     @Serializable
     data object ComingSoon : HomeDetailType
