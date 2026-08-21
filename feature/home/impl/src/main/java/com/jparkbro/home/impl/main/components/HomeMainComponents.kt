@@ -23,75 +23,117 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.anime.Anime
-import com.jparkbro.core.ui.AniPickAnimeCard
-import com.jparkbro.core.ui.objectParticleFor
+import com.jparkbro.core.model.review.Review
+import com.jparkbro.core.ui.component.AniPickAnimeCard
+import com.jparkbro.core.ui.util.objectParticleFor
 
-/**
- * "오늘의 추천작" 섹션 제목. [referenceAnimeTitle]이 있으면(특정 애니를 재밌게 봤다는 게 있으면)
- * 그 작품 기준 문구를, 없으면 [nickname] 기준의 기본 문구를 보여준다.
- */
+/** "오늘의 추천작" 섹션 제목
+ *  [referenceAnimeTitle] 있음: 그 작품 기준 문구, 없음: [nickname] 기준 문구 */
 @Composable
 internal fun RecommendationSectionTitle(
     nickname: String?,
     referenceAnimeTitle: String?,
     modifier: Modifier = Modifier,
+    titleStyle: TextStyle = AniPickTheme.typography.h3,
+    accentColor: Color = AniPickTheme.colors.primary,
+    baseColor: Color = AniPickTheme.colors.black,
 ) {
     Column(modifier = modifier) {
         if (referenceAnimeTitle != null) {
             Row {
                 Text(
                     text = referenceAnimeTitle,
-                    style = AniPickTheme.typography.h3,
-                    color = AniPickTheme.colors.primary,
+                    style = titleStyle,
+                    color = accentColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false),
                 )
                 Text(
                     text = "${objectParticleFor(referenceAnimeTitle)} 재밌게 보셨다면,",
-                    style = AniPickTheme.typography.h3,
-                    color = AniPickTheme.colors.black,
+                    style = titleStyle,
+                    color = baseColor,
                 )
             }
             Text(
                 text = "이 작품들도 마음에 드실 거에요!",
-                style = AniPickTheme.typography.h3,
-                color = AniPickTheme.colors.black,
+                style = titleStyle,
+                color = baseColor,
             )
         } else {
             Row {
                 Text(
                     text = "오늘의 추천작, ",
-                    style = AniPickTheme.typography.h3,
-                    color = AniPickTheme.colors.black,
+                    style = titleStyle,
+                    color = baseColor,
                 )
                 Text(
                     text = nickname.orEmpty(),
-                    style = AniPickTheme.typography.h3,
-                    color = AniPickTheme.colors.primary,
+                    style = titleStyle,
+                    color = accentColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false),
                 )
                 Text(
                     text = " 님의",
-                    style = AniPickTheme.typography.h3,
-                    color = AniPickTheme.colors.black,
+                    style = titleStyle,
+                    color = baseColor,
                 )
             }
             Text(
                 text = "취향에 맞춰 준비했어요!",
-                style = AniPickTheme.typography.h3,
-                color = AniPickTheme.colors.black,
+                style = titleStyle,
+                color = baseColor,
             )
         }
+    }
+}
+
+/** "최근 찾아보신 OO과 비슷한 작품이에요!" 섹션 제목. [referenceAnimeTitle]은 기준이 된 애니 제목 */
+@Composable
+internal fun SimilarRecommendationSectionTitle(
+    referenceAnimeTitle: String?,
+    modifier: Modifier = Modifier,
+    titleStyle: TextStyle = AniPickTheme.typography.h3,
+    accentColor: Color = AniPickTheme.colors.primary,
+    baseColor: Color = AniPickTheme.colors.black,
+) {
+    Column(modifier = modifier) {
+        Row {
+            Text(
+                text = "최근 찾아보신 ",
+                style = titleStyle,
+                color = baseColor,
+            )
+            Text(
+                text = referenceAnimeTitle.orEmpty(),
+                style = titleStyle,
+                color = accentColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            Text(
+                text = " 과",
+                style = titleStyle,
+                color = baseColor,
+            )
+        }
+        Text(
+            text = "비슷한 작품이에요!",
+            style = titleStyle,
+            color = baseColor,
+        )
     }
 }
 
@@ -142,10 +184,7 @@ internal fun EmptyRecommendationImage(
 
 @Composable
 internal fun RecentReviewCard(
-    title: String,
-    content: String,
-    nickname: String,
-    date: String,
+    review: Review,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -155,22 +194,26 @@ internal fun RecentReviewCard(
             .border(1.dp, AniPickTheme.colors.gray, RoundedCornerShape(8.dp))
             .padding(horizontal = 16.dp, vertical = 14.dp)
     ) {
-        Text(
-            text = title,
-            style = AniPickTheme.typography.caption2,
-            color = AniPickTheme.colors.textGray,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        review.animeTitle?.let {
+            Text(
+                text = it,
+                style = AniPickTheme.typography.caption2,
+                color = AniPickTheme.colors.textGray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = content,
-            style = AniPickTheme.typography.body2,
-            color = AniPickTheme.colors.black,
-            maxLines = 2,
-            minLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
+        review.content?.let {
+            Text(
+                text = it,
+                style = AniPickTheme.typography.body2,
+                color = AniPickTheme.colors.black,
+                maxLines = 2,
+                minLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier
@@ -178,24 +221,28 @@ internal fun RecentReviewCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = nickname,
-                style = AniPickTheme.typography.caption2,
-                color = AniPickTheme.colors.textGray,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f, fill = false),
-            )
+            review.nickname?.let {
+                Text(
+                    text = it,
+                    style = AniPickTheme.typography.caption2,
+                    color = AniPickTheme.colors.textGray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+            }
             VerticalDivider(
                 modifier = Modifier.height(10.dp),
                 thickness = 1.dp,
                 color = AniPickTheme.colors.textGray
             )
-            Text(
-                text = date,
-                style = AniPickTheme.typography.caption2,
-                color = AniPickTheme.colors.textGray,
-            )
+            review.createdAt?.let {
+                Text(
+                    text = it,
+                    style = AniPickTheme.typography.caption2,
+                    color = AniPickTheme.colors.textGray,
+                )
+            }
         }
     }
 }
@@ -210,9 +257,11 @@ private fun EmptyRecommendationImagePreview() {
 @Preview(showBackground = true)
 private fun RecentReviewCardPreview() {
     RecentReviewCard(
-        title = "title",
-        content = "contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent",
-        nickname = "nicknamenicknamenicknamenicknamenicknamenicknamenicknamenickname",
-        date = "2026.08.01",
+        review = Review(
+            animeTitle = "title",
+            content = "contentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontentcontent",
+            nickname = "nicknamenicknamenicknamenicknamenicknamenicknamenicknamenickname",
+            createdAt = "2026.08.01",
+        ),
     )
 }

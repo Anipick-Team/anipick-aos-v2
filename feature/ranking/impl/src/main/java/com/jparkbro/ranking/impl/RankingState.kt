@@ -20,6 +20,7 @@ data class RankingState(
     val isLoadingMore: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null,
+    val isMetadataError: Boolean = false,
 )
 
 enum class RankingType {

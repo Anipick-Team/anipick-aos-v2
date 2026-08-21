@@ -13,8 +13,9 @@ val homeModule = module {
         HomeDetailViewModel(
             type = params.get<HomeDetailType>(),
             animeRepository = get(),
-            reviewRepository = get(),
-            authRepository = get(),
+            recommendationRepository = get(),
+            userRepository = get(),
+            homeRepository = get(),
         )
     }
 }
