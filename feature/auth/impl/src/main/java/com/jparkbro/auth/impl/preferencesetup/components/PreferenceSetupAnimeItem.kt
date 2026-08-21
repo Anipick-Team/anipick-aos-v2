@@ -29,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.component.AniPickButton
+import com.jparkbro.core.designsystem.component.AniPickGenreTag
 import com.jparkbro.core.designsystem.component.AniPickShimmerBox
 import com.jparkbro.core.designsystem.component.AniPickStarRatingBar
 import com.jparkbro.core.designsystem.model.ButtonSize
@@ -69,7 +69,7 @@ internal fun PreferenceSetupAnimeItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = anime.coverImageUrl.ifBlank { null } ?: R.drawable.default_image_preference,
+                model = anime.coverImageUrl?.ifBlank { null } ?: R.drawable.default_image_preference,
                 contentDescription = "애니메이션 커버 이미지",
                 modifier = Modifier
                     .size(width = 132.dp, height = 88.dp),
@@ -86,7 +86,7 @@ internal fun PreferenceSetupAnimeItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = anime.title,
+                        text = anime.title ?: "-",
                         color = AniPickTheme.colors.black,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
@@ -107,15 +107,8 @@ internal fun PreferenceSetupAnimeItem(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     maxLines = 1,
                 ) {
-                    anime.genres.forEach { genre ->
-                        Text(
-                            text = genre,
-                            style = AniPickTheme.typography.caption2,
-                            color = AniPickTheme.colors.primary,
-                            modifier = Modifier
-                                .background(AniPickTheme.colors.primary10, RoundedCornerShape(8.dp))
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
+                    anime.genres?.forEach { genre ->
+                        AniPickGenreTag(genre = genre)
                     }
                 }
                 if (committedRating != 0f) {
@@ -240,7 +233,7 @@ private fun PreferenceSetupCompactButton(
 private fun PreferenceSetupAnimeItemPreview() {
     Column(
         modifier = Modifier
-            .background(Color.White)
+            .background(AniPickTheme.colors.white)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -274,7 +267,7 @@ private fun PreferenceSetupAnimeItemPreview() {
 private fun PreferenceSetupAnimeItemSkeletonPreview() {
     Column(
         modifier = Modifier
-            .background(Color.White)
+            .background(AniPickTheme.colors.white)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {

@@ -24,6 +24,7 @@ data class PreferenceSetupState(
     val isLoadingMore: Boolean = false,
     val isLastPage: Boolean = false,
     val isCompleting: Boolean = false,
+    val isMetadataError: Boolean = false,
 ) {
     val ratedCount: Int get() = ratings.size
     val isCompleteEnabled: Boolean get() = ratings.isNotEmpty()

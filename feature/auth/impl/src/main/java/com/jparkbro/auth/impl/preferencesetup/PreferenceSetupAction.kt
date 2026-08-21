@@ -20,4 +20,5 @@ sealed interface PreferenceSetupAction {
     data class OnSaveRatingClick(val index: Int, val rating: Float) : PreferenceSetupAction
     data class OnCancelRatingClick(val index: Int) : PreferenceSetupAction
     data object OnCompleteClick : PreferenceSetupAction
+    data object OnMetadataRetryClick : PreferenceSetupAction
 }

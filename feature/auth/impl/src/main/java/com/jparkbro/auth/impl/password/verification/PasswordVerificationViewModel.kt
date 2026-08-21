@@ -76,11 +76,7 @@ class PasswordVerificationViewModel(
         }
     }
 
-    /**
-     * 이미 인증번호를 받은 상태(발송 성공 이후)에서 이메일을 수정하면, 화면에 남아있는 카운트다운/재발송
-     * 상태/입력했던 인증번호가 전부 "예전 이메일" 기준이라 오해를 살 수 있어서 초기화한다.
-     * 아직 한 번도 발송 안 한 상태(Idle)에서 타이핑하는 중이면 아무 것도 하지 않는다.
-     */
+    /** 인증번호 발송 후 이메일을 수정하면 카운트다운/재발송 상태 초기화 */
     private fun resetCodeSessionIfActive() {
         val current = _state.value
         val hasActiveCodeSession = current.codeExpiresInSeconds != null ||
@@ -217,7 +213,7 @@ class PasswordVerificationViewModel(
             _state.update {
                 it.copy(
                     codeExpiresInSeconds = 0,
-                    codeError = "유효 시간이 만료되었습니다. 재발송 후 다시 시도해주세요.",
+                    codeError = "유효 시간이 만료되었습니다. 재발송 후 다시 시도해 주세요.",
                 )
             }
         }

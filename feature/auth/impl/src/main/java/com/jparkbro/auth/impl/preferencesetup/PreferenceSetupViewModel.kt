@@ -3,12 +3,14 @@ package com.jparkbro.auth.impl.preferencesetup
 import androidx.compose.foundation.text.input.clearText
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.data.anime.AnimeRepository
 import com.jparkbro.core.data.common.CommonRepository
 import com.jparkbro.core.data.review.ReviewRepository
 import com.jparkbro.core.model.anime.AnimeRating
+import com.jparkbro.core.ui.GlobalSnackbarManager
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +24,7 @@ class PreferenceSetupViewModel(
     private val animeRepository: AnimeRepository,
     private val commonRepository: CommonRepository,
     private val reviewRepository: ReviewRepository,
+    private val globalSnackbarManager: GlobalSnackbarManager,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PreferenceSetupState())
@@ -93,6 +96,8 @@ class PreferenceSetupViewModel(
             }
 
             PreferenceSetupAction.OnCompleteClick -> complete()
+
+            PreferenceSetupAction.OnMetadataRetryClick -> fetchMetadata()
         }
     }
 
@@ -118,14 +123,15 @@ class PreferenceSetupViewModel(
                 lastId = lastId,
             )
                 .onSuccess { result ->
+                    val animes = result.animes ?: emptyList()
                     _state.update { state ->
                         state.copy(
-                            animeList = if (resetCursor) result.animes else state.animeList + result.animes,
+                            animeList = if (resetCursor) animes else state.animeList + animes,
                             cursor = result.cursor,
                             isSearchLoading = false,
                             isSearchError = false,
                             isLoadingMore = false,
-                            isLastPage = result.animes.isEmpty(),
+                            isLastPage = animes.isEmpty(),
                         )
                     }
                 }
@@ -145,7 +151,10 @@ class PreferenceSetupViewModel(
     private fun skip() {
         viewModelScope.launch {
             reviewRepository.submitReviews(emptyList())
-                .onFailure { error -> Timber.e("건너뛰기 평가 제출 실패: $error") }
+                .onFailure { error ->
+                    Timber.e("건너뛰기 평가 제출 실패: $error")
+                    handleSubmitFailure(error)
+                }
             sendEvent(PreferenceSetupEvent.NavigateToHome)
         }
     }
@@ -162,19 +171,46 @@ class PreferenceSetupViewModel(
                 .onFailure { error ->
                     Timber.e("평가 제출 실패: $error")
                     _state.update { it.copy(isCompleting = false) }
+                    handleSubmitFailure(error)
                 }
+        }
+    }
+
+    private fun handleSubmitFailure(error: DataError.Network) {
+        when (error) {
+            DataError.Network.NO_INTERNET -> {
+                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
+            }
+            else -> {
+                val message = (error as? DataError.Network.Api)?.message
+                globalSnackbarManager.showSnackbar(message ?: "알 수 없는 오류가 발생했습니다.")
+            }
         }
     }
 
     private fun fetchMetadata() {
         viewModelScope.launch {
+            _state.update { it.copy(isMetadataError = false) }
+
             commonRepository.getMetadata()
                 .onSuccess { metadata ->
                     _state.update { it.copy(metadata = metadata) }
                 }
                 .onFailure { error ->
                     Timber.e("메타데이터 조회 실패: $error")
+                    handleMetadataFailure(error)
                 }
+        }
+    }
+
+    private fun handleMetadataFailure(error: DataError.Network) {
+        when (error) {
+            DataError.Network.NO_INTERNET -> {
+                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
+            }
+            else -> {
+                _state.update { it.copy(isMetadataError = true) }
+            }
         }
     }
 
