@@ -2,13 +2,16 @@ package com.jparkbro.ranking.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.common.CommonRepository
 import com.jparkbro.core.data.ranking.RankingRepository
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.metadata.FilterType
 import com.jparkbro.core.model.pagination.Cursor
+import com.jparkbro.core.ui.GlobalSnackbarManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +22,7 @@ import timber.log.Timber
 class RankingViewModel(
     private val rankingRepository: RankingRepository,
     private val commonRepository: CommonRepository,
+    private val globalSnackbarManager: GlobalSnackbarManager,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(RankingState())
@@ -67,9 +71,12 @@ class RankingViewModel(
             }
 
             RankingAction.OnLoadMore -> loadMore()
+            RankingAction.OnRetryClick -> loadRankings(resetCursor = true)
+            RankingAction.OnMetadataRetryClick -> fetchMetadata()
 
-            RankingAction.OnSearchClick -> Unit
-            is RankingAction.OnAnimeClick -> Unit
+            RankingAction.OnSearchClick,
+            is RankingAction.OnAnimeClick,
+            -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
         }
     }
 
@@ -118,9 +125,10 @@ class RankingViewModel(
             result
                 .onSuccess { page -> applyLoadedPage(page.items ?: emptyList(), page.cursor, append = !resetCursor) }
                 .onFailure { error ->
+                    val message = error.toDisplayMessage()
                     _state.update {
-                        if (resetCursor) it.copy(isLoading = false, error = error.toString())
-                        else it.copy(isLoadingMore = false, error = error.toString())
+                        if (resetCursor) it.copy(isLoading = false, error = message)
+                        else it.copy(isLoadingMore = false, error = message)
                     }
                 }
         }
@@ -140,9 +148,21 @@ class RankingViewModel(
 
     private fun fetchMetadata() {
         viewModelScope.launch {
+            _state.update { it.copy(isMetadataError = false) }
+
             commonRepository.getMetadata()
                 .onSuccess { metadata -> _state.update { it.copy(metadata = metadata) } }
-                .onFailure { error -> Timber.e("메타데이터 조회 실패: $error") }
+                .onFailure { error ->
+                    Timber.e("메타데이터 조회 실패: $error")
+                    handleMetadataFailure(error)
+                }
+        }
+    }
+
+    private fun handleMetadataFailure(error: DataError.Network) {
+        when (error) {
+            DataError.Network.NO_INTERNET -> globalSnackbarManager.showSnackbar(error.toDisplayMessage())
+            else -> _state.update { it.copy(isMetadataError = true) }
         }
     }
 

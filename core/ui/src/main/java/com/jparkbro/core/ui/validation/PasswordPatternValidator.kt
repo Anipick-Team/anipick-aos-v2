@@ -5,6 +5,7 @@ object PasswordPatternValidator {
     private const val MIN_PASSWORD_LENGTH = 8
     private const val MAX_PASSWORD_LENGTH = 16
 
+    /** 길이/숫자 포함/특수문자 포함 조건을 항목별로 확인 */
     fun isValidPassword(password: String): PasswordValidationState {
         val hasMinLength = password.length >= MIN_PASSWORD_LENGTH
         val hasMaxLength = password.length <= MAX_PASSWORD_LENGTH

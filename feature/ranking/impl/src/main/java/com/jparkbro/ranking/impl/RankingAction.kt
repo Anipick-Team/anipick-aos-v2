@@ -14,6 +14,8 @@ sealed interface RankingAction {
         val genre: Genre?
     ) : RankingAction
     data object OnLoadMore : RankingAction
+    data object OnRetryClick : RankingAction
+    data object OnMetadataRetryClick : RankingAction
     data object OnSearchClick : RankingAction
     data class OnAnimeClick(val animeId: Long) : RankingAction
 }

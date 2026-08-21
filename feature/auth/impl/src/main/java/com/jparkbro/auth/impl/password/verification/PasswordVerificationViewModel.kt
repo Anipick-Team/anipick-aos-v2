@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.auth.AuthRepository
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import com.jparkbro.core.ui.validation.EmailPatternValidator
@@ -140,15 +141,10 @@ class PasswordVerificationViewModel(
                     112 -> _state.update { it.copy(emailError = error.message) }
                     113, 114, 115 -> _state.update { it.copy(codeError = error.message) }
                     122 -> _state.update { it.copy(showSnsLoginAlert = true) }
-                    else -> globalSnackbarManager.showSnackbar(error.message ?: "알 수 없는 오류가 발생했습니다.")
+                    else -> globalSnackbarManager.showSnackbar(error.toDisplayMessage())
                 }
             }
-            DataError.Network.NO_INTERNET -> {
-                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
-            }
-            else -> {
-                globalSnackbarManager.showSnackbar("알 수 없는 오류가 발생했습니다.")
-            }
+            else -> globalSnackbarManager.showSnackbar(error.toDisplayMessage())
         }
     }
 
@@ -177,12 +173,7 @@ class PasswordVerificationViewModel(
             is DataError.Network.Api -> {
                 _state.update { it.copy(codeError = error.message) }
             }
-            DataError.Network.NO_INTERNET -> {
-                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
-            }
-            else -> {
-                globalSnackbarManager.showSnackbar("알 수 없는 오류가 발생했습니다.")
-            }
+            else -> globalSnackbarManager.showSnackbar(error.toDisplayMessage())
         }
     }
 

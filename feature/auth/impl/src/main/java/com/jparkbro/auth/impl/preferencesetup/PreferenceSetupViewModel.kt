@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.anime.AnimeRepository
 import com.jparkbro.core.data.common.CommonRepository
 import com.jparkbro.core.data.review.ReviewRepository
@@ -177,15 +178,7 @@ class PreferenceSetupViewModel(
     }
 
     private fun handleSubmitFailure(error: DataError.Network) {
-        when (error) {
-            DataError.Network.NO_INTERNET -> {
-                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
-            }
-            else -> {
-                val message = (error as? DataError.Network.Api)?.message
-                globalSnackbarManager.showSnackbar(message ?: "알 수 없는 오류가 발생했습니다.")
-            }
-        }
+        globalSnackbarManager.showSnackbar(error.toDisplayMessage())
     }
 
     private fun fetchMetadata() {
@@ -206,7 +199,7 @@ class PreferenceSetupViewModel(
     private fun handleMetadataFailure(error: DataError.Network) {
         when (error) {
             DataError.Network.NO_INTERNET -> {
-                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
+                globalSnackbarManager.showSnackbar(error.toDisplayMessage())
             }
             else -> {
                 _state.update { it.copy(isMetadataError = true) }

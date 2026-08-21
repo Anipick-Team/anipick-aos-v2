@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.auth.impl.component.AuthFormLayout
 import com.jparkbro.auth.impl.password.reset.components.PasswordResetFields
 import com.jparkbro.core.designsystem.component.AniPickButton
-import com.jparkbro.core.ui.ObserveAsEvents
+import com.jparkbro.core.ui.effect.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 

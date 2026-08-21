@@ -20,12 +20,12 @@ import com.jparkbro.auth.impl.preferencesetup.components.PreferenceSetupComplete
 import com.jparkbro.auth.impl.preferencesetup.components.PreferenceSetupHeader
 import com.jparkbro.auth.impl.preferencesetup.components.PreferenceSetupSearchFilterSection
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.core.ui.AniPickAnimeFilterBottomSheet
-import com.jparkbro.core.ui.CollapsibleHeader
-import com.jparkbro.core.ui.LoadMoreEffect
-import com.jparkbro.core.ui.ObserveAsEvents
-import com.jparkbro.core.ui.rememberCollapsibleHeaderState
-import com.jparkbro.core.ui.toAnimeFilterTab
+import com.jparkbro.core.ui.component.AniPickAnimeFilterBottomSheet
+import com.jparkbro.core.ui.component.toAnimeFilterTab
+import com.jparkbro.core.ui.effect.CollapsibleHeader
+import com.jparkbro.core.ui.effect.LoadMoreEffect
+import com.jparkbro.core.ui.effect.ObserveAsEvents
+import com.jparkbro.core.ui.effect.rememberCollapsibleHeaderState
 import org.koin.compose.viewmodel.koinViewModel
 
 private const val LOAD_MORE_THRESHOLD = 3
@@ -111,6 +111,8 @@ private fun PreferenceSetupScreen(
             showYearSeasonTab = true,
             showGenreTab = true,
             showTypeTab = false,
+            isMetadataError = state.isMetadataError,
+            onMetadataRetryClick = { onAction(PreferenceSetupAction.OnMetadataRetryClick) },
             onConfirm = { year, season, genre, type ->
                 onAction(PreferenceSetupAction.OnAnimeFilterConfirm(year, season, genre, type))
             },

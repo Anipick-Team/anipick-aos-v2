@@ -15,13 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jparkbro.core.designsystem.component.AniPickEmptyState
 import com.jparkbro.core.designsystem.component.AniPickLoadMoreIndicator
 import com.jparkbro.core.designsystem.component.AniPickShellTopAppBar
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.metadata.FilterType
-import com.jparkbro.core.ui.AniPickAnimeFilterBottomSheet
-import com.jparkbro.core.ui.LoadMoreEffect
-import com.jparkbro.core.ui.toAnimeFilterTab
+import com.jparkbro.core.ui.component.AniPickAnimeFilterBottomSheet
+import com.jparkbro.core.ui.component.toAnimeFilterTab
+import com.jparkbro.core.ui.effect.LoadMoreEffect
 import com.jparkbro.ranking.impl.components.RankingFilterHeader
 import com.jparkbro.ranking.impl.components.RankingItemCard
 import com.jparkbro.ranking.impl.components.RankingItemCardSkeleton
@@ -89,6 +90,14 @@ private fun RankingScreen(
                 items(RANKING_SKELETON_ITEM_COUNT) {
                     RankingItemCardSkeleton(contentPadding = PaddingValues(20.dp))
                 }
+            } else if (state.animes.isEmpty()) {
+                item {
+                    AniPickEmptyState(
+                        message = state.error ?: "검색조건에 맞는 결과가 없어요.\n다른 조건으로 검색해보세요.",
+                        onRetryClick = state.error?.let { { onAction(RankingAction.OnRetryClick) } },
+                        modifier = Modifier.fillParentMaxSize(),
+                    )
+                }
             } else {
                 items(state.animes, key = { it.animeId ?: it.hashCode() }) { anime ->
                     RankingItemCard(
@@ -119,6 +128,8 @@ private fun RankingScreen(
             showYearSeasonTab = filterType != FilterType.GENRE,
             showGenreTab = filterType == FilterType.GENRE,
             showTypeTab = false,
+            isMetadataError = state.isMetadataError,
+            onMetadataRetryClick = { onAction(RankingAction.OnMetadataRetryClick) },
             onConfirm = { year, season, genre, _ ->
                 onAction(RankingAction.OnAnimeFilterConfirm(year, season, genre))
             },
@@ -134,6 +145,26 @@ private const val RANKING_SKELETON_ITEM_COUNT = 6
 private fun RankingScreenPreview() {
     RankingScreen(
         state = RankingState(),
+        bottomNavigation = {},
+        onAction = {},
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun RankingScreenConnectionErrorPreview() {
+    RankingScreen(
+        state = RankingState(error = "네트워크 연결을 확인해주세요."),
+        bottomNavigation = {},
+        onAction = {},
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun RankingScreenMetadataErrorPreview() {
+    RankingScreen(
+        state = RankingState(isMetadataError = true, activeFilterSheet = FilterType.GENRE),
         bottomNavigation = {},
         onAction = {},
     )

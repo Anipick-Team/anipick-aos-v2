@@ -29,9 +29,9 @@ import com.jparkbro.core.designsystem.icon.RankingUp
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.RankingTrend
-import com.jparkbro.core.ui.AniPickAnimeCoverImage
-import com.jparkbro.core.ui.AniPickCardBackground
-import com.jparkbro.core.ui.CARD_ASPECT_RATIO
+import com.jparkbro.core.ui.component.AniPickAnimeCoverImage
+import com.jparkbro.core.ui.component.AniPickCardBackground
+import com.jparkbro.core.ui.component.CARD_ASPECT_RATIO
 
 @Composable
 internal fun RankingItemCard(

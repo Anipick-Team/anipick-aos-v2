@@ -34,11 +34,12 @@ internal fun PreferenceSetupAnimeList(
         if (state.isSearchError) {
             AniPickEmptyState(
                 message = "네트워크 연결을 확인해주세요.",
+                onRetryClick = { onAction(PreferenceSetupAction.OnSearchClick) },
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
         } else if (!state.isSearchLoading && state.animeList.isEmpty()) {
             AniPickEmptyState(
-                message = "해당하는 작품이 없습니다.\n다른 조건으로 검색해보세요.",
+                message = "검색조건에 맞는 결과가 없어요.\n다른 조건으로 검색해보세요.",
                 modifier = Modifier.padding(horizontal = 20.dp),
             )
         } else {

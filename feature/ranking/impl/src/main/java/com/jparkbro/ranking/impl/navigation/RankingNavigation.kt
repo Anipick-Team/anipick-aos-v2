@@ -19,7 +19,7 @@ fun EntryProviderScope<NavKey>.rankingEntry(
         RankingRoot(
             bottomNavigation = bottomNavigation,
             onNavigateToSearch = { navigator.navigate(SearchNavKey.Main) },
-            onNavigateToAnimeDetail = { animeId -> navigator.navigate(CatalogNavKey.Anime(animeId)) }
+            onNavigateToAnimeDetail = { animeId -> navigator.navigate(CatalogNavKey.Anime(animeId)) },
         )
     }
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.auth.AuthRepository
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import com.jparkbro.core.ui.validation.PasswordPatternValidator
@@ -119,12 +120,7 @@ class PasswordResetViewModel(
             is DataError.Network.Api -> {
                 _state.update { it.copy(error = error.message) }
             }
-            DataError.Network.NO_INTERNET -> {
-                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
-            }
-            else -> {
-                globalSnackbarManager.showSnackbar("알 수 없는 오류가 발생했습니다.")
-            }
+            else -> globalSnackbarManager.showSnackbar(error.toDisplayMessage())
         }
     }
 }

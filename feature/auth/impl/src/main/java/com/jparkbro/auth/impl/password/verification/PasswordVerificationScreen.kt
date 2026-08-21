@@ -11,7 +11,7 @@ import com.jparkbro.auth.impl.component.AuthFormLayout
 import com.jparkbro.auth.impl.password.verification.components.PasswordVerificationFields
 import com.jparkbro.core.designsystem.component.AniPickButton
 import com.jparkbro.core.designsystem.component.AniPickDialog
-import com.jparkbro.core.ui.ObserveAsEvents
+import com.jparkbro.core.ui.effect.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

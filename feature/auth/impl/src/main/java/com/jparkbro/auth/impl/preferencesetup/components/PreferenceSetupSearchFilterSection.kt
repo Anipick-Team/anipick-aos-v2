@@ -11,10 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jparkbro.auth.impl.preferencesetup.PreferenceSetupAction
 import com.jparkbro.auth.impl.preferencesetup.PreferenceSetupState
-import com.jparkbro.core.designsystem.component.AniPickButton
 import com.jparkbro.core.designsystem.component.AniPickFilterChip
 import com.jparkbro.core.designsystem.component.AniPickSearchTextField
-import com.jparkbro.core.designsystem.model.ButtonSize
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.metadata.FilterType
 
@@ -72,23 +70,6 @@ internal fun PreferenceSetupSearchFilterSection(
                 isExpanded = state.activeFilterSheet == FilterType.GENRE,
                 onClick = { onAction(PreferenceSetupAction.OnFilterChipClick(FilterType.GENRE)) }
             )
-        }
-        if (state.isMetadataError) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "필터 정보를 불러오지 못했습니다.",
-                    style = AniPickTheme.typography.caption1,
-                    color = AniPickTheme.colors.textGray,
-                )
-                AniPickButton(
-                    text = "다시 시도",
-                    onClick = { onAction(PreferenceSetupAction.OnMetadataRetryClick) },
-                    size = ButtonSize.S,
-                )
-            }
         }
     }
 }

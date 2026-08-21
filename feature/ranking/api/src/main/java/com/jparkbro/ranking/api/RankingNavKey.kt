@@ -7,5 +7,4 @@ sealed interface RankingNavKey : NavKey {
 
     @Serializable
     data object Ranking : RankingNavKey
-
 }
