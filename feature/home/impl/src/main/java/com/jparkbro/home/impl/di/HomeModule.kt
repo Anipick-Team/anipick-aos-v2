@@ -15,7 +15,6 @@ val homeModule = module {
             animeRepository = get(),
             recommendationRepository = get(),
             userRepository = get(),
-            homeRepository = get(),
         )
     }
 }
