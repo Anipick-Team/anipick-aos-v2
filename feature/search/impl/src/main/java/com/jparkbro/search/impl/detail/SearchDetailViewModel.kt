@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.search.SearchRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,10 +38,12 @@ class SearchDetailViewModel(
             SearchDetailAction.OnSearchClearClick -> _state.value.searchFieldState.clearText()
             is SearchDetailAction.OnTabChanged -> onTabChanged(action.type)
             SearchDetailAction.OnLoadMore -> loadMore()
-            SearchDetailAction.OnBackClick -> Unit
-            is SearchDetailAction.OnAnimeClick -> Unit
-            is SearchDetailAction.OnActorClick -> Unit
-            is SearchDetailAction.OnStudioClick -> Unit
+            SearchDetailAction.OnRetryClick -> search(resetCursor = true)
+            SearchDetailAction.OnBackClick,
+            is SearchDetailAction.OnAnimeClick,
+            is SearchDetailAction.OnActorClick,
+            is SearchDetailAction.OnStudioClick,
+            -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
         }
     }
 
@@ -101,24 +104,25 @@ class SearchDetailViewModel(
 
             searchRepository.getSearchAnimes(query = query, lastId = lastId, size = PAGE_SIZE, page = page)
                 .onSuccess { response ->
+                    val animes = response.animes ?: emptyList()
                     _state.update {
                         it.copy(
-                            animeCount = response.animeCount,
-                            actorCount = response.actorCount,
-                            studioCount = response.studioCount,
+                            animeCount = response.animeCount ?: 0,
+                            actorCount = response.actorCount ?: 0,
+                            studioCount = response.studioCount ?: 0,
                             animeResult = it.animeResult.copy(
-                                animes = if (resetCursor) response.animes else it.animeResult.animes + response.animes,
+                                animes = if (resetCursor) animes else it.animeResult.animes + animes,
                                 cursor = response.cursor,
                                 nextPage = response.nextPage,
                             ),
-                            endReached = response.animes.size < PAGE_SIZE,
+                            endReached = animes.size < PAGE_SIZE,
                             isLoading = false,
                             isLoadingMore = false,
                         )
                     }
                 }
                 .onFailure { error ->
-                    _state.update { it.copy(error = error.toString(), isLoading = false, isLoadingMore = false) }
+                    _state.update { it.copy(error = error.toDisplayMessage(), isLoading = false, isLoadingMore = false) }
                 }
         }
     }
@@ -137,23 +141,24 @@ class SearchDetailViewModel(
 
             searchRepository.getSearchActors(query = query, lastId = lastId, size = PAGE_SIZE)
                 .onSuccess { response ->
+                    val actors = response.actors ?: emptyList()
                     _state.update {
                         it.copy(
-                            animeCount = response.animeCount,
-                            actorCount = response.actorCount,
-                            studioCount = response.studioCount,
+                            animeCount = response.animeCount ?: 0,
+                            actorCount = response.actorCount ?: 0,
+                            studioCount = response.studioCount ?: 0,
                             actorResult = it.actorResult.copy(
-                                actors = if (resetCursor) response.actors else it.actorResult.actors + response.actors,
+                                actors = if (resetCursor) actors else it.actorResult.actors + actors,
                                 cursor = response.cursor,
                             ),
-                            endReached = response.actors.size < PAGE_SIZE,
+                            endReached = actors.size < PAGE_SIZE,
                             isLoading = false,
                             isLoadingMore = false,
                         )
                     }
                 }
                 .onFailure { error ->
-                    _state.update { it.copy(error = error.toString(), isLoading = false, isLoadingMore = false) }
+                    _state.update { it.copy(error = error.toDisplayMessage(), isLoading = false, isLoadingMore = false) }
                 }
         }
     }
@@ -172,23 +177,24 @@ class SearchDetailViewModel(
 
             searchRepository.getSearchStudios(query = query, lastId = lastId, size = PAGE_SIZE)
                 .onSuccess { response ->
+                    val studios = response.studios ?: emptyList()
                     _state.update {
                         it.copy(
-                            animeCount = response.animeCount,
-                            actorCount = response.actorCount,
-                            studioCount = response.studioCount,
+                            animeCount = response.animeCount ?: 0,
+                            actorCount = response.actorCount ?: 0,
+                            studioCount = response.studioCount ?: 0,
                             studioResult = it.studioResult.copy(
-                                studios = if (resetCursor) response.studios else it.studioResult.studios + response.studios,
+                                studios = if (resetCursor) studios else it.studioResult.studios + studios,
                                 cursor = response.cursor,
                             ),
-                            endReached = response.studios.size < PAGE_SIZE,
+                            endReached = studios.size < PAGE_SIZE,
                             isLoading = false,
                             isLoadingMore = false,
                         )
                     }
                 }
                 .onFailure { error ->
-                    _state.update { it.copy(error = error.toString(), isLoading = false, isLoadingMore = false) }
+                    _state.update { it.copy(error = error.toDisplayMessage(), isLoading = false, isLoadingMore = false) }
                 }
         }
     }

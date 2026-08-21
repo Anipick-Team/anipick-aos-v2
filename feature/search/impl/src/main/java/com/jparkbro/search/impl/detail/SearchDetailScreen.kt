@@ -17,16 +17,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jparkbro.core.designsystem.component.AniPickCountLabel
 import com.jparkbro.core.designsystem.component.AniPickSearchTopAppBar
 import com.jparkbro.core.designsystem.component.AniPickSectionDivider
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.core.ui.ObserveAsEvents
-import com.jparkbro.search.impl.components.SearchActorList
+import com.jparkbro.core.ui.effect.ObserveAsEvents
 import com.jparkbro.search.impl.components.SearchAnimeGrid
-import com.jparkbro.search.impl.components.SearchResultCountHeader
-import com.jparkbro.search.impl.components.SearchStudioList
-import com.jparkbro.search.impl.components.SearchTypeTabRow
-import com.jparkbro.search.impl.main.SearchMainEvent
+import com.jparkbro.search.impl.detail.components.SearchActorList
+import com.jparkbro.search.impl.detail.components.SearchStudioList
+import com.jparkbro.search.impl.detail.components.SearchTypeTabRow
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -92,6 +91,8 @@ private fun SearchDetailScreen(
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             AniPickSectionDivider(modifier = Modifier.fillMaxWidth())
+            val emptyMessage = state.error ?: "검색조건에 맞는 결과가 없어요.\n다른 조건으로 검색해보세요."
+            val onRetryClick = state.error?.let { { onAction(SearchDetailAction.OnRetryClick) } }
             when (state.searchType) {
                 SearchType.ANIME -> SearchAnimeGrid(
                     animes = state.animeResult.animes,
@@ -100,9 +101,11 @@ private fun SearchDetailScreen(
                     modifier = Modifier.weight(1f),
                     isLoadingMore = state.isLoadingMore,
                     onLoadMore = { onAction(SearchDetailAction.OnLoadMore) },
+                    emptyMessage = emptyMessage,
+                    onRetryClick = onRetryClick,
                     header = {
                         item(span = { GridItemSpan(maxLineSpan) }) {
-                            SearchResultCountHeader(count = state.animeCount, unit = "개")
+                            AniPickCountLabel(count = state.animeCount, unit = "개")
                         }
                     },
                 )
@@ -114,6 +117,8 @@ private fun SearchDetailScreen(
                     modifier = Modifier.weight(1f),
                     isLoadingMore = state.isLoadingMore,
                     onLoadMore = { onAction(SearchDetailAction.OnLoadMore) },
+                    emptyMessage = emptyMessage,
+                    onRetryClick = onRetryClick,
                 )
                 SearchType.STUDIO -> SearchStudioList(
                     studios = state.studioResult.studios,
@@ -123,6 +128,8 @@ private fun SearchDetailScreen(
                     modifier = Modifier.weight(1f),
                     isLoadingMore = state.isLoadingMore,
                     onLoadMore = { onAction(SearchDetailAction.OnLoadMore) },
+                    emptyMessage = emptyMessage,
+                    onRetryClick = onRetryClick,
                 )
             }
         }

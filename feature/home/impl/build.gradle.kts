@@ -10,4 +10,7 @@ dependencies {
     implementation(projects.feature.home.api)
     implementation(projects.feature.search.api)
     implementation(projects.feature.review.api)
+    implementation(projects.feature.catalog.api)
+    implementation(projects.feature.ranking.api)
+    implementation(projects.feature.explore.api)
 }

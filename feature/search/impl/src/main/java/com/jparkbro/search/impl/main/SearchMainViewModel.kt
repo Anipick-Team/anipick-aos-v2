@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.search.SearchRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,11 +36,13 @@ class SearchMainViewModel(
         when (action) {
             SearchMainAction.OnSearch -> search()
             SearchMainAction.OnSearchClearClick -> _state.value.searchFieldState.clearText()
-            is SearchMainAction.OnRecentSearchClick -> Unit
             is SearchMainAction.OnRecentSearchRemove -> removeRecentSearch(action.query)
             SearchMainAction.OnRecentSearchClearAll -> clearRecentSearches()
-            SearchMainAction.OnBackClick -> Unit
-            is SearchMainAction.OnAnimeClick -> Unit
+            SearchMainAction.OnRetryClick -> loadPopularAnimes()
+            SearchMainAction.OnBackClick,
+            is SearchMainAction.OnRecentSearchClick,
+            is SearchMainAction.OnAnimeClick,
+            -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
         }
     }
 
@@ -77,8 +80,8 @@ class SearchMainViewModel(
             _state.update { it.copy(isLoading = true, error = null) }
 
             searchRepository.getPopularAnimes()
-                .onSuccess { animes -> _state.update { it.copy(animes = animes, isLoading = false) } }
-                .onFailure { error -> _state.update { it.copy(isLoading = false, error = error.toString()) } }
+                .onSuccess { animes -> _state.update { it.copy(animes = animes ?: emptyList(), isLoading = false) } }
+                .onFailure { error -> _state.update { it.copy(isLoading = false, error = error.toDisplayMessage()) } }
         }
     }
 }

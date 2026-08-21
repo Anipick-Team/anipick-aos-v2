@@ -1,4 +1,4 @@
-package com.jparkbro.search.impl.components
+package com.jparkbro.search.impl.detail.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,24 +14,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.jparkbro.core.designsystem.component.AniPickCountLabel
+import com.jparkbro.core.designsystem.component.AniPickEmptyState
 import com.jparkbro.core.designsystem.component.AniPickLoadMoreIndicator
 import com.jparkbro.core.designsystem.component.AniPickShimmerBox
 import com.jparkbro.core.designsystem.icon.ChevronRight
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.studio.Studio
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import com.jparkbro.core.ui.effect.LoadMoreEffect
 
 private const val SEARCH_STUDIO_LIST_SKELETON_ITEM_COUNT = 8
-private const val SEARCH_STUDIO_LIST_LOAD_MORE_THRESHOLD = 3
 
 @Composable
 internal fun SearchStudioList(
@@ -42,25 +37,13 @@ internal fun SearchStudioList(
     modifier: Modifier = Modifier,
     isLoadingMore: Boolean = false,
     onLoadMore: (() -> Unit)? = null,
+    emptyMessage: String? = null,
+    onRetryClick: (() -> Unit)? = null,
 ) {
     val listState = rememberLazyListState()
 
     if (onLoadMore != null) {
-        val shouldLoadMore by remember {
-            derivedStateOf {
-                val layoutInfo = listState.layoutInfo
-                val totalItemsCount = layoutInfo.totalItemsCount
-                val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                totalItemsCount > 0 && lastVisibleItemIndex >= totalItemsCount - SEARCH_STUDIO_LIST_LOAD_MORE_THRESHOLD
-            }
-        }
-
-        LaunchedEffect(listState) {
-            snapshotFlow { shouldLoadMore }
-                .distinctUntilChanged()
-                .filter { it }
-                .collect { onLoadMore() }
-        }
+        LoadMoreEffect(state = listState, onLoadMore = onLoadMore)
     }
 
     LazyColumn(
@@ -71,12 +54,20 @@ internal fun SearchStudioList(
         userScrollEnabled = !isLoading,
     ) {
         item {
-            SearchResultCountHeader(count = totalCount, unit = "개")
+            AniPickCountLabel(count = totalCount, unit = "개")
         }
 
         if (isLoading) {
             items(SEARCH_STUDIO_LIST_SKELETON_ITEM_COUNT) {
                 SearchStudioRowSkeleton()
+            }
+        } else if (studios.isEmpty() && emptyMessage != null) {
+            item {
+                AniPickEmptyState(
+                    message = emptyMessage,
+                    onRetryClick = onRetryClick,
+                    modifier = Modifier.fillParentMaxSize(),
+                )
             }
         } else {
             items(studios, key = { it.studioId }) { studio ->
@@ -102,7 +93,7 @@ private fun SearchStudioRow(studio: Studio, onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = studio.name,
+            text = studio.name ?: "-",
             style = AniPickTheme.typography.body2,
             color = AniPickTheme.colors.black,
         )

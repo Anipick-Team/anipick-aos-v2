@@ -1,4 +1,4 @@
-package com.jparkbro.core.ui
+package com.jparkbro.core.ui.util
 
 import android.content.Context
 import androidx.annotation.StringRes

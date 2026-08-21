@@ -1,4 +1,4 @@
-package com.jparkbro.search.impl.components
+package com.jparkbro.search.impl.detail.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
