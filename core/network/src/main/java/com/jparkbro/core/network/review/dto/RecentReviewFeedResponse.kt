@@ -7,9 +7,9 @@ import kotlinx.serialization.Serializable
 /** HomeDetail "더보기" 화면에서 20개씩 무한스크롤로 불러오는 페이지 단위 응답. */
 @Serializable
 data class RecentReviewFeedResponse(
-    val count: Int,
-    val cursor: CursorResponse,
-    val reviews: List<RecentReviewFeedItemResponse> = emptyList(),
+    val count: Int? = null,
+    val cursor: CursorResponse? = null,
+    val reviews: List<RecentReviewFeedItemResponse>? = null,
 )
 
 @Serializable
@@ -25,8 +25,8 @@ data class RecentReviewFeedItemResponse(
     val profileImageUrl: String? = null,
     val createdAt: String? = null,
     val likeCount: Int? = null,
-    val likedByCurrentUser: Boolean = false,
-    val isMine: Boolean = false,
+    val likedByCurrentUser: Boolean? = null,
+    val isMine: Boolean? = null,
 )
 
 fun RecentReviewFeedItemResponse.toReview(): Review = Review(

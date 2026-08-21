@@ -1,4 +1,4 @@
-package com.jparkbro.core.ui
+package com.jparkbro.core.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.component.AniPickShimmerBox
 
-/** [AniPickAnimeCard]와 같은 비율([ANIME_CARD_ASPECT_RATIO])로 로딩 중 자리를 채운다. */
+/** [AniPickAnimeCard]와 같은 비율([CARD_ASPECT_RATIO])로 로딩 중 자리를 채운다. */
 @Composable
 fun AniPickAnimeCardSkeleton(
     modifier: Modifier = Modifier,
@@ -25,7 +25,7 @@ fun AniPickAnimeCardSkeleton(
         AniPickShimmerBox(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(ANIME_CARD_ASPECT_RATIO),
+                .aspectRatio(CARD_ASPECT_RATIO),
         )
         AniPickShimmerBox(
             modifier = Modifier

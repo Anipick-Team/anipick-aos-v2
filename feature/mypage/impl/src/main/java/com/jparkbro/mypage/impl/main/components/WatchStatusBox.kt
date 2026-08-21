@@ -6,19 +6,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.core.ui.DevicePreviews
+import com.jparkbro.core.ui.util.DevicePreviews
 
 @Composable
 internal fun RowScope.WatchStatusBox(
@@ -51,8 +48,8 @@ internal fun RowScope.WatchStatusBox(
 
 @DevicePreviews
 @Composable
-fun WatchStatusBoxPreview() {
-    Row() {
+private fun WatchStatusBoxPreview() {
+    Row {
         WatchStatusBox(
             title = "볼 애니",
             count = 2,

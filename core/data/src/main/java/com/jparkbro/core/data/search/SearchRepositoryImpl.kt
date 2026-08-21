@@ -21,9 +21,9 @@ class SearchRepositoryImpl(
 
     override val recentSearches = recentSearchDataStore.recentSearches
 
-    override suspend fun getPopularAnimes(): Result<List<Anime>, DataError.Network> {
+    override suspend fun getPopularAnimes(): Result<List<Anime>?, DataError.Network> {
         return searchNetworkDataSource.getSearchInit()
-            .map { response -> response.popularAnimes.map { it.toAnime() } }
+            .map { response -> response.popularAnimes?.map { it.toAnime() } }
     }
 
     override suspend fun getSearchAnimes(
@@ -39,7 +39,7 @@ class SearchRepositoryImpl(
             page = page,
         ).map { response ->
             SearchAnimeResult(
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
                 animeCount = response.count,
                 actorCount = response.personCount,
                 studioCount = response.studioCount,
@@ -60,7 +60,7 @@ class SearchRepositoryImpl(
             size = size,
         ).map { response ->
             SearchActorResult(
-                actors = response.persons.map { it.toActor() },
+                actors = response.persons?.map { it.toActor() },
                 actorCount = response.count,
                 animeCount = response.animeCount,
                 studioCount = response.studioCount,
@@ -80,7 +80,7 @@ class SearchRepositoryImpl(
             size = size,
         ).map { response ->
             SearchStudioResult(
-                studios = response.studios.map { it.toStudio() },
+                studios = response.studios?.map { it.toStudio() },
                 studioCount = response.count,
                 animeCount = response.animeCount,
                 actorCount = response.personCount,

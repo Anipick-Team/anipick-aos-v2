@@ -23,7 +23,7 @@ class RecommendationRepositoryImpl(
             RecommendationResult(
                 referenceAnimeTitle = response.referenceAnimeTitle,
                 cursor = response.cursor.toCursor(),
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
             )
         }
     }
@@ -39,7 +39,7 @@ class RecommendationRepositoryImpl(
             RecommendationResult(
                 referenceAnimeTitle = response.referenceAnimeTitle,
                 cursor = response.cursor.toCursor(),
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
             )
         }
     }
@@ -53,7 +53,7 @@ class RecommendationRepositoryImpl(
             RecommendationResult(
                 referenceAnimeTitle = response.referenceAnimeTitle,
                 cursor = response.cursor.toCursor(),
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
             )
         }
     }

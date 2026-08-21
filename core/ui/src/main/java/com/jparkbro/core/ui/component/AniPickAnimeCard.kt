@@ -1,4 +1,4 @@
-package com.jparkbro.core.ui
+package com.jparkbro.core.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -26,14 +28,36 @@ import coil3.compose.AsyncImage
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.anime.Anime
+import com.jparkbro.core.ui.util.orNullIfDefaultCover
 
-/**
- * 128x182, 114x162 두 사이즈로 쓰이는데 둘 다 가로/세로 비율이 사실상 같다(0.7033 / 0.7037).
- * 그래서 가로/세로를 각각 고정값으로 넣지 않고, 이 비율 하나만 [Modifier.aspectRatio]로 주고
- * 세로는 [cardWidth]에 맞춰 자동으로 계산되게 한다 — cardWidth=114.dp를 넣으면 세로가 약
- * 162.1dp로 나와서 114x162 쪽과도 그대로 맞는다.
- */
-internal const val ANIME_CARD_ASPECT_RATIO = 128f / 182f
+/** 애니/캐릭터 카드 커버 이미지 가로세로 비율 */
+const val CARD_ASPECT_RATIO = 128f / 182f
+
+/** 애니/캐릭터 카드 커버 이미지 - 없거나 플레이스홀더면 [background]에 맞는 기본 이미지로 대체 */
+@Composable
+fun AniPickAnimeCoverImage(
+    coverImageUrl: String?,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    background: AniPickCardBackground = AniPickCardBackground.WHITE,
+    shape: Shape = RoundedCornerShape(8.dp),
+) {
+    val defaultImageRes = when (background) {
+        AniPickCardBackground.WHITE -> R.drawable.card_default_img_white
+        AniPickCardBackground.GRAY -> R.drawable.card_default_img_gray
+    }
+
+    AsyncImage(
+        model = coverImageUrl.orNullIfDefaultCover(),
+        contentDescription = contentDescription,
+        error = painterResource(defaultImageRes),
+        placeholder = painterResource(defaultImageRes),
+        modifier = modifier
+            .aspectRatio(CARD_ASPECT_RATIO)
+            .clip(shape),
+        contentScale = ContentScale.Crop,
+    )
+}
 
 @Composable
 fun AniPickAnimeCard(
@@ -41,6 +65,7 @@ fun AniPickAnimeCard(
     modifier: Modifier = Modifier,
     cardWidth: Dp = 128.dp,
     maxLine: Int = 2,
+    background: AniPickCardBackground = AniPickCardBackground.WHITE,
     onClick: () -> Unit = {}
 ) {
     Column(
@@ -52,14 +77,11 @@ fun AniPickAnimeCard(
         Box(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            AsyncImage(
-                model = anime.coverImageUrl.ifBlank { null } ?: R.drawable.anime_card_default_img,
-                contentDescription = anime.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(ANIME_CARD_ASPECT_RATIO)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop,
+            AniPickAnimeCoverImage(
+                coverImageUrl = anime.coverImageUrl,
+                contentDescription = "${anime.title ?: "-"} 커버 이미지",
+                modifier = Modifier.fillMaxWidth(),
+                background = background,
             )
             anime.rank?.let { rank ->
                 Box(
@@ -79,7 +101,7 @@ fun AniPickAnimeCard(
             }
         }
         Text(
-            text = anime.title,
+            text = anime.title ?: "-",
             style = AniPickTheme.typography.body2,
             color = AniPickTheme.colors.black,
             minLines = maxLine,
@@ -121,6 +143,19 @@ private fun AniPickAnimeCardPreview() {
             AniPickAnimeCard(
                 anime = Anime(title = "진격의 거인", coverImageUrl = ""),
                 cardWidth = 114.dp,
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(AniPickTheme.colors.backgroundGray)
+                .padding(12.dp),
+        ) {
+            AniPickAnimeCard(
+                anime = Anime(title = "귀멸의 칼날: 무한열차편", coverImageUrl = ""),
+                cardWidth = 114.dp,
+                background = AniPickCardBackground.GRAY,
             )
         }
     }

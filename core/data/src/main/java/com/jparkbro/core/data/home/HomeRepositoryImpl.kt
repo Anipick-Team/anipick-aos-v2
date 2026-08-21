@@ -31,7 +31,7 @@ class HomeRepositoryImpl(
         return homeNetworkDataSource.getRecommendationAnimes().map { response ->
             RecommendationResult(
                 referenceAnimeTitle = response.referenceAnimeTitle,
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
             )
         }
     }
@@ -40,7 +40,7 @@ class HomeRepositoryImpl(
         return homeNetworkDataSource.getRecentAnimeRecommendations(animeId).map { response ->
             RecommendationResult(
                 referenceAnimeTitle = response.referenceAnimeTitle,
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
             )
         }
     }

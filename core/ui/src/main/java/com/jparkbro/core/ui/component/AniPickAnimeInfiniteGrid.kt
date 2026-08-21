@@ -1,4 +1,4 @@
-package com.jparkbro.core.ui
+package com.jparkbro.core.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -14,19 +14,15 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.model.anime.Anime
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import com.jparkbro.core.ui.effect.LoadMoreEffect
 
+/** 카드 너비에 맞춰 열 개수가 자동 조정되는 무한스크롤 애니메 그리드 */
 @Composable
 fun AniPickAnimeInfiniteGrid(
     animes: List<Anime>,
@@ -43,6 +39,7 @@ fun AniPickAnimeInfiniteGrid(
     contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
     loadMoreThreshold: Int? = null,
     onLoadMore: () -> Unit = {},
+    cardBackground: AniPickCardBackground = AniPickCardBackground.GRAY,
     header: (LazyGridScope.() -> Unit)? = null,
     footer: (LazyGridScope.() -> Unit)? = null,
 ) {
@@ -58,21 +55,7 @@ fun AniPickAnimeInfiniteGrid(
     ) { layout ->
         val threshold = loadMoreThreshold ?: (layout.columns + 1)
 
-        val shouldLoadMore by remember(threshold) {
-            derivedStateOf {
-                val layoutInfo = state.layoutInfo
-                val totalItemsCount = layoutInfo.totalItemsCount
-                val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                totalItemsCount > 0 && lastVisibleItemIndex >= totalItemsCount - threshold
-            }
-        }
-
-        LaunchedEffect(state, threshold) {
-            snapshotFlow { shouldLoadMore }
-                .distinctUntilChanged()
-                .filter { it }
-                .collect { onLoadMore() }
-        }
+        LoadMoreEffect(state = state, threshold = threshold, onLoadMore = onLoadMore)
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(layout.columns),
@@ -88,6 +71,7 @@ fun AniPickAnimeInfiniteGrid(
                 AniPickAnimeCard(
                     anime = anime,
                     cardWidth = layout.cardWidth,
+                    background = cardBackground,
                     onClick = { onAnimeClick(anime) },
                 )
             }
@@ -97,6 +81,7 @@ fun AniPickAnimeInfiniteGrid(
     }
 }
 
+/** [AniPickAnimeInfiniteGrid]와 같은 레이아웃으로 로딩 중 자리를 채운다. */
 @Composable
 fun AniPickAnimeGridSkeleton(
     modifier: Modifier = Modifier,
@@ -175,6 +160,7 @@ data class AnimeGridLayout(
     val horizontalSpacing: Dp,
 )
 
+/** 가용 너비에 맞는 열 개수/카드 너비/간격 계산 */
 fun calculateAnimeGridLayout(
     availableWidth: Dp,
     minCardWidth: Dp = 114.dp,

@@ -3,16 +3,13 @@ package com.jparkbro.core.network.anime.dto
 import com.jparkbro.core.model.anime.Anime
 import kotlinx.serialization.Serializable
 
-/**
- * 홈 화면 "추천"([RecommendationAnimesResponse.animes])과 "방영예정"([UpcomingSeasonAnimesResponse.animes])
- * 목록의 애니메 카드 하나. [TrendingAnimeResponse]와 달리 순위 정보(rank)는 없다.
- */
+/** 홈 추천/방영예정 목록의 애니 카드 (순위 정보 없음) */
 @Serializable
 data class AnimeSummaryResponse(
     val animeId: Long? = null,
-    val title: String,
-    val coverImageUrl: String,
-    val isAdult: Boolean = false,
+    val title: String? = null,
+    val coverImageUrl: String? = null,
+    val isAdult: Boolean? = null,
 )
 
 fun AnimeSummaryResponse.toAnime(): Anime = Anime(

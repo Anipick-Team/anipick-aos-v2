@@ -13,7 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.auth.impl.component.AuthFormLayout
 import com.jparkbro.auth.impl.email.signup.components.EmailSignupAgreementSection
 import com.jparkbro.auth.impl.email.signup.components.EmailSignupFields
-import com.jparkbro.core.ui.ObserveAsEvents
+import com.jparkbro.core.ui.effect.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

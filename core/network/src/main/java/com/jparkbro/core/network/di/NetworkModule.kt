@@ -11,6 +11,8 @@ import com.jparkbro.core.network.character.CharacterNetworkDataSource
 import com.jparkbro.core.network.character.KtorCharacterNetworkDataSource
 import com.jparkbro.core.network.common.CommonNetworkDataSource
 import com.jparkbro.core.network.common.KtorCommonNetworkDataSource
+import com.jparkbro.core.network.community.CommunityNetworkDataSource
+import com.jparkbro.core.network.community.KtorCommunityNetworkDataSource
 import com.jparkbro.core.network.explore.ExploreNetworkDataSource
 import com.jparkbro.core.network.explore.KtorExploreNetworkDataSource
 import com.jparkbro.core.network.home.HomeNetworkDataSource
@@ -19,6 +21,8 @@ import com.jparkbro.core.network.image.ImageNetworkDataSource
 import com.jparkbro.core.network.image.KtorImageNetworkDataSource
 import com.jparkbro.core.network.ranking.KtorRankingNetworkDataSource
 import com.jparkbro.core.network.ranking.RankingNetworkDataSource
+import com.jparkbro.core.network.rating.KtorRatingNetworkDataSource
+import com.jparkbro.core.network.rating.RatingNetworkDataSource
 import com.jparkbro.core.network.recommendation.KtorRecommendationNetworkDataSource
 import com.jparkbro.core.network.recommendation.RecommendationNetworkDataSource
 import com.jparkbro.core.network.review.KtorReviewNetworkDataSource
@@ -35,7 +39,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-/** core:network 모듈이 제공하는 Koin DI 모듈. HttpClient는 앱 전역에서 하나만 재사용하도록 싱글턴으로 등록. */
+/** core:network 모듈의 Koin DI 모듈 */
 val networkModule = module {
     single { HttpClientFactory(get()).build() }
 
@@ -44,10 +48,12 @@ val networkModule = module {
     singleOf(::KtorAuthNetworkDataSource).bind<AuthNetworkDataSource>()
     singleOf(::KtorCharacterNetworkDataSource).bind<CharacterNetworkDataSource>()
     singleOf(::KtorCommonNetworkDataSource).bind<CommonNetworkDataSource>()
+    singleOf(::KtorCommunityNetworkDataSource).bind<CommunityNetworkDataSource>()
     singleOf(::KtorExploreNetworkDataSource).bind<ExploreNetworkDataSource>()
     singleOf(::KtorHomeNetworkDataSource).bind<HomeNetworkDataSource>()
     singleOf(::KtorImageNetworkDataSource).bind<ImageNetworkDataSource>()
     singleOf(::KtorRankingNetworkDataSource).bind<RankingNetworkDataSource>()
+    singleOf(::KtorRatingNetworkDataSource).bind<RatingNetworkDataSource>()
     singleOf(::KtorRecommendationNetworkDataSource).bind<RecommendationNetworkDataSource>()
     singleOf(::KtorReviewNetworkDataSource).bind<ReviewNetworkDataSource>()
     singleOf(::KtorSearchNetworkDataSource).bind<SearchNetworkDataSource>()

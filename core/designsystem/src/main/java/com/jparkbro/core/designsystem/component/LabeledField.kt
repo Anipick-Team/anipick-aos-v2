@@ -15,14 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.model.TextFieldType
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/**
- * 라벨(+선택적 트레일링 아이콘) 아래에 텍스트필드(+선택적 트레일링 컴포넌트)를 배치하는 공용 폼 필드 레이아웃.
- * 텍스트필드 자체는 슬롯으로 받아서, 어떤 [AniPickBaseTextField] 설정을 쓰든 자유롭게 넣을 수 있다.
- *
- * @param labelTrailingContent 라벨 옆(오른쪽)에 붙는 선택적 콘텐츠. 없으면 null.
- * @param fieldTrailingContent 텍스트필드 옆(오른쪽)에 붙는 선택적 콘텐츠(예: "중복확인"/"인증번호 받기" 버튼). 없으면 null.
- * @param textField 실제 텍스트필드. 보통 [AniPickBaseTextField]를 넣는다.
- */
+/** 라벨 아래에 텍스트필드를 배치하는 공용 폼 필드 레이아웃 - 텍스트필드는 슬롯으로 받는다. */
 @Composable
 fun AniPickLabeledField(
     label: String,

@@ -6,17 +6,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchStudiosResponse(
-    val count: Int = 0,
-    val animeCount: Int = 0,
-    val personCount: Int = 0,
-    val cursor: CursorResponse = CursorResponse(),
-    val studios: List<SearchStudioResponse> = emptyList(),
+    val count: Int? = null,
+    val animeCount: Int? = null,
+    val personCount: Int? = null,
+    val cursor: CursorResponse? = null,
+    val studios: List<SearchStudioResponse>? = null,
 )
 
 @Serializable
 data class SearchStudioResponse(
     val studioId: Long,
-    val name: String,
+    val name: String? = null,
 )
 
 fun SearchStudioResponse.toStudio(): Studio = Studio(

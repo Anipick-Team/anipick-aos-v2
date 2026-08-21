@@ -1,4 +1,4 @@
-package com.jparkbro.core.ui
+package com.jparkbro.core.ui.effect
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
+/** [flow]를 라이프사이클 STARTED 구간에서만 수집해 [onEvent] 호출 */
 @Composable
 fun <T> ObserveAsEvents(
     flow: Flow<T>,

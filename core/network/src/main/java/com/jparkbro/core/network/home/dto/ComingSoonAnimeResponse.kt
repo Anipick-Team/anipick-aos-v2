@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ComingSoonAnimeResponse(
     val animeId: Long? = null,
-    val title: String,
-    val coverImageUrl: String,
+    val title: String? = null,
+    val coverImageUrl: String? = null,
     val releaseDate: String? = null,
-    val isAdult: Boolean = false,
+    val isAdult: Boolean? = null,
 )
 
 fun ComingSoonAnimeResponse.toAnime(): Anime = Anime(

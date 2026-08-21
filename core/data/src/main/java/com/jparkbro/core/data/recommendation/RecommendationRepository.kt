@@ -4,14 +4,15 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.model.anime.RecommendationResult
 
+/** 추천 관련 데이터를 읽어오는 인터페이스 */
 interface RecommendationRepository {
-    /** Home Detail "오늘의 추천작" 전체 목록. [lastId]/[lastValue]가 null이면 첫 페이지. */
+    /** 홈 상세 "오늘의 추천작" 전체 목록 - `GET /recommendation/animes`. */
     suspend fun getRecommendationAnimesDetail(
         lastId: Long? = null,
         lastValue: String? = null,
         size: Long = 18,
     ): Result<RecommendationResult, DataError.Network>
-    /** Home Detail "최근 본 애니 기반 추천" 전체 목록. [lastId]/[lastValue]가 null이면 첫 페이지. */
+    /** 홈 상세 "최근 본 애니 기반 추천" 전체 목록 - `GET /recommendation/animes/{animeId}/recent`. */
     suspend fun getRecentAnimeRecommendationsDetail(
         animeId: Long,
         lastId: Long? = null,
@@ -19,7 +20,7 @@ interface RecommendationRepository {
         size: Long = 18,
     ): Result<RecommendationResult, DataError.Network>
 
-    /** 애니 상세 "이 작품과 비슷한 작품" 추천 전체보기. [lastId]가 null이면 첫 페이지. */
+    /** 애니 상세 "이 작품과 비슷한 작품" 전체보기 - `GET /animes/{animeId}/recommendations`. */
     suspend fun getAnimeRecommendations(
         animeId: Long,
         lastId: Long? = null,

@@ -28,10 +28,7 @@ import com.jparkbro.core.designsystem.icon.StarOutlined
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import kotlin.math.roundToInt
 
-/**
- * 드래그(혹은 탭)한 x좌표를 별 5개 폭에 매핑해 0.5 단위로 스냅한 평점을 [onRatingChange]로 알려준다.
- * 손을 뗄 때까지 기다리지 않고 처음 닿는 순간(down) 바로 값을 반영해서, 탭 한 번으로도 평점을 매길 수 있다.
- */
+/** 드래그/탭한 x좌표를 0.5 단위로 스냅한 평점으로 매핑해 [onRatingChange]로 알려준다. */
 @Composable
 fun AniPickStarRatingBar(
     rating: Float,

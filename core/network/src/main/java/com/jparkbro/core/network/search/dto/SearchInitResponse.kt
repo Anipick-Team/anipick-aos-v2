@@ -5,15 +5,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchInitResponse(
-    val popularAnimes: List<SearchAnimeResponse> = emptyList(),
+    val popularAnimes: List<SearchAnimeResponse>? = null,
 )
 
 @Serializable
 data class SearchAnimeResponse(
     val animeId: Long,
-    val title: String,
-    val coverImageUrl: String,
-    val isAdult: Boolean = false,
+    val title: String? = null,
+    val coverImageUrl: String? = null,
+    val isAdult: Boolean? = null,
 )
 
 fun SearchAnimeResponse.toAnime(): Anime = Anime(

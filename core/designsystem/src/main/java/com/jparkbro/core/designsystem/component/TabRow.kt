@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SecondaryTabRow
@@ -31,9 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.model.AniPickTabItem
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/**
- * Tab Content 사이즈만큼만 넓이를 차지하는 TabRow.
- */
+/** Tab Content 사이즈만큼만 넓이를 차지하는 TabRow. */
 @Composable
 fun AniPickPrimaryTabRow(
     tabs: List<AniPickTabItem>,
@@ -99,15 +96,14 @@ fun AniPickPrimaryTabRow(
     }
 }
 
-/**
- * 화면(부모) 전체 넓이를 차지하며 탭이 균등하게 나눠지는 TabRow.
- */
+/** 화면(부모) 전체 넓이를 차지하며 탭이 균등하게 나눠지는 TabRow. */
 @Composable
 fun AniPickSecondaryTabRow(
     tabs: List<AniPickTabItem>,
     selectedIndex: Int,
     onTabClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    isTabEnabled: (Int) -> Boolean = { true },
 ) {
     SecondaryTabRow(
         selectedTabIndex = selectedIndex,
@@ -116,6 +112,7 @@ fun AniPickSecondaryTabRow(
         indicator = {
             TabRowDefaults.SecondaryIndicator(
                 modifier = Modifier.tabIndicatorOffset(selectedIndex, matchContentSize = false),
+                height = 2.dp,
                 color = AniPickTheme.colors.black,
             )
         },
@@ -126,11 +123,12 @@ fun AniPickSecondaryTabRow(
             Tab(
                 selected = isSelected,
                 onClick = { onTabClick(index) },
+                enabled = isTabEnabled(index),
                 text = {
                     Text(
                         text = if (tab.subLabel != null) "${tab.label} ${tab.subLabel}" else tab.label,
                         style = AniPickTheme.typography.caption1,
-                        color = AniPickTheme.colors.black
+                        color = if(isSelected) AniPickTheme.colors.black else AniPickTheme.colors.textGray,
                     )
                 },
                 selectedContentColor = AniPickTheme.colors.black,

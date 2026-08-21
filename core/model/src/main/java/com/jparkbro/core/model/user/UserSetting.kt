@@ -1,7 +1,7 @@
 package com.jparkbro.core.model.user
 
 data class UserSetting(
-    val nickname: String,
-    val email: String,
-    val provider: AuthProvider,
+    val nickname: String? = null,
+    val email: String? = null,
+    val provider: AuthProvider? = null,
 )

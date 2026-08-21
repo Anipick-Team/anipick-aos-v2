@@ -5,10 +5,10 @@ import com.jparkbro.core.model.pagination.Cursor
 
 /** `GET /search/animes` 검색 결과. */
 data class SearchAnimeResult(
-    val animes: List<Anime>,
-    val animeCount: Int,
-    val actorCount: Int,
-    val studioCount: Int,
-    val cursor: Cursor?,
-    val nextPage: Long?,
+    val animes: List<Anime>? = null,
+    val animeCount: Int? = null,
+    val actorCount: Int? = null,
+    val studioCount: Int? = null,
+    val cursor: Cursor? = null,
+    val nextPage: Long? = null,
 )

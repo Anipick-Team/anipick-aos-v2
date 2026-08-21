@@ -1,4 +1,4 @@
-package com.jparkbro.core.ui
+package com.jparkbro.core.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,14 +18,8 @@ import com.jparkbro.core.designsystem.component.AniPickSelectChip
 import com.jparkbro.core.designsystem.component.AniPickSwitch
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/**
- * 옵션 리스트에서 고르는 칩 형태의 선택 리스트. 여러 줄로 자동 줄바꿈되고, 넘치면 세로로 스크롤된다.
- * 호출부에서 장르/타입 같은 metadata(id, label) 항목을 그대로 넘길 걸 감안해서 core:ui에 둔다.
- *
- * [allowMultiSelect]가 false면(기본값) 칩 하나만 고를 수 있고 "모든 조건 일치" 토글은 숨겨진다.
- * true면 여러 칩을 동시에 고를 수 있고, 그 선택들을 AND로 매칭할지([matchAll])를 정하는 토글이
- * FlowRow 위쪽에 나타난다.
- */
+/** 옵션 선택 칩 리스트
+ *  [allowMultiSelect] false: 단일 선택, true: 다중 선택 + "모든 조건 일치"([matchAll]) 토글 표시 */
 @Composable
 fun <T> AniPickChipSelectList(
     options: List<T>,

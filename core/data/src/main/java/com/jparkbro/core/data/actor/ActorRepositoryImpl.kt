@@ -22,4 +22,12 @@ class ActorRepositoryImpl(
             size = size,
         ).map { it.toActorDetailPage() }
     }
+
+    override suspend fun likeActor(personId: Long): Result<Unit, DataError.Network> {
+        return actorNetworkDataSource.likeActor(personId)
+    }
+
+    override suspend fun unlikeActor(personId: Long): Result<Unit, DataError.Network> {
+        return actorNetworkDataSource.unlikeActor(personId)
+    }
 }

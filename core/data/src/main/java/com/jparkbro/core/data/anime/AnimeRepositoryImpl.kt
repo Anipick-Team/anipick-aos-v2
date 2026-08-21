@@ -99,4 +99,12 @@ class AnimeRepositoryImpl(
             responses.map { it.toAnime() }
         }
     }
+
+    override suspend fun likeAnime(animeId: Long): Result<Unit, DataError.Network> {
+        return animeNetworkDataSource.likeAnime(animeId)
+    }
+
+    override suspend fun unlikeAnime(animeId: Long): Result<Unit, DataError.Network> {
+        return animeNetworkDataSource.unlikeAnime(animeId)
+    }
 }

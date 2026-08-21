@@ -30,13 +30,7 @@ import com.jparkbro.core.designsystem.theme.AniPickTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
-/**
- * 앱 상단에 떠서 일정 시간 후 자동으로 사라지는 커스텀 스낵바.
- * [message]가 바뀔 때마다 등장 → [duration]만큼 유지 → 퇴장 애니메이션을 재생하고, 끝나면 [onDismiss]를 호출한다.
- *
- * @param onDismiss 등장~퇴장 애니메이션이 모두 끝난 뒤 호출된다. 호출부는 보통 여기서 큐의 다음 메시지로 넘어간다.
- * @param duration 스낵바가 화면에 유지되는 시간(ms). 퇴장 애니메이션 시간은 별도(300ms 고정).
- */
+/** 앱 상단에 떠서 일정 시간 후 자동으로 사라지는 커스텀 스낵바 - 퇴장 애니메이션이 끝나면 [onDismiss] 호출. */
 @Composable
 fun AniPickSnackbar(
     message: String,

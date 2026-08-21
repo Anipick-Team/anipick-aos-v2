@@ -19,19 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.icon.HeartFilled
 import com.jparkbro.core.designsystem.icon.HeartOutlined
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/**
- * 좋아요를 누를 때만 살짝 커졌다 돌아오는 바운스 효과
- */
+/** 좋아요를 누를 때만 살짝 커졌다 돌아오는 바운스 효과가 있는 하트 아이콘. */
 @Composable
 fun AniPickAnimatedHeartIcon(
     isLiked: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    size: Dp = 24.dp,
     enabled: Boolean = true,
     likedTint: Color = AniPickTheme.colors.point,
     unlikedTint: Color = LocalContentColor.current,
@@ -61,6 +61,7 @@ fun AniPickAnimatedHeartIcon(
         tint = if (isLiked) likedTint else unlikedTint,
         contentDescription = contentDescription,
         modifier = modifier
+            .size(size)
             .scale(scale.value)
             .clickable(enabled = enabled, onClick = onClick),
     )
@@ -72,6 +73,5 @@ private fun AniPickAnimatedHeartIconPreview() {
     AniPickAnimatedHeartIcon(
         isLiked = true,
         onClick = {},
-        modifier = Modifier.size(24.dp),
     )
 }

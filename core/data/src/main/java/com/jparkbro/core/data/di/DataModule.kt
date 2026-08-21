@@ -10,12 +10,16 @@ import com.jparkbro.core.data.character.CharacterRepository
 import com.jparkbro.core.data.character.CharacterRepositoryImpl
 import com.jparkbro.core.data.common.CommonRepository
 import com.jparkbro.core.data.common.CommonRepositoryImpl
+import com.jparkbro.core.data.community.CommunityRepository
+import com.jparkbro.core.data.community.CommunityRepositoryImpl
 import com.jparkbro.core.data.explore.ExploreRepository
 import com.jparkbro.core.data.explore.ExploreRepositoryImpl
 import com.jparkbro.core.data.home.HomeRepository
 import com.jparkbro.core.data.home.HomeRepositoryImpl
 import com.jparkbro.core.data.ranking.RankingRepository
 import com.jparkbro.core.data.ranking.RankingRepositoryImpl
+import com.jparkbro.core.data.rating.RatingRepository
+import com.jparkbro.core.data.rating.RatingRepositoryImpl
 import com.jparkbro.core.data.recommendation.RecommendationRepository
 import com.jparkbro.core.data.recommendation.RecommendationRepositoryImpl
 import com.jparkbro.core.data.review.ReviewRepository
@@ -38,9 +42,11 @@ val dataModule = module {
     singleOf(::AuthRepositoryImpl) { bind<AuthRepository>() }
     singleOf(::CharacterRepositoryImpl) { bind<CharacterRepository>() }
     singleOf(::CommonRepositoryImpl) { bind<CommonRepository>() }
+    singleOf(::CommunityRepositoryImpl) { bind<CommunityRepository>() }
     singleOf(::ExploreRepositoryImpl) { bind<ExploreRepository>() }
     singleOf(::HomeRepositoryImpl) { bind<HomeRepository>() }
     singleOf(::RankingRepositoryImpl) { bind<RankingRepository>() }
+    singleOf(::RatingRepositoryImpl) { bind<RatingRepository>() }
     singleOf(::RecommendationRepositoryImpl) { bind<RecommendationRepository>() }
     singleOf(::ReviewRepositoryImpl) { bind<ReviewRepository>() }
     singleOf(::SearchRepositoryImpl) { bind<SearchRepository>() }

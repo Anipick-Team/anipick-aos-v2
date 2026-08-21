@@ -9,6 +9,7 @@ import com.jparkbro.core.datastore.RecentSearchDataStore
 import com.jparkbro.core.datastore.UserDataStore
 import com.jparkbro.core.network.auth.AuthNetworkDataSource
 import com.jparkbro.core.network.auth.dto.AuthProvider
+import com.jparkbro.core.network.auth.dto.OAuthLoginResponse
 
 class AuthRepositoryImpl(
     private val authNetworkDataSource: AuthNetworkDataSource,
@@ -27,18 +28,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun loginWithEmail(email: String, password: String): Result<Boolean, DataError.Network> {
-        return authNetworkDataSource.loginWithEmail(email, password)
-            .map { response ->
-                tokenProvider.saveTokens(
-                    accessToken = response.token.accessToken,
-                    refreshToken = response.token.refreshToken,
-                )
-                userDataStore.saveUser(
-                    userId = response.userId,
-                    nickname = response.nickname,
-                )
-                response.reviewCompletedYn
-            }
+        return authNetworkDataSource.loginWithEmail(email, password).map { it.saveSession() }
     }
 
     override suspend fun signUpWithEmail(
@@ -46,18 +36,7 @@ class AuthRepositoryImpl(
         password: String,
         termsAndConditions: Boolean,
     ): Result<Boolean, DataError.Network> {
-        return authNetworkDataSource.signUpWithEmail(email, password, termsAndConditions)
-            .map { response ->
-                tokenProvider.saveTokens(
-                    accessToken = response.token.accessToken,
-                    refreshToken = response.token.refreshToken,
-                )
-                userDataStore.saveUser(
-                    userId = response.userId,
-                    nickname = response.nickname,
-                )
-                response.reviewCompletedYn
-            }
+        return authNetworkDataSource.signUpWithEmail(email, password, termsAndConditions).map { it.saveSession() }
     }
 
     override suspend fun sendEmailVerification(email: String): Result<Unit, DataError.Network> {
@@ -84,17 +63,12 @@ class AuthRepositoryImpl(
     }
 
     private suspend fun login(provider: AuthProvider, code: String): Result<Boolean, DataError.Network> {
-        return authNetworkDataSource.loginWithOAuth(provider, code)
-            .map { response ->
-                tokenProvider.saveTokens(
-                    accessToken = response.token.accessToken,
-                    refreshToken = response.token.refreshToken,
-                )
-                userDataStore.saveUser(
-                    userId = response.userId,
-                    nickname = response.nickname,
-                )
-                response.reviewCompletedYn
-            }
+        return authNetworkDataSource.loginWithOAuth(provider, code).map { it.saveSession() }
+    }
+
+    private suspend fun OAuthLoginResponse.saveSession(): Boolean {
+        tokenProvider.saveTokens(accessToken = token.accessToken, refreshToken = token.refreshToken)
+        userDataStore.saveUser(userId = userId, nickname = nickname)
+        return reviewCompletedYn
     }
 }

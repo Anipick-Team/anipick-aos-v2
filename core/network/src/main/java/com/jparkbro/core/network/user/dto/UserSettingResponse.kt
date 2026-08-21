@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserSettingResponse(
-    val nickname: String,
-    val email: String,
-    val provider: String,
+    val nickname: String? = null,
+    val email: String? = null,
+    val provider: String? = null,
 )
 
 fun UserSettingResponse.toUserSetting(): UserSetting = UserSetting(
     nickname = nickname,
     email = email,
-    provider = AuthProvider.valueOf(provider),
+    provider = provider?.let { runCatching { AuthProvider.valueOf(it) }.getOrNull() },
 )

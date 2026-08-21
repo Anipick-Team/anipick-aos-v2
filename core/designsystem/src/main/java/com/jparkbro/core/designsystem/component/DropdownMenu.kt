@@ -27,10 +27,7 @@ import com.jparkbro.core.designsystem.icon.MoreVertical
 import com.jparkbro.core.designsystem.model.AniPickDropdownMenuItem
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/**
- * 트리거 + 드롭다운 메뉴를 묶은 공통 컴포넌트.
- * 항목을 누르면 메뉴가 닫히고 해당 onClick이 실행된다.
- */
+/** 트리거 + 드롭다운 메뉴를 묶은 공통 컴포넌트. */
 @Composable
 fun AniPickDropdownMenuIcon(
     items: List<AniPickDropdownMenuItem>,

@@ -27,7 +27,7 @@ class StudioRepositoryImpl(
             StudioAnimePage(
                 studioName = response.studioName,
                 cursor = response.cursor.toCursor(),
-                animes = response.animes.map { it.toAnime() },
+                animes = response.animes?.map { it.toAnime() },
             )
         }
     }

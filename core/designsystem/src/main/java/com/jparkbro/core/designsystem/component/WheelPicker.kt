@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -37,6 +36,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.mapNotNull
 import kotlin.math.abs
 
+/** 스크롤해서 가운데 항목을 고르는 휠 피커 - 스크롤이 멈추면 중앙에 가장 가까운 항목으로 선택값이 스냅된다. */
 @Composable
 fun <T> AniPickWheelPicker(
     items: List<T>,

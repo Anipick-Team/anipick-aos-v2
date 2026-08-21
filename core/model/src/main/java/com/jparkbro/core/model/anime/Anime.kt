@@ -2,14 +2,14 @@ package com.jparkbro.core.model.anime
 
 data class Anime(
     val animeId: Long? = null,
-    val title: String,
-    val coverImageUrl: String,
-    val genres: List<String> = emptyList(),
+    val title: String? = null,
+    val coverImageUrl: String? = null,
+    val genres: List<String>? = null,
     val rank: Int? = null,
     val subtitle: String? = null,
     val clickLog: String? = null,
     val impressionLog: String? = null,
-    val isAdult: Boolean = false,
+    val isAdult: Boolean? = null,
     val change: String? = null,
     val trend: RankingTrend? = null,
     val popularity: Int? = null,
@@ -17,5 +17,5 @@ data class Anime(
     val userAnimeStatusId: Int? = null,
     val myRating: Float? = null,
     val animeLikeId: Int? = null,
-    val seasonYear: String = "",
+    val seasonYear: String? = null,
 )

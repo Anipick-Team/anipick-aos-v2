@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.auth.AuthRepository
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import com.jparkbro.core.ui.validation.EmailPatternValidator
@@ -115,10 +116,10 @@ class EmailLoginViewModel(
                 }
             }
             DataError.Network.NO_INTERNET -> {
-                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
+                globalSnackbarManager.showSnackbar(error.toDisplayMessage())
             }
             else -> {
-                _state.update { it.copy(loginError = "알 수 없는 오류가 발생했습니다.") }
+                _state.update { it.copy(loginError = error.toDisplayMessage()) }
             }
         }
     }

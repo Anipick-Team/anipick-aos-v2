@@ -6,10 +6,12 @@ import com.jparkbro.core.network.recommendation.dto.RecommendationAnimesDetailRe
 import com.jparkbro.core.network.recommendation.dto.RecommendationAnimesRequest
 
 interface RecommendationNetworkDataSource {
+    /** 홈 상세 - 추천 애니 전체보기 - `GET /recommendation/animes`. */
     suspend fun getRecommendationAnimesDetail(
         request: RecommendationAnimesRequest,
     ): Result<RecommendationAnimesDetailResponse, DataError.Network>
 
+    /** 홈 상세 - 최근 본 애니 기반 추천 전체보기 - `GET /recommendation/animes/{animeId}/recent`. */
     suspend fun getRecentAnimeRecommendationsDetail(
         animeId: Long,
         request: RecommendationAnimesRequest,

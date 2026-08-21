@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,6 +50,7 @@ import com.jparkbro.core.designsystem.transformation.PasswordOutputTransformatio
 import com.jparkbro.core.designsystem.transformation.PhoneNumberOutputTransformation
 import com.jparkbro.core.designsystem.transformation.TrimInputTransformation
 
+/** 기본 텍스트필드 - [TextFieldType]에 따라 입력/출력 트랜스포메이션과 키보드 타입이 자동 설정된다. */
 @Composable
 fun AniPickBaseTextField(
     state: TextFieldState,
@@ -64,7 +66,9 @@ fun AniPickBaseTextField(
     actions: @Composable (() -> Unit)? = null,
     showPassword: Boolean = false,
     maxLength: Int? = null,
-    height: Dp = 46.dp
+    height: Dp = 46.dp,
+    verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
 ) {
     val isNumericType = type == TextFieldType.PHONE || type == TextFieldType.NUMBER || type == TextFieldType.DATE
 
@@ -108,13 +112,13 @@ fun AniPickBaseTextField(
                     .fillMaxWidth()
                     .height(height)
                     .background(AniPickTheme.colors.lightGray, RoundedCornerShape(8.dp))
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .padding(contentPadding),
+                verticalAlignment = verticalAlignment,
             ) {
                 Box(
                     modifier = Modifier
                         .weight(1f),
-                    contentAlignment = Alignment.CenterStart
+                    contentAlignment = if (verticalAlignment == Alignment.Top) Alignment.TopStart else Alignment.CenterStart
                 ) {
                     if (state.text.isEmpty()) {
                         Text(

@@ -5,6 +5,7 @@ import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.network.explore.dto.ExploreAnimesResponse
 
 interface ExploreNetworkDataSource {
+    /** 탐색 화면 애니 목록 - `GET /explore/animes`. */
     suspend fun getExploreAnimes(
         year: Int? = null,
         season: Int? = null,

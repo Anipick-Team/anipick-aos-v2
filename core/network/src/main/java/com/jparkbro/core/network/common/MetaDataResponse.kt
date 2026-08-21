@@ -7,21 +7,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MetaDataResponse(
-    val seasonYear: List<Int> = emptyList(),
-    val season: List<MetadataItemResponse> = emptyList(),
-    val genres: List<MetadataItemResponse> = emptyList(),
-    val type: List<String> = emptyList(),
+    val seasonYear: List<Int>? = null,
+    val season: List<MetadataItemResponse>? = null,
+    val genres: List<MetadataItemResponse>? = null,
+    val type: List<String>? = null,
 )
 
 @Serializable
 data class MetadataItemResponse(
     val id: Int,
-    val name: String,
+    val name: String? = null,
 )
 
 fun MetaDataResponse.toMetadata(): Metadata = Metadata(
     seasonYears = seasonYear,
-    seasons = season.map { Season(id = it.id, name = it.name) },
-    genres = genres.map { Genre(id = it.id, name = it.name) },
+    seasons = season?.map { Season(id = it.id, name = it.name) },
+    genres = genres?.map { Genre(id = it.id, name = it.name) },
     types = type,
 )

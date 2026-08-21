@@ -27,7 +27,7 @@ class RankingRepositoryImpl(
         ).map { response ->
             CursorPage(
                 cursor = response.cursor.toCursor(),
-                items = response.animes.map { it.toAnime() },
+                items = response.animes?.map { it.toAnime() },
             )
         }
     }
@@ -50,7 +50,7 @@ class RankingRepositoryImpl(
         ).map { response ->
             CursorPage(
                 cursor = response.cursor.toCursor(),
-                items = response.animes.map { it.toAnime() },
+                items = response.animes?.map { it.toAnime() },
             )
         }
     }
@@ -69,7 +69,7 @@ class RankingRepositoryImpl(
         ).map { response ->
             CursorPage(
                 cursor = response.cursor.toCursor(),
-                items = response.animes.map { it.toAnime() },
+                items = response.animes?.map { it.toAnime() },
             )
         }
     }

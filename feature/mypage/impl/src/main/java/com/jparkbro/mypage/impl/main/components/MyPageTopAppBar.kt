@@ -31,7 +31,7 @@ import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.icon.Edit
 import com.jparkbro.core.designsystem.icon.Setting
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.core.ui.rememberPhotoPickerWithPermission
+import com.jparkbro.core.ui.effect.rememberPhotoPickerWithPermission
 
 @Composable
 internal fun MyPageTopAppBar(

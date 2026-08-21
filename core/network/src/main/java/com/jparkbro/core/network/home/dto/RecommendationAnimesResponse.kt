@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RecommendationAnimesResponse(
     val referenceAnimeTitle: String? = null,
-    val animes: List<AnimeSummaryResponse> = emptyList(),
+    val animes: List<AnimeSummaryResponse>? = null,
 )

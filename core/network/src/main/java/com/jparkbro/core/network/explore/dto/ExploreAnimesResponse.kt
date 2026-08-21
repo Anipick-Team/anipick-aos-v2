@@ -4,23 +4,20 @@ import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.network.common.CursorResponse
 import kotlinx.serialization.Serializable
 
-/**
- * `GET /explore/animes` 응답. sort가 "popularity"면 cursor에 [CursorResponse.lastValue]가 없고,
- * "rating"이면 있다 - 둘 다 [CursorResponse]가 optional이라 그대로 처리된다.
- */
+/** 탐색 화면 애니 목록 응답 */
 @Serializable
 data class ExploreAnimesResponse(
-    val count: Int,
-    val cursor: CursorResponse = CursorResponse(),
-    val animes: List<ExploreAnimeResponse> = emptyList(),
+    val count: Int? = null,
+    val cursor: CursorResponse? = null,
+    val animes: List<ExploreAnimeResponse>? = null,
 )
 
 @Serializable
 data class ExploreAnimeResponse(
     val animeId: Long,
-    val title: String,
-    val coverImageUrl: String,
-    val isAdult: Boolean = false,
+    val title: String? = null,
+    val coverImageUrl: String? = null,
+    val isAdult: Boolean? = null,
 )
 
 fun ExploreAnimeResponse.toAnime(): Anime = Anime(

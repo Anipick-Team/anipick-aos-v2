@@ -36,7 +36,6 @@ internal fun EmptyItems(
             text = contentText,
             style = AniPickTheme.typography.body2,
             color = AniPickTheme.colors.black,
-            modifier = Modifier
         )
     }
 }

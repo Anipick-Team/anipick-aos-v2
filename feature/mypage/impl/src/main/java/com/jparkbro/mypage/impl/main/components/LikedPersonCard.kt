@@ -21,6 +21,7 @@ import coil3.compose.AsyncImage
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.actor.Actor
+import com.jparkbro.core.ui.util.orNullIfDefaultCover
 
 private val LIKED_PERSON_CARD_WIDTH = 80.dp
 
@@ -38,7 +39,7 @@ internal fun LikedPersonCard(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         AsyncImage(
-            model = actor.profileImage.ifBlank { null },
+            model = actor.profileImage.orNullIfDefaultCover(),
             contentDescription = actor.name,
             error = painterResource(R.drawable.profile_default_img),
             placeholder = painterResource(R.drawable.profile_default_img),
@@ -48,7 +49,7 @@ internal fun LikedPersonCard(
             contentScale = ContentScale.Crop,
         )
         Text(
-            text = actor.name,
+            text = actor.name ?: "-",
             style = AniPickTheme.typography.caption1,
             color = AniPickTheme.colors.black,
             maxLines = 1,

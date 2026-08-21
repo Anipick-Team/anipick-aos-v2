@@ -1,4 +1,4 @@
-package com.jparkbro.core.ui
+package com.jparkbro.core.ui.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -20,11 +20,7 @@ import com.jparkbro.core.designsystem.theme.AniPickTheme
 internal val WHEEL_ITEM_WIDTH = 88.dp
 internal val WHEEL_ITEM_HEIGHT = 36.dp
 
-/**
- * [AniPickWheelPicker]에 선택 영역을 primary 색 테두리 박스로, 선택된 아이템 텍스트를 h3/primary로
- * 꾸민 커스텀 스타일. 이 바텀시트(년도/분기 등)에서만 쓰는 스타일이라 core:designsystem이 아니라
- * core:ui에 둔다.
- */
+/** 선택 영역을 primary 테두리 박스로 꾸민 [AniPickWheelPicker] 커스텀 스타일 */
 @Composable
 fun <T> AniPickStyledWheelPicker(
     items: List<T>,

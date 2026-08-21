@@ -4,6 +4,7 @@ import android.app.Application
 import com.jparkbro.anipick.di.appModule
 import com.jparkbro.auth.impl.di.authModule
 import com.jparkbro.catalog.impl.di.catalogModule
+import com.jparkbro.community.impl.di.communityModule
 import com.jparkbro.core.data.di.dataModule
 import com.jparkbro.core.datastore.di.datastoreModule
 import com.jparkbro.core.network.di.networkModule
@@ -12,6 +13,7 @@ import com.jparkbro.explore.impl.di.exploreModule
 import com.jparkbro.home.impl.di.homeModule
 import com.jparkbro.mypage.impl.di.myPageModule
 import com.jparkbro.ranking.impl.di.rankingModule
+import com.jparkbro.review.impl.di.reviewModule
 import com.jparkbro.search.impl.di.searchModule
 import com.jparkbro.splash.impl.di.splashModule
 import com.kakao.sdk.common.KakaoSdk
@@ -49,6 +51,8 @@ class AniPickApplication: Application() {
                 myPageModule,
                 searchModule,
                 catalogModule,
+                communityModule,
+                reviewModule,
             )
         }
     }

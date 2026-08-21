@@ -7,22 +7,22 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RankingAnimesResponse(
-    val cursor: CursorResponse = CursorResponse(),
-    val animes: List<RankingAnimeResponse> = emptyList(),
+    val cursor: CursorResponse? = null,
+    val animes: List<RankingAnimeResponse>? = null,
 )
 
 @Serializable
 data class RankingAnimeResponse(
     val animeId: Long,
-    val title: String,
-    val coverImageUrl: String,
+    val title: String? = null,
+    val coverImageUrl: String? = null,
     val rank: Int? = null,
     val change: String? = null,
     val trend: String? = null,
-    val genres: List<String> = emptyList(),
+    val genres: List<String>? = null,
     val popularity: Int? = null,
     val trending: Int? = null,
-    val isAdult: Boolean = false,
+    val isAdult: Boolean? = null,
 )
 
 fun RankingAnimeResponse.toAnime(): Anime = Anime(

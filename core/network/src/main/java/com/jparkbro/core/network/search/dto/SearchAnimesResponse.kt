@@ -6,22 +6,22 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchAnimesResponse(
-    val count: Int = 0,
+    val count: Int? = null,
     val nextPage: Long? = null,
-    val personCount: Int = 0,
-    val studioCount: Int = 0,
-    val cursor: CursorResponse = CursorResponse(),
-    val animes: List<SearchResultAnimeResponse> = emptyList(),
+    val personCount: Int? = null,
+    val studioCount: Int? = null,
+    val cursor: CursorResponse? = null,
+    val animes: List<SearchResultAnimeResponse>? = null,
 )
 
 @Serializable
 data class SearchResultAnimeResponse(
     val animeId: Long,
-    val title: String,
-    val coverImageUrl: String,
+    val title: String? = null,
+    val coverImageUrl: String? = null,
     val clickLog: String? = null,
     val impressionLog: String? = null,
-    val isAdult: Boolean = false,
+    val isAdult: Boolean? = null,
 )
 
 fun SearchResultAnimeResponse.toAnime(): Anime = Anime(

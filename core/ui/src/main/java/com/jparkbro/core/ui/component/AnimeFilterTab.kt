@@ -1,4 +1,4 @@
-package com.jparkbro.core.ui
+package com.jparkbro.core.ui.component
 
 import com.jparkbro.core.model.metadata.FilterType
 

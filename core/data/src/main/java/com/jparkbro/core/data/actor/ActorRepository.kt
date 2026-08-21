@@ -12,4 +12,10 @@ interface ActorRepository {
         lastId: Long? = null,
         size: Int = 18,
     ): Result<ActorDetailPage, DataError.Network>
+
+    /** 배우 찜하기 - `POST /persons/{personId}/like`. */
+    suspend fun likeActor(personId: Long): Result<Unit, DataError.Network>
+
+    /** 배우 찜 취소 - `DELETE /persons/{personId}/like`. */
+    suspend fun unlikeActor(personId: Long): Result<Unit, DataError.Network>
 }

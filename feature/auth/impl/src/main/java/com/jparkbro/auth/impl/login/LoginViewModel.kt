@@ -14,6 +14,7 @@ import com.jparkbro.auth.impl.BuildConfig
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.auth.AuthRepository
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import com.kakao.sdk.auth.model.OAuthToken
@@ -114,15 +115,7 @@ class LoginViewModel(
     }
 
     private fun handleLoginFailure(error: DataError.Network) {
-        when (error) {
-            DataError.Network.NO_INTERNET -> {
-                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
-            }
-            else -> {
-                val message = (error as? DataError.Network.Api)?.message
-                globalSnackbarManager.showSnackbar(message ?: "알 수 없는 오류가 발생했습니다.")
-            }
-        }
+        globalSnackbarManager.showSnackbar(error.toDisplayMessage())
     }
 
     private suspend fun requestGoogleIdToken(activity: Activity): String? {

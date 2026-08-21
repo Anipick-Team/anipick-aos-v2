@@ -27,7 +27,7 @@ import com.jparkbro.core.designsystem.component.AniPickBrandHeader
 import com.jparkbro.core.designsystem.component.AniPickBrandHeaderKey
 import com.jparkbro.core.designsystem.extension.context.requireActivity
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.core.ui.ObserveAsEvents
+import com.jparkbro.core.ui.effect.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalSharedTransitionApi::class)

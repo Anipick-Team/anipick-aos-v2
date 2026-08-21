@@ -4,15 +4,15 @@ import com.jparkbro.core.model.actor.Actor
 import com.jparkbro.core.model.anime.Anime
 
 data class MyPageProfile(
-    val nickname: String,
+    val nickname: String? = null,
     val profileImageUrl: String? = null,
-    val watchCounts: WatchCounts = WatchCounts(),
-    val likedAnimes: List<Anime> = emptyList(),
-    val likedPersons: List<Actor> = emptyList(),
+    val watchCounts: WatchCounts? = null,
+    val likedAnimes: List<Anime>? = null,
+    val likedPersons: List<Actor>? = null,
 )
 
 data class WatchCounts(
-    val watchList: Int = 0,
-    val watching: Int = 0,
-    val finished: Int = 0,
+    val watchList: Int? = null,
+    val watching: Int? = null,
+    val finished: Int? = null,
 )

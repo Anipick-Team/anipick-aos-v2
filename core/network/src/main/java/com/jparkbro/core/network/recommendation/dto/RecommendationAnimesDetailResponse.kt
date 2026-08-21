@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RecommendationAnimesDetailResponse(
     val referenceAnimeTitle: String? = null,
-    val cursor: CursorResponse = CursorResponse(),
-    val animes: List<AnimeSummaryResponse> = emptyList(),
+    val cursor: CursorResponse? = null,
+    val animes: List<AnimeSummaryResponse>? = null,
 )

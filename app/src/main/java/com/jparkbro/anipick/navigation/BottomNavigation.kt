@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.core.ui.UiText
+import com.jparkbro.core.ui.util.UiText
 import com.jparkbro.home.api.HomeNavKey
 
 @Composable

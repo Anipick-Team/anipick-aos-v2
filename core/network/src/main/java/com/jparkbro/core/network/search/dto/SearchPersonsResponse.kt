@@ -6,18 +6,18 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchPersonsResponse(
-    val count: Int = 0,
-    val animeCount: Int = 0,
-    val studioCount: Int = 0,
-    val cursor: CursorResponse = CursorResponse(),
-    val persons: List<SearchPersonResponse> = emptyList(),
+    val count: Int? = null,
+    val animeCount: Int? = null,
+    val studioCount: Int? = null,
+    val cursor: CursorResponse? = null,
+    val persons: List<SearchPersonResponse>? = null,
 )
 
 @Serializable
 data class SearchPersonResponse(
     val personId: Long,
-    val name: String,
-    val profileImage: String,
+    val name: String? = null,
+    val profileImage: String? = null,
 )
 
 fun SearchPersonResponse.toActor(): Actor = Actor(

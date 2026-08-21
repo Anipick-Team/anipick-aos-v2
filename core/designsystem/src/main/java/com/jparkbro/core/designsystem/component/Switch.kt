@@ -1,7 +1,6 @@
 package com.jparkbro.core.designsystem.component
 
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -23,10 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/**
- * Material3 [androidx.compose.material3.Switch]는 트랙/썸 크기가 내부적으로 고정돼 있어서
- * modifier로 32x16 같은 작은 사이즈로 줄일 수 없다(그냥 잘리거나 어긋난다). 그래서 직접 그린 스위치.
- */
+/** 작은 사이즈로 그릴 수 있게 직접 구현한 스위치. */
 @Composable
 fun AniPickSwitch(
     checked: Boolean,

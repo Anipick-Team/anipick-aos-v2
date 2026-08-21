@@ -31,10 +31,7 @@ fun Modifier.topEdgeShadow(
     )
 }
 
-/**
- * 자신의 아래쪽에 그림자를 그린다. 상단 고정 바(앱바 등)가 콘텐츠 위에 떠 있는 느낌을 줄 때 사용.
- * 피그마 스펙(X 0 / Y 2 / Blur 12 / Spread 0 / #000000 20%) 기준 — [offsetY]가 Y, [height]가 Blur에 대응한다.
- */
+/** 자신의 아래쪽에 그림자를 그린다. 상단 고정 바(앱바 등)가 콘텐츠 위에 떠 있는 느낌을 줄 때 사용. */
 fun Modifier.bottomEdgeShadow(
     height: Dp = 12.dp,
     offsetY: Dp = 2.dp,
@@ -53,17 +50,7 @@ fun Modifier.bottomEdgeShadow(
     )
 }
 
-/**
- * 피그마 스타일(blur/x/y/색상 독립 지정) 드롭섀도우. 카드/스낵바처럼 사각형 배경 뒤에 은은하게 퍼지는
- * 그림자가 필요할 때 사용. [topEdgeShadow]/[bottomEdgeShadow]와 달리 선형 그라데이션이 아니라
- * 실제 블러 처리된 그림자를 그린다.
- *
- * @param blurRadius 그림자가 퍼지는 정도(블러 반경)
- * @param offsetY 그림자의 세로 방향 오프셋
- * @param offsetX 그림자의 가로 방향 오프셋
- * @param color 그림자 색상(투명도 포함) — 기본값은 검정 20%
- * @param cornerRadius 대상의 모서리 반경. 배경의 [RoundedCornerShape]와 값을 맞춰야 자연스럽다.
- */
+/** 피그마 스타일 드롭섀도우 - [topEdgeShadow]/[bottomEdgeShadow]와 달리 실제 블러 처리된 그림자를 그린다. */
 fun Modifier.dropShadow(
     blurRadius: Dp = 12.dp,
     offsetY: Dp = 4.dp,

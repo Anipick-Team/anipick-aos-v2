@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.user.UserRepository
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import com.jparkbro.core.ui.validation.EmailPatternValidator
@@ -175,12 +176,7 @@ class SettingDetailViewModel(
 
         when (error) {
             is DataError.Network.Api -> applyFieldError(error)
-            DataError.Network.NO_INTERNET -> {
-                globalSnackbarManager.showSnackbar("네트워크 연결을 확인해주세요.")
-            }
-            else -> {
-                globalSnackbarManager.showSnackbar("알 수 없는 오류가 발생했습니다.")
-            }
+            else -> globalSnackbarManager.showSnackbar(error.toDisplayMessage())
         }
     }
 

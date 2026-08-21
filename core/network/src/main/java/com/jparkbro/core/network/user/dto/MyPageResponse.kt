@@ -8,47 +8,45 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MyPageResponse(
-    val nickname: String,
+    val nickname: String? = null,
     val profileImageUrl: String? = null,
-    val watchCounts: WatchCountsResponse = WatchCountsResponse(),
-    val likedAnimes: List<LikedAnimeResponse> = emptyList(),
-    val likedPersons: List<LikedPersonResponse> = emptyList(),
+    val watchCounts: WatchCountsResponse? = null,
+    val likedAnimes: List<LikedAnimeResponse>? = null,
+    val likedPersons: List<LikedPersonResponse>? = null,
 )
 
 @Serializable
 data class WatchCountsResponse(
-    val watchList: Int = 0,
-    val watching: Int = 0,
-    val finished: Int = 0,
+    val watchList: Int? = null,
+    val watching: Int? = null,
+    val finished: Int? = null,
 )
 
 @Serializable
 data class LikedAnimeResponse(
     val animeId: Long? = null,
     val animeLikeId: Int? = null,
-    val title: String,
-    val coverImageUrl: String,
-    val isAdult: Boolean = false,
+    val title: String? = null,
+    val coverImageUrl: String? = null,
+    val isAdult: Boolean? = null,
 )
 
 @Serializable
 data class LikedPersonResponse(
     val personId: Long,
     val userLikedVoiceActorId: Int? = null,
-    val name: String,
-    val profileImageUrl: String,
+    val name: String? = null,
+    val profileImageUrl: String? = null,
 )
 
 fun MyPageResponse.toMyPageProfile(): MyPageProfile = MyPageProfile(
     nickname = nickname,
     profileImageUrl = profileImageUrl,
-    watchCounts = WatchCounts(
-        watchList = watchCounts.watchList,
-        watching = watchCounts.watching,
-        finished = watchCounts.finished,
-    ),
-    likedAnimes = likedAnimes.map { it.toAnime() },
-    likedPersons = likedPersons.map { it.toActor() },
+    watchCounts = watchCounts?.let {
+        WatchCounts(watchList = it.watchList, watching = it.watching, finished = it.finished)
+    },
+    likedAnimes = likedAnimes?.map { it.toAnime() },
+    likedPersons = likedPersons?.map { it.toActor() },
 )
 
 fun LikedAnimeResponse.toAnime(): Anime = Anime(

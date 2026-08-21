@@ -19,22 +19,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.jparkbro.core.designsystem.model.ButtonSize
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/**
- * 확인/취소 버튼 구성이 가능한 공용 다이얼로그.
- * [dismissText]가 null이면 확인 버튼 하나만 있는 Alert 형태, 값이 있으면 확인+취소 버튼이 있는 Confirm 형태로 쓴다.
- *
- * @param title 다이얼로그 상단 제목
- * @param message 본문 설명 텍스트
- * @param onDismissRequest 다이얼로그 바깥 영역 탭 또는 시스템 뒤로가기로 닫힐 때 호출된다
- * @param confirmText 확인(주 액션) 버튼에 표시할 텍스트
- * @param onConfirm 확인 버튼 클릭 시 실행할 동작
- * @param modifier 다이얼로그 콘텐츠에 적용할 [Modifier]
- * @param dismissText 취소(보조 액션) 버튼 텍스트. null이면 취소 버튼을 그리지 않아 Alert 형태가 된다
- * @param onDismiss 취소 버튼 클릭 시 실행할 동작. [dismissText]가 null이면 쓰이지 않는다
- */
+/** 확인/취소 버튼 구성이 가능한 공용 다이얼로그
+ *  [dismissText] null: 확인 버튼만 있는 Alert, 있음: 확인+취소 버튼이 있는 Confirm */
 @Composable
 fun AniPickDialog(
     title: String,
@@ -61,10 +49,7 @@ fun AniPickDialog(
     }
 }
 
-/**
- * [Dialog]는 별도의 시스템 윈도우로 떠서 Compose Preview에 내용이 렌더링되지 않는다.
- * 그래서 실제 콘텐츠(카드+버튼)를 이 컴포저블로 분리해서, Preview에서는 [Dialog] 없이 이 함수를 직접 호출한다.
- */
+/** [Dialog]는 Preview에 렌더링되지 않아 실제 콘텐츠를 분리한 것 - Preview에서는 이 함수를 직접 호출한다. */
 @Composable
 private fun AniPickDialogContent(
     title: String,
