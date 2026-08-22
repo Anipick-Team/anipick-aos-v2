@@ -1,4 +1,4 @@
-package com.jparkbro.core.ui
+package com.jparkbro.core.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,12 +30,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.component.AniPickButton
+import com.jparkbro.core.designsystem.component.AniPickEmptyState
 import com.jparkbro.core.designsystem.icon.Close
 import com.jparkbro.core.designsystem.model.ButtonSize
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.metadata.Genre
 import com.jparkbro.core.model.metadata.Season
 
+/** 년도/분기·장르·타입 탭으로 구성된 애니 필터 바텀시트 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AniPickAnimeFilterBottomSheet(
@@ -47,7 +49,7 @@ fun AniPickAnimeFilterBottomSheet(
     initialSeason: Season?,
     initialGenre: Genre?,
     initialType: String?,
-    onConfirm: (year: Int?, season: Season?, genre: Genre?, type: String?) -> Unit,
+    onConfirm: (year: Int?, season: Season?, genre: Genre?, type: String?, genres: List<Genre>, genreMatchType: String?) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     initialTab: AnimeFilterTab = AnimeFilterTab.YEAR_SEASON,
@@ -55,7 +57,12 @@ fun AniPickAnimeFilterBottomSheet(
     showGenreTab: Boolean = true,
     showTypeTab: Boolean = true,
     sheetHeight: Dp = 360.dp,
-    sheetBackgroundColor: Color = AniPickTheme.colors.white
+    sheetBackgroundColor: Color = AniPickTheme.colors.white,
+    isMetadataError: Boolean = false,
+    onMetadataRetryClick: (() -> Unit)? = null,
+    allowMultipleGenres: Boolean = false,
+    initialGenres: List<Genre> = emptyList(),
+    initialGenreMatchType: String? = null,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -82,6 +89,11 @@ fun AniPickAnimeFilterBottomSheet(
             showTypeTab = showTypeTab,
             sheetHeight = sheetHeight,
             sheetBackgroundColor = sheetBackgroundColor,
+            isMetadataError = isMetadataError,
+            onMetadataRetryClick = onMetadataRetryClick,
+            allowMultipleGenres = allowMultipleGenres,
+            initialGenres = initialGenres,
+            initialGenreMatchType = initialGenreMatchType,
             onConfirm = onConfirm,
             onDismissRequest = onDismissRequest,
         )
@@ -104,7 +116,12 @@ private fun AniPickAnimeFilterBottomSheetContent(
     showTypeTab: Boolean,
     sheetHeight: Dp,
     sheetBackgroundColor: Color,
-    onConfirm: (year: Int?, season: Season?, genre: Genre?, type: String?) -> Unit,
+    isMetadataError: Boolean,
+    onMetadataRetryClick: (() -> Unit)?,
+    allowMultipleGenres: Boolean,
+    initialGenres: List<Genre>,
+    initialGenreMatchType: String?,
+    onConfirm: (year: Int?, season: Season?, genre: Genre?, type: String?, genres: List<Genre>, genreMatchType: String?) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val availableTabs = remember(showYearSeasonTab, showGenreTab, showTypeTab) {
@@ -120,6 +137,8 @@ private fun AniPickAnimeFilterBottomSheetContent(
     var draftYear by remember { mutableStateOf(initialYear) }
     var draftSeason by remember { mutableStateOf(initialSeason) }
     var draftGenre by remember { mutableStateOf(initialGenre) }
+    var draftGenres by remember { mutableStateOf(initialGenres) }
+    var draftGenreMatchAll by remember { mutableStateOf(initialGenreMatchType == "AND") }
     var draftType by remember { mutableStateOf(initialType) }
     var resetTrigger by remember { mutableStateOf(0) }
 
@@ -132,7 +151,7 @@ private fun AniPickAnimeFilterBottomSheetContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 20.dp)
                 .height(56.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -176,7 +195,13 @@ private fun AniPickAnimeFilterBottomSheetContent(
                 .fillMaxWidth()
                 .weight(1f),
         ) {
-            when (selectedTab) {
+            if (isMetadataError) {
+                AniPickEmptyState(
+                    message = "필터 정보를 불러오지 못했습니다.",
+                    onRetryClick = onMetadataRetryClick,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else when (selectedTab) {
                 AnimeFilterTab.YEAR_SEASON -> YearSeasonTabContent(
                     years = years,
                     seasons = seasons,
@@ -188,15 +213,30 @@ private fun AniPickAnimeFilterBottomSheetContent(
                     resetTrigger = resetTrigger,
                 )
 
-                AnimeFilterTab.GENRE -> AniPickChipSelectList(
-                    options = genres,
-                    selectedOptions = listOfNotNull(draftGenre),
-                    optionLabel = { it.name },
-                    onSelectionChange = { draftGenre = it.firstOrNull() },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 20.dp, vertical = 24.dp),
-                )
+                AnimeFilterTab.GENRE -> if (allowMultipleGenres) {
+                    AniPickChipSelectList(
+                        options = genres,
+                        selectedOptions = draftGenres,
+                        optionLabel = { it.name ?: "-" },
+                        onSelectionChange = { draftGenres = it },
+                        allowMultiSelect = true,
+                        matchAll = draftGenreMatchAll,
+                        onMatchAllChange = { draftGenreMatchAll = it },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp, vertical = 16.dp),
+                    )
+                } else {
+                    AniPickChipSelectList(
+                        options = genres,
+                        selectedOptions = listOfNotNull(draftGenre),
+                        optionLabel = { it.name ?: "-" },
+                        onSelectionChange = { draftGenre = it.firstOrNull() },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp, vertical = 16.dp),
+                    )
+                }
 
                 AnimeFilterTab.TYPE -> AniPickChipSelectList(
                     options = types,
@@ -205,37 +245,46 @@ private fun AniPickAnimeFilterBottomSheetContent(
                     onSelectionChange = { draftType = it.firstOrNull() },
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 20.dp, vertical = 24.dp),
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
                 )
             }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
-        ) {
-            AniPickButton(
-                text = "초기화",
-                onClick = {
-                    draftYear = null
-                    draftSeason = null
-                    draftGenre = null
-                    draftType = null
-                    resetTrigger++
-                },
-                size = ButtonSize.S,
-                backgroundColor = AniPickTheme.colors.gray,
-                contentColor = AniPickTheme.colors.textGray,
-            )
-            AniPickButton(
-                text = "확인",
-                onClick = {
-                    val confirmedSeason = if (draftYear == null) null else draftSeason
-                    onConfirm(draftYear, confirmedSeason, draftGenre, draftType)
-                },
-                size = ButtonSize.S,
-            )
+        if (!isMetadataError) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
+            ) {
+                AniPickButton(
+                    text = "초기화",
+                    onClick = {
+                        draftYear = null
+                        draftSeason = null
+                        draftGenre = null
+                        draftGenres = emptyList()
+                        draftGenreMatchAll = false
+                        draftType = null
+                        resetTrigger++
+                    },
+                    size = ButtonSize.S,
+                    backgroundColor = AniPickTheme.colors.gray,
+                    contentColor = AniPickTheme.colors.textGray,
+                )
+                AniPickButton(
+                    text = "확인",
+                    onClick = {
+                        val confirmedSeason = if (draftYear == null) null else draftSeason
+                        val genreMatchType = if (allowMultipleGenres) {
+                            if (draftGenreMatchAll) "AND" else "OR"
+                        } else {
+                            null
+                        }
+                        onConfirm(draftYear, confirmedSeason, draftGenre, draftType, draftGenres, genreMatchType)
+                    },
+                    size = ButtonSize.S,
+                )
+            }
         }
     }
 }
@@ -312,7 +361,72 @@ private fun AniPickAnimeFilterBottomSheetContentPreview() {
         showTypeTab = true,
         sheetHeight = 360.dp,
         sheetBackgroundColor = AniPickTheme.colors.white,
-        onConfirm = { _, _, _, _ -> },
+        isMetadataError = false,
+        onMetadataRetryClick = null,
+        allowMultipleGenres = false,
+        initialGenres = emptyList(),
+        initialGenreMatchType = null,
+        onConfirm = { _, _, _, _, _, _ -> },
+        onDismissRequest = {},
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AniPickAnimeFilterBottomSheetContentMultiGenrePreview() {
+    AniPickAnimeFilterBottomSheetContent(
+        years = emptyList(),
+        seasons = emptyList(),
+        genres = listOf(
+            Genre(id = 1, name = "액션"),
+            Genre(id = 2, name = "판타지"),
+            Genre(id = 3, name = "로맨스"),
+        ),
+        types = emptyList(),
+        initialYear = null,
+        initialSeason = null,
+        initialGenre = null,
+        initialType = null,
+        initialTab = AnimeFilterTab.GENRE,
+        showYearSeasonTab = false,
+        showGenreTab = true,
+        showTypeTab = false,
+        sheetHeight = 360.dp,
+        sheetBackgroundColor = AniPickTheme.colors.white,
+        isMetadataError = false,
+        onMetadataRetryClick = null,
+        allowMultipleGenres = true,
+        initialGenres = listOf(Genre(id = 1, name = "액션"), Genre(id = 2, name = "판타지")),
+        initialGenreMatchType = "AND",
+        onConfirm = { _, _, _, _, _, _ -> },
+        onDismissRequest = {},
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AniPickAnimeFilterBottomSheetContentMetadataErrorPreview() {
+    AniPickAnimeFilterBottomSheetContent(
+        years = emptyList(),
+        seasons = emptyList(),
+        genres = emptyList(),
+        types = emptyList(),
+        initialYear = null,
+        initialSeason = null,
+        initialGenre = null,
+        initialType = null,
+        initialTab = AnimeFilterTab.YEAR_SEASON,
+        showYearSeasonTab = true,
+        showGenreTab = true,
+        showTypeTab = true,
+        sheetHeight = 360.dp,
+        sheetBackgroundColor = AniPickTheme.colors.white,
+        isMetadataError = true,
+        onMetadataRetryClick = {},
+        allowMultipleGenres = false,
+        initialGenres = emptyList(),
+        initialGenreMatchType = null,
+        onConfirm = { _, _, _, _, _, _ -> },
         onDismissRequest = {},
     )
 }
