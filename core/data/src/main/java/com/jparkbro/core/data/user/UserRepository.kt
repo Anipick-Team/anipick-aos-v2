@@ -2,14 +2,14 @@ package com.jparkbro.core.data.user
 
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
+import com.jparkbro.core.model.actor.Actor
+import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.AnimeWatchStatus
-import com.jparkbro.core.model.mypage.MyPageAnimesResult
-import com.jparkbro.core.model.mypage.MyPageCommunityCommentsResult
-import com.jparkbro.core.model.mypage.MyPageCommunityPostsResult
-import com.jparkbro.core.model.mypage.MyPageLikedAnimesResult
-import com.jparkbro.core.model.mypage.MyPageLikedPersonsResult
+import com.jparkbro.core.model.community.CommunityPost
+import com.jparkbro.core.model.mypage.MyCommunityComment
 import com.jparkbro.core.model.mypage.MyPageProfile
-import com.jparkbro.core.model.mypage.MyPageRatedAnimesResult
+import com.jparkbro.core.model.pagination.CursorPage
+import com.jparkbro.core.model.review.Review
 import com.jparkbro.core.model.user.UserSetting
 import kotlinx.coroutines.flow.Flow
 
@@ -64,7 +64,7 @@ interface UserRepository {
         status: AnimeWatchStatus,
         lastId: Long? = null,
         size: Int = 18,
-    ): Result<MyPageAnimesResult, DataError.Network>
+    ): Result<CursorPage<Anime>, DataError.Network>
 
     /** 마이페이지 "평가한 애니" 목록 - `GET /mypage/animes/rated`. */
     suspend fun getRatedAnimes(
@@ -74,23 +74,26 @@ interface UserRepository {
         size: Int = 20,
         sort: String? = null,
         reviewOnly: Boolean? = null,
-    ): Result<MyPageRatedAnimesResult, DataError.Network>
+    ): Result<CursorPage<Review>, DataError.Network>
 
     /** 마이페이지 "찜한 애니" 목록 - `GET /mypage/animes/like`. */
-    suspend fun getLikedAnimes(lastId: Long? = null, size: Int = 18): Result<MyPageLikedAnimesResult, DataError.Network>
+    suspend fun getLikedAnimes(lastId: Long? = null, size: Int = 18): Result<CursorPage<Anime>, DataError.Network>
 
     /** 마이페이지 "찜한 인물" 목록 - `GET /mypage/persons/like`. */
-    suspend fun getLikedPersons(lastId: Long? = null, size: Int = 18): Result<MyPageLikedPersonsResult, DataError.Network>
+    suspend fun getLikedPersons(lastId: Long? = null, size: Int = 18): Result<CursorPage<Actor>, DataError.Network>
 
     /** 마이페이지 "내가 쓴 게시글" 목록 - `GET /mypage/community/posts`. */
     suspend fun getMyCommunityPosts(
         lastId: Long? = null,
         size: Int = 20,
-    ): Result<MyPageCommunityPostsResult, DataError.Network>
+    ): Result<CursorPage<CommunityPost>, DataError.Network>
 
     /** 마이페이지 "내가 쓴 댓글" 목록 - `GET /mypage/community/comments`. */
     suspend fun getMyCommunityComments(
         lastId: Long? = null,
         size: Int = 20,
-    ): Result<MyPageCommunityCommentsResult, DataError.Network>
+    ): Result<CursorPage<MyCommunityComment>, DataError.Network>
+
+    /** 유저 차단 - `POST /users/{userId}/block`. */
+    suspend fun blockUser(userId: Long): Result<Unit, DataError.Network>
 }

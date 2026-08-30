@@ -56,7 +56,7 @@ class PasswordVerificationViewModel(
                 _state.update { it.copy(showSnsLoginAlert = false) }
                 viewModelScope.launch { _events.send(PasswordVerificationEvent.NavigateToLogin) }
             }
-            PasswordVerificationAction.OnBackClick -> Unit
+            is PasswordVerificationAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 

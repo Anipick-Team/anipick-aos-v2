@@ -67,7 +67,7 @@ class SettingDetailViewModel(
             SettingDetailAction.OnPasswordVisibilityToggle -> {
                 _state.update { it.copy(showPassword = !it.showPassword) }
             }
-            SettingDetailAction.OnBackClick -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
+            is SettingDetailAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 

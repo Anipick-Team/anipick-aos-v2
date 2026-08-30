@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.core.ui.util.UiText
 import com.jparkbro.home.api.HomeNavKey
 
 @Composable
@@ -99,13 +98,13 @@ fun AniPickBottomNavigationItem(
         Spacer(modifier = Modifier.height(12.dp))
         Icon(
             imageVector = ImageVector.vectorResource(if (isSelected) item.selectedIcon else item.unselectedIcon),
-            contentDescription = UiText.StringResource(item.iconTextId).asString(),
+            contentDescription = item.label,
             tint = contentColor,
             modifier = Modifier.width(16.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = UiText.StringResource(item.iconTextId).asString(),
+            text = item.label,
             style = AniPickTheme.typography.caption1,
             color = contentColor
         )

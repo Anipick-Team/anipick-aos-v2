@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.jparkbro.catalog.api.CatalogNavKey
+import com.jparkbro.core.navigation.Navigator
 import com.jparkbro.explore.api.ExploreEntryFilter
 import com.jparkbro.explore.api.ExploreNavKey
 import com.jparkbro.home.api.HomeNavKey
@@ -13,7 +14,6 @@ import com.jparkbro.home.impl.main.MainRoot
 import com.jparkbro.ranking.api.RankingNavKey
 import com.jparkbro.review.api.ReviewNavKey
 import com.jparkbro.search.api.SearchNavKey
-import kr.agromarket.at.core.navigation.Navigator
 
 /** [HomeNavKey.Main]의 contentKey — 다른 모듈(app의 탭 전환 애니메이션 판단 등)에서도 참조할 수 있게 공개. */
 const val HOME_MAIN_CONTENT_KEY = "HomeNavKey.Main"

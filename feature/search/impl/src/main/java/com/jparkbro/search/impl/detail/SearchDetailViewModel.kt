@@ -8,11 +8,9 @@ import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.search.SearchRepository
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,9 +21,6 @@ class SearchDetailViewModel(
 
     private val _state = MutableStateFlow(SearchDetailState(searchFieldState = TextFieldState(query)))
     val state: StateFlow<SearchDetailState> = _state.asStateFlow()
-
-    private val _events = Channel<SearchDetailEvent>()
-    val events = _events.receiveAsFlow()
 
     init {
         search(resetCursor = true)
@@ -39,20 +34,13 @@ class SearchDetailViewModel(
             is SearchDetailAction.OnTabChanged -> onTabChanged(action.type)
             SearchDetailAction.OnLoadMore -> loadMore()
             SearchDetailAction.OnRetryClick -> search(resetCursor = true)
-            SearchDetailAction.OnBackClick,
-            is SearchDetailAction.OnAnimeClick,
-            is SearchDetailAction.OnActorClick,
-            is SearchDetailAction.OnStudioClick,
-            -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
+            is SearchDetailAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 
     private fun onSearch() {
         val query = _state.value.searchFieldState.text.toString()
-        if (query.isBlank()) {
-            sendEvent(SearchDetailEvent.ShowToast("검색어를 입력해주세요"))
-            return
-        }
+        if (query.isBlank()) return
         _state.update {
             it.copy(
                 animeResult = AnimeSearchResult(),
@@ -104,18 +92,18 @@ class SearchDetailViewModel(
 
             searchRepository.getSearchAnimes(query = query, lastId = lastId, size = PAGE_SIZE, page = page)
                 .onSuccess { response ->
-                    val animes = response.animes ?: emptyList()
+                    val animes = response.animes.items ?: emptyList()
                     _state.update {
                         it.copy(
-                            animeCount = response.animeCount ?: 0,
-                            actorCount = response.actorCount ?: 0,
-                            studioCount = response.studioCount ?: 0,
+                            animeCount = response.counts.animeCount ?: 0,
+                            actorCount = response.counts.actorCount ?: 0,
+                            studioCount = response.counts.studioCount ?: 0,
                             animeResult = it.animeResult.copy(
                                 animes = if (resetCursor) animes else it.animeResult.animes + animes,
-                                cursor = response.cursor,
+                                cursor = response.animes.cursor,
                                 nextPage = response.nextPage,
                             ),
-                            endReached = animes.size < PAGE_SIZE,
+                            endReached = animes.size < PAGE_SIZE || response.nextPage == null,
                             isLoading = false,
                             isLoadingMore = false,
                         )
@@ -141,17 +129,17 @@ class SearchDetailViewModel(
 
             searchRepository.getSearchActors(query = query, lastId = lastId, size = PAGE_SIZE)
                 .onSuccess { response ->
-                    val actors = response.actors ?: emptyList()
+                    val actors = response.actors.items ?: emptyList()
                     _state.update {
                         it.copy(
-                            animeCount = response.animeCount ?: 0,
-                            actorCount = response.actorCount ?: 0,
-                            studioCount = response.studioCount ?: 0,
+                            animeCount = response.counts.animeCount ?: 0,
+                            actorCount = response.counts.actorCount ?: 0,
+                            studioCount = response.counts.studioCount ?: 0,
                             actorResult = it.actorResult.copy(
                                 actors = if (resetCursor) actors else it.actorResult.actors + actors,
-                                cursor = response.cursor,
+                                cursor = response.actors.cursor,
                             ),
-                            endReached = actors.size < PAGE_SIZE,
+                            endReached = actors.size < PAGE_SIZE || response.actors.cursor == null,
                             isLoading = false,
                             isLoadingMore = false,
                         )
@@ -177,17 +165,17 @@ class SearchDetailViewModel(
 
             searchRepository.getSearchStudios(query = query, lastId = lastId, size = PAGE_SIZE)
                 .onSuccess { response ->
-                    val studios = response.studios ?: emptyList()
+                    val studios = response.studios.items ?: emptyList()
                     _state.update {
                         it.copy(
-                            animeCount = response.animeCount ?: 0,
-                            actorCount = response.actorCount ?: 0,
-                            studioCount = response.studioCount ?: 0,
+                            animeCount = response.counts.animeCount ?: 0,
+                            actorCount = response.counts.actorCount ?: 0,
+                            studioCount = response.counts.studioCount ?: 0,
                             studioResult = it.studioResult.copy(
                                 studios = if (resetCursor) studios else it.studioResult.studios + studios,
-                                cursor = response.cursor,
+                                cursor = response.studios.cursor,
                             ),
-                            endReached = studios.size < PAGE_SIZE,
+                            endReached = studios.size < PAGE_SIZE || response.studios.cursor == null,
                             isLoading = false,
                             isLoadingMore = false,
                         )
@@ -196,12 +184,6 @@ class SearchDetailViewModel(
                 .onFailure { error ->
                     _state.update { it.copy(error = error.toDisplayMessage(), isLoading = false, isLoadingMore = false) }
                 }
-        }
-    }
-
-    private fun sendEvent(event: SearchDetailEvent) {
-        viewModelScope.launch {
-            _events.send(event)
         }
     }
 

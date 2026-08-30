@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CommunityBoardResponse(
-    val hasBoard: Boolean,
     val seriesId: Long? = null,
+    val hasBoard: Boolean? = null,
     val title: String? = null,
     val coverImageUrl: String? = null,
     val genres: List<MetadataItemResponse>? = null,

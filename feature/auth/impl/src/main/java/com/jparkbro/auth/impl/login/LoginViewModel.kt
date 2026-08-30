@@ -40,9 +40,7 @@ class LoginViewModel(
         when (action) {
             is LoginAction.OnKakaoLoginClick -> { kakaoLogin(action.activity) }
             is LoginAction.OnGoogleLoginClick -> { googleLogin(action.activity) }
-            LoginAction.OnEmailLoginClick,
-            LoginAction.OnEmailSignupClick,
-            LoginAction.OnProblemClick -> Unit
+            is LoginAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 
@@ -53,7 +51,7 @@ class LoginViewModel(
             authRepository.loginWithKakao(token.accessToken)
                 .onSuccess { reviewCompletedYn ->
                     _events.send(
-                        if (reviewCompletedYn) LoginEvent.NavigateToHome else LoginEvent.NavigateToPreferenceSetup
+                        if (reviewCompletedYn == true) LoginEvent.NavigateToHome else LoginEvent.NavigateToPreferenceSetup
                     )
                 }
                 .onFailure { error ->
@@ -104,7 +102,7 @@ class LoginViewModel(
             authRepository.loginWithGoogle(idToken)
                 .onSuccess { reviewCompletedYn ->
                     _events.send(
-                        if (reviewCompletedYn) LoginEvent.NavigateToHome else LoginEvent.NavigateToPreferenceSetup
+                        if (reviewCompletedYn == true) LoginEvent.NavigateToHome else LoginEvent.NavigateToPreferenceSetup
                     )
                 }
                 .onFailure { error ->

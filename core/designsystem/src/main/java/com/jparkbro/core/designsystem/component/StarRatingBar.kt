@@ -34,6 +34,7 @@ fun AniPickStarRatingBar(
     rating: Float,
     onRatingChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
+    onRatingChangeFinished: (() -> Unit)? = null,
     enabled: Boolean = true,
     starCount: Int = 5,
     starSize: Dp = 32.dp,
@@ -66,6 +67,7 @@ fun AniPickStarRatingBar(
                                     change.consume()
                                 }
                             } while (event.changes.any { it.pressed })
+                            onRatingChangeFinished?.invoke()
                         }
                     }
                 } else {

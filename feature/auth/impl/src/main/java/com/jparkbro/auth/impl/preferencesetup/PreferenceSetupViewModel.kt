@@ -124,7 +124,7 @@ class PreferenceSetupViewModel(
                 lastId = lastId,
             )
                 .onSuccess { result ->
-                    val animes = result.animes ?: emptyList()
+                    val animes = result.items ?: emptyList()
                     _state.update { state ->
                         state.copy(
                             animeList = if (resetCursor) animes else state.animeList + animes,
@@ -132,7 +132,7 @@ class PreferenceSetupViewModel(
                             isSearchLoading = false,
                             isSearchError = false,
                             isLoadingMore = false,
-                            isLastPage = animes.isEmpty(),
+                            isLastPage = animes.isEmpty() || result.cursor == null,
                         )
                     }
                 }

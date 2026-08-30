@@ -5,6 +5,7 @@ import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
 import com.jparkbro.core.model.anime.AnimeRating
 import com.jparkbro.core.model.pagination.CursorPage
+import com.jparkbro.core.model.report.ReportCategory
 import com.jparkbro.core.model.review.Review
 import com.jparkbro.core.network.common.toCursor
 import com.jparkbro.core.network.review.ReviewNetworkDataSource
@@ -65,5 +66,21 @@ class ReviewRepositoryImpl(
                 items = response.reviews?.map { it.toReview() },
             )
         }
+    }
+
+    override suspend fun deleteReview(reviewId: Long): Result<Unit, DataError.Network> {
+        return reviewNetworkDataSource.deleteReview(reviewId)
+    }
+
+    override suspend fun likeReview(reviewId: Long): Result<Unit, DataError.Network> {
+        return reviewNetworkDataSource.likeReview(reviewId)
+    }
+
+    override suspend fun unlikeReview(reviewId: Long): Result<Unit, DataError.Network> {
+        return reviewNetworkDataSource.unlikeReview(reviewId)
+    }
+
+    override suspend fun reportReview(reviewId: Long, reportCategory: ReportCategory): Result<Unit, DataError.Network> {
+        return reviewNetworkDataSource.reportReview(reviewId, reportCategory.name)
     }
 }

@@ -56,7 +56,7 @@ class HomeMainViewModel(
         when (action) {
             is HomeMainAction.OnDaySelected -> selectDay(action.day)
             HomeMainAction.OnRetryClick -> refresh(force = true)
-            else -> Unit // 네비게이션만 필요한 액션들은 Root에서 직접 처리한다.
+            is HomeMainAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 

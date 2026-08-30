@@ -5,7 +5,7 @@ import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.AnimeDetail
 import com.jparkbro.core.model.anime.ComingSoonResult
-import com.jparkbro.core.model.anime.PreferenceSetupSearchResult
+import com.jparkbro.core.model.pagination.CursorPage
 import com.jparkbro.core.model.anime.UpcomingSeasonResult
 import com.jparkbro.core.model.character.AnimeCharacter
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +16,9 @@ interface AnimeRepository {
     /** 최근 조회한 애니 ID */
     val recentAnimeId: Flow<Long?>
 
+    /** 최근 조회한 애니 ID 저장 */
+    suspend fun saveRecentAnimeId(animeId: Long)
+
     /** 선호작 설정 애니 검색 - `GET /explore-search`. */
     suspend fun searchPreferenceSetupAnimes(
         query: String? = null,
@@ -24,7 +27,7 @@ interface AnimeRepository {
         genres: Int? = null,
         lastId: Long? = null,
         size: Int? = 10,
-    ): Result<PreferenceSetupSearchResult, DataError.Network>
+    ): Result<CursorPage<Anime>, DataError.Network>
 
     /** 홈 화면 방영 예정 시즌 애니 - `GET /animes/upcoming-season`. */
     suspend fun getUpcomingSeasonAnimes(): Result<UpcomingSeasonResult, DataError.Network>

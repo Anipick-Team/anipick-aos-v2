@@ -6,14 +6,14 @@ import com.jparkbro.core.common.result.map
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.data.auth.AuthRepository
 import com.jparkbro.core.datastore.UserDataStore
+import com.jparkbro.core.model.actor.Actor
+import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.AnimeWatchStatus
-import com.jparkbro.core.model.mypage.MyPageAnimesResult
-import com.jparkbro.core.model.mypage.MyPageCommunityCommentsResult
-import com.jparkbro.core.model.mypage.MyPageCommunityPostsResult
-import com.jparkbro.core.model.mypage.MyPageLikedAnimesResult
-import com.jparkbro.core.model.mypage.MyPageLikedPersonsResult
+import com.jparkbro.core.model.community.CommunityPost
+import com.jparkbro.core.model.mypage.MyCommunityComment
 import com.jparkbro.core.model.mypage.MyPageProfile
-import com.jparkbro.core.model.mypage.MyPageRatedAnimesResult
+import com.jparkbro.core.model.pagination.CursorPage
+import com.jparkbro.core.model.review.Review
 import com.jparkbro.core.model.user.UserSetting
 import com.jparkbro.core.network.common.toCursor
 import com.jparkbro.core.network.image.ImageNetworkDataSource
@@ -101,12 +101,12 @@ class UserRepositoryImpl(
         status: AnimeWatchStatus,
         lastId: Long?,
         size: Int,
-    ): Result<MyPageAnimesResult, DataError.Network> {
+    ): Result<CursorPage<Anime>, DataError.Network> {
         return userNetworkDataSource.getMyPageAnimes(status, lastId, size).map { response ->
-            MyPageAnimesResult(
-                count = response.count,
+            CursorPage(
                 cursor = response.cursor.toCursor(),
-                animes = response.animes?.map { it.toAnime() },
+                items = response.animes?.map { it.toAnime() },
+                count = response.count,
             )
         }
     }
@@ -118,33 +118,33 @@ class UserRepositoryImpl(
         size: Int,
         sort: String?,
         reviewOnly: Boolean?,
-    ): Result<MyPageRatedAnimesResult, DataError.Network> {
+    ): Result<CursorPage<Review>, DataError.Network> {
         return userNetworkDataSource.getRatedAnimes(lastId, lastLikeCount, lastRating, size, sort, reviewOnly)
             .map { response ->
-                MyPageRatedAnimesResult(
-                    count = response.count,
+                CursorPage(
                     cursor = response.cursor.toCursor(),
-                    reviews = response.reviews?.map { it.toReview() },
+                    items = response.reviews?.map { it.toReview() },
+                    count = response.count,
                 )
             }
     }
 
-    override suspend fun getLikedAnimes(lastId: Long?, size: Int): Result<MyPageLikedAnimesResult, DataError.Network> {
+    override suspend fun getLikedAnimes(lastId: Long?, size: Int): Result<CursorPage<Anime>, DataError.Network> {
         return userNetworkDataSource.getLikedAnimes(lastId, size).map { response ->
-            MyPageLikedAnimesResult(
-                count = response.count,
+            CursorPage(
                 cursor = response.cursor.toCursor(),
-                animes = response.animes?.map { it.toAnime() },
+                items = response.animes?.map { it.toAnime() },
+                count = response.count,
             )
         }
     }
 
-    override suspend fun getLikedPersons(lastId: Long?, size: Int): Result<MyPageLikedPersonsResult, DataError.Network> {
+    override suspend fun getLikedPersons(lastId: Long?, size: Int): Result<CursorPage<Actor>, DataError.Network> {
         return userNetworkDataSource.getLikedPersons(lastId, size).map { response ->
-            MyPageLikedPersonsResult(
-                count = response.count,
+            CursorPage(
                 cursor = response.cursor.toCursor(),
-                persons = response.persons?.map { it.toActor() },
+                items = response.persons?.map { it.toActor() },
+                count = response.count,
             )
         }
     }
@@ -152,12 +152,12 @@ class UserRepositoryImpl(
     override suspend fun getMyCommunityPosts(
         lastId: Long?,
         size: Int,
-    ): Result<MyPageCommunityPostsResult, DataError.Network> {
+    ): Result<CursorPage<CommunityPost>, DataError.Network> {
         return userNetworkDataSource.getMyCommunityPosts(lastId, size).map { response ->
-            MyPageCommunityPostsResult(
-                count = response.count,
+            CursorPage(
                 cursor = response.cursor.toCursor(),
-                posts = response.posts?.map { it.toCommunityPost() },
+                items = response.posts?.map { it.toCommunityPost() },
+                count = response.count,
             )
         }
     }
@@ -165,13 +165,17 @@ class UserRepositoryImpl(
     override suspend fun getMyCommunityComments(
         lastId: Long?,
         size: Int,
-    ): Result<MyPageCommunityCommentsResult, DataError.Network> {
+    ): Result<CursorPage<MyCommunityComment>, DataError.Network> {
         return userNetworkDataSource.getMyCommunityComments(lastId, size).map { response ->
-            MyPageCommunityCommentsResult(
-                count = response.count,
+            CursorPage(
                 cursor = response.cursor.toCursor(),
-                comments = response.comments?.map { it.toMyCommunityComment() },
+                items = response.comments?.map { it.toMyCommunityComment() },
+                count = response.count,
             )
         }
+    }
+
+    override suspend fun blockUser(userId: Long): Result<Unit, DataError.Network> {
+        return userNetworkDataSource.blockUser(userId)
     }
 }

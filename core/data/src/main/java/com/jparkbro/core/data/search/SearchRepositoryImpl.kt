@@ -5,9 +5,11 @@ import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
 import com.jparkbro.core.datastore.RecentSearchDataStore
 import com.jparkbro.core.model.anime.Anime
-import com.jparkbro.core.model.search.SearchActorResult
-import com.jparkbro.core.model.search.SearchAnimeResult
-import com.jparkbro.core.model.search.SearchStudioResult
+import com.jparkbro.core.model.pagination.CursorPage
+import com.jparkbro.core.model.search.SearchActorPage
+import com.jparkbro.core.model.search.SearchAnimePage
+import com.jparkbro.core.model.search.SearchCounts
+import com.jparkbro.core.model.search.SearchStudioPage
 import com.jparkbro.core.network.common.toCursor
 import com.jparkbro.core.network.search.SearchNetworkDataSource
 import com.jparkbro.core.network.search.dto.toActor
@@ -31,19 +33,24 @@ class SearchRepositoryImpl(
         lastId: Long?,
         size: Int,
         page: Long,
-    ): Result<SearchAnimeResult, DataError.Network> {
+    ): Result<SearchAnimePage, DataError.Network> {
         return searchNetworkDataSource.getSearchAnimes(
             query = query,
             lastId = lastId,
             size = size,
             page = page,
         ).map { response ->
-            SearchAnimeResult(
-                animes = response.animes?.map { it.toAnime() },
-                animeCount = response.count,
-                actorCount = response.personCount,
-                studioCount = response.studioCount,
-                cursor = response.cursor.toCursor(),
+            SearchAnimePage(
+                animes = CursorPage(
+                    cursor = response.cursor.toCursor(),
+                    items = response.animes?.map { it.toAnime() },
+                    count = response.count,
+                ),
+                counts = SearchCounts(
+                    animeCount = response.count,
+                    actorCount = response.personCount,
+                    studioCount = response.studioCount,
+                ),
                 nextPage = response.nextPage,
             )
         }
@@ -53,18 +60,23 @@ class SearchRepositoryImpl(
         query: String,
         lastId: Long?,
         size: Int,
-    ): Result<SearchActorResult, DataError.Network> {
+    ): Result<SearchActorPage, DataError.Network> {
         return searchNetworkDataSource.getSearchPersons(
             query = query,
             lastId = lastId,
             size = size,
         ).map { response ->
-            SearchActorResult(
-                actors = response.persons?.map { it.toActor() },
-                actorCount = response.count,
-                animeCount = response.animeCount,
-                studioCount = response.studioCount,
-                cursor = response.cursor.toCursor(),
+            SearchActorPage(
+                actors = CursorPage(
+                    cursor = response.cursor.toCursor(),
+                    items = response.persons?.map { it.toActor() },
+                    count = response.count,
+                ),
+                counts = SearchCounts(
+                    animeCount = response.animeCount,
+                    actorCount = response.count,
+                    studioCount = response.studioCount,
+                ),
             )
         }
     }
@@ -73,18 +85,23 @@ class SearchRepositoryImpl(
         query: String,
         lastId: Long?,
         size: Int,
-    ): Result<SearchStudioResult, DataError.Network> {
+    ): Result<SearchStudioPage, DataError.Network> {
         return searchNetworkDataSource.getSearchStudios(
             query = query,
             lastId = lastId,
             size = size,
         ).map { response ->
-            SearchStudioResult(
-                studios = response.studios?.map { it.toStudio() },
-                studioCount = response.count,
-                animeCount = response.animeCount,
-                actorCount = response.personCount,
-                cursor = response.cursor.toCursor(),
+            SearchStudioPage(
+                studios = CursorPage(
+                    cursor = response.cursor.toCursor(),
+                    items = response.studios?.map { it.toStudio() },
+                    count = response.count,
+                ),
+                counts = SearchCounts(
+                    animeCount = response.animeCount,
+                    actorCount = response.personCount,
+                    studioCount = response.count,
+                ),
             )
         }
     }

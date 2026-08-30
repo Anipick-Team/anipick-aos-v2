@@ -47,9 +47,7 @@ class EmailLoginViewModel(
             EmailLoginAction.OnDialogDismiss -> {
                 _state.update { it.copy(showAccountDeletedDialog = false) }
             }
-            EmailLoginAction.OnEmailSignupClick,
-            EmailLoginAction.OnFindPasswordClick,
-            EmailLoginAction.OnBackClick -> Unit
+            is EmailLoginAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 
@@ -95,7 +93,7 @@ class EmailLoginViewModel(
                 .onSuccess { reviewCompletedYn ->
                     _state.update { it.copy(isLoading = false) }
                     _events.send(
-                        if (reviewCompletedYn) EmailLoginEvent.NavigateToHome else EmailLoginEvent.NavigateToPreferenceSetup
+                        if (reviewCompletedYn == true) EmailLoginEvent.NavigateToHome else EmailLoginEvent.NavigateToPreferenceSetup
                     )
                 }
                 .onFailure { error ->

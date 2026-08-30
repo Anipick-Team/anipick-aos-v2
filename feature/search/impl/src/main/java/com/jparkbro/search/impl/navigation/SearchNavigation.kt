@@ -3,10 +3,10 @@ package com.jparkbro.search.impl.navigation
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.jparkbro.catalog.api.CatalogNavKey
+import com.jparkbro.core.navigation.Navigator
 import com.jparkbro.search.api.SearchNavKey
 import com.jparkbro.search.impl.detail.SearchDetailRoot
 import com.jparkbro.search.impl.main.SearchMainRoot
-import kr.agromarket.at.core.navigation.Navigator
 
 const val SEARCH_MAIN_CONTENT_KEY = "SearchNavKey.Main"
 const val SEARCH_DETAIL_CONTENT_KEY = "SearchNavKey.Detail"

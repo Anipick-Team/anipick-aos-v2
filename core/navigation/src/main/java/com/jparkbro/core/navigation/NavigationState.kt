@@ -1,4 +1,4 @@
-package kr.agromarket.at.core.navigation
+package com.jparkbro.core.navigation
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
@@ -17,13 +17,11 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.savedstate.serialization.SavedStateConfiguration
 
-/**
- * 설정 변경(회전 등) 및 프로세스 종료 시에도 유지되는 네비게이션 상태를 생성합니다.
- */
+/** 설정 변경/프로세스 종료 시에도 유지되는 네비게이션 상태 생성 */
 @Composable
 fun rememberNavigationState(
-    startKey: NavKey,           // 앱 시작 시 첫 화면(루트) 키
-    topLevelKeys: Set<NavKey>,  // 바텀 네비게이션 등에 해당하는 최상위 화면 키 집합
+    startKey: NavKey,
+    topLevelKeys: Set<NavKey>,
 ): NavigationState {
     // 최상위 레벨의 백스택 (예: 홈, 통계, 설정 등 탭 간의 이동 기록)
     val topLevelStack = rememberNavBackStack(startKey)
@@ -39,38 +37,30 @@ fun rememberNavigationState(
     }
 }
 
-/**
- * 네비게이션 상태를 보유하는 클래스입니다.
- *
- * @param startKey 시작 네비게이션 키. 사용자가 이 화면에서 뒤로가기를 하면 앱이 종료됩니다.
- * @param topLevelStack 최상위 백스택. 주요 탭들의 이동 기록만 보유합니다.
- * @param subStacks 각 최상위 키(탭)별로 내부에 쌓이는 화면들의 백스택 맵입니다.
- */
+/** 네비게이션 상태를 보유하는 클래스 */
 class NavigationState(
     val startKey: NavKey,
     val topLevelStack: NavBackStack<NavKey>,
     val subStacks: Map<NavKey, NavBackStack<NavKey>>,
 ) {
-    // 현재 화면에 표시되고 있는 최상위 레벨 키 (현재 선택된 탭)
+    /** 현재 선택된 탭 키 */
     val currentTopLevelKey: NavKey by derivedStateOf { topLevelStack.last() }
 
     val topLevelKeys
         get() = subStacks.keys
 
-    // 현재 활성화된 탭의 서브 백스택
+    /** 현재 탭의 서브 백스택 */
     @get:VisibleForTesting
     val currentSubStack: NavBackStack<NavKey>
         get() = subStacks[currentTopLevelKey]
             ?: error("$currentTopLevelKey 에 대한 서브 스택이 존재하지 않습니다.")
 
-    // 현재 사용자에게 보이고 있는 최종 목적지 키
+    /** 현재 화면 키 */
     @get:VisibleForTesting
     val currentKey: NavKey by derivedStateOf { currentSubStack.last() }
 }
 
-/**
- * NavigationState를 Compose에서 처리 가능한 NavEntries 리스트로 변환합니다.
- */
+/** NavEntries 리스트로 변환 */
 @Composable
 fun NavigationState.toEntries(
     entryProvider: (NavKey) -> NavEntry<NavKey>,

@@ -1,8 +1,8 @@
 package com.jparkbro.search.api
 
 import androidx.navigation3.runtime.NavKey
+import com.jparkbro.core.navigation.Navigator
 import kotlinx.serialization.Serializable
-import kr.agromarket.at.core.navigation.Navigator
 
 sealed interface SearchNavKey : NavKey {
 

@@ -14,7 +14,7 @@ data class AnimeCharactersResponse(
 
 @Serializable
 data class AnimeCharacterResponse(
-    val character: CharacterResponse,
+    val character: CharacterResponse? = null,
     val voiceActor: VoiceActorResponse? = null,
     val role: String? = null,
 )
@@ -34,7 +34,7 @@ data class VoiceActorResponse(
 )
 
 fun AnimeCharacterResponse.toAnimeCharacter(): AnimeCharacter = AnimeCharacter(
-    character = character.toCharacter(),
+    character = character?.toCharacter(),
     voiceActor = voiceActor?.toActor(),
     role = role,
 )

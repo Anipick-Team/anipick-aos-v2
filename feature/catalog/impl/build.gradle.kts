@@ -9,4 +9,5 @@ android {
 dependencies {
     implementation(projects.feature.catalog.api)
     implementation(projects.feature.community.api)
+    implementation(projects.feature.review.api)
 }

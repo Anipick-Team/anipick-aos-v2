@@ -35,7 +35,9 @@ internal fun PasswordResetRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                PasswordResetAction.OnBackClick -> onBackClick()
+                is PasswordResetAction.Navigation -> when (action) {
+                    PasswordResetAction.OnBackClick -> onBackClick()
+                }
                 else -> viewModel.onAction(action)
             }
         }

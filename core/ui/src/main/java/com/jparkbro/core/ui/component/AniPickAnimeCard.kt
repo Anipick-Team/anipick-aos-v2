@@ -66,7 +66,9 @@ fun AniPickAnimeCard(
     cardWidth: Dp = 128.dp,
     maxLine: Int = 2,
     background: AniPickCardBackground = AniPickCardBackground.WHITE,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    /** null이면 [Anime.subtitle]을 캡션으로 보여준다 - 넘기면 그 자리를 대체한다(예: 마이페이지 "다 본 애니"의 내 평점 표시). */
+    descriptionContent: (@Composable () -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
@@ -108,13 +110,17 @@ fun AniPickAnimeCard(
             maxLines = maxLine,
             overflow = TextOverflow.Ellipsis,
         )
-        anime.subtitle?.let { subtitle ->
-            Text(
-                text = subtitle,
-                style = AniPickTheme.typography.caption2,
-                color = AniPickTheme.colors.textGray,
-                maxLines = 1
-            )
+        if (descriptionContent != null) {
+            descriptionContent()
+        } else {
+            anime.subtitle?.let { subtitle ->
+                Text(
+                    text = subtitle,
+                    style = AniPickTheme.typography.caption2,
+                    color = AniPickTheme.colors.textGray,
+                    maxLines = 1
+                )
+            }
         }
     }
 }

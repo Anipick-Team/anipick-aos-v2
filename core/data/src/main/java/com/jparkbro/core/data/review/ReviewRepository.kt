@@ -4,6 +4,7 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.model.anime.AnimeRating
 import com.jparkbro.core.model.pagination.CursorPage
+import com.jparkbro.core.model.report.ReportCategory
 import com.jparkbro.core.model.review.Review
 
 /** 리뷰 관련 데이터를 읽고 쓰는 인터페이스 */
@@ -33,4 +34,16 @@ interface ReviewRepository {
         lastValue: String? = null,
         size: Int = 20,
     ): Result<CursorPage<Review>, DataError.Network>
+
+    /** 리뷰 삭제 - `DELETE /reviews/{reviewId}`. */
+    suspend fun deleteReview(reviewId: Long): Result<Unit, DataError.Network>
+
+    /** 리뷰 좋아요 - `POST /reviews/{reviewId}/like`. */
+    suspend fun likeReview(reviewId: Long): Result<Unit, DataError.Network>
+
+    /** 리뷰 좋아요 취소 - `DELETE /reviews/{reviewId}/like`. */
+    suspend fun unlikeReview(reviewId: Long): Result<Unit, DataError.Network>
+
+    /** 리뷰 신고 - `POST /reviews/{reviewId}/report`. */
+    suspend fun reportReview(reviewId: Long, reportCategory: ReportCategory): Result<Unit, DataError.Network>
 }

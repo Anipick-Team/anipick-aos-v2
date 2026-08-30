@@ -2,22 +2,19 @@ package com.jparkbro.home.impl.detail
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.core.designsystem.component.AniPickEmptyState
-import com.jparkbro.core.designsystem.component.AniPickLoadMoreIndicator
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.ui.component.AniPickAnimeGridSkeleton
-import com.jparkbro.core.ui.component.AniPickAnimeInfiniteGrid
 import com.jparkbro.core.ui.util.DevicePreviews
 import com.jparkbro.home.api.HomeDetailType
-import com.jparkbro.home.impl.detail.components.DetailHeader
+import com.jparkbro.home.impl.detail.components.AnimeGridContent
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -34,12 +31,11 @@ internal fun DetailRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                HomeDetailAction.OnBackClick -> onBackClick()
-                is HomeDetailAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
-                is HomeDetailAction.OnDaySelected -> viewModel.onAction(action)
-                is HomeDetailAction.OnSortSelected -> viewModel.onAction(action)
-                HomeDetailAction.OnLoadMore -> viewModel.onAction(action)
-                HomeDetailAction.OnRetryClick -> viewModel.onAction(action)
+                is HomeDetailAction.Navigation -> when (action) {
+                    HomeDetailAction.OnBackClick -> onBackClick()
+                    is HomeDetailAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
+                }
+                else -> viewModel.onAction(action)
             }
         }
     )
@@ -78,32 +74,6 @@ private fun DetailScreen(
             )
         }
     }
-}
-
-@Composable
-private fun AnimeGridContent(
-    state: HomeDetailState,
-    onAction: (HomeDetailAction) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    AniPickAnimeInfiniteGrid(
-        animes = state.animes,
-        onAnimeClick = { anime -> anime.animeId?.let { onAction(HomeDetailAction.OnAnimeClick(it)) } },
-        modifier = modifier,
-        onLoadMore = { onAction(HomeDetailAction.OnLoadMore) },
-        header = { item(span = { GridItemSpan(maxLineSpan) }) { DetailHeader(state = state, onAction = onAction) } },
-        footer = if (state.isLoadingMore) {
-            { item(span = { GridItemSpan(maxLineSpan) }) { AniPickLoadMoreIndicator() } }
-        } else {
-            null
-        },
-    )
-}
-
-private fun HomeDetailType.title(): String = when (this) {
-    is HomeDetailType.Recommendation -> "추천 애니메이션"
-    HomeDetailType.Weekly -> "요일별 신작"
-    HomeDetailType.ComingSoon -> "공개 예정"
 }
 
 private val previewAnimes = (1..15).map { id ->

@@ -114,9 +114,7 @@ class ExploreViewModel(
             ExploreAction.OnRetryClick -> loadAnimes(resetCursor = true)
             ExploreAction.OnMetadataRetryClick -> fetchMetadata()
 
-            ExploreAction.OnSearchClick -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
-            is ExploreAction.OnAnimeClick -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
-            is ExploreAction.OnCommunityBoardClick -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
+            is ExploreAction.Navigation -> Unit // Root에서 처리한다.
 
             ExploreAction.OnCommunitySearchClick -> loadCommunityBoards(resetCursor = true)
             ExploreAction.OnCommunitySearchClearClick -> {
@@ -209,7 +207,7 @@ class ExploreViewModel(
                 size = COMMUNITY_PAGE_SIZE,
             )
                 .onSuccess { result ->
-                    applyLoadedCommunityPage(result.boards ?: emptyList(), result.cursor, append = !resetCursor)
+                    applyLoadedCommunityPage(result.items ?: emptyList(), result.cursor, append = !resetCursor)
                 }
                 .onFailure { error ->
                     val message = error.toDisplayMessage()

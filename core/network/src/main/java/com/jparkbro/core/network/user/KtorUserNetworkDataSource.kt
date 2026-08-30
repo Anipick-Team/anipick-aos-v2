@@ -172,4 +172,8 @@ class KtorUserNetworkDataSource(
             ),
         )
     }
+
+    override suspend fun blockUser(userId: Long): Result<Unit, DataError.Network> {
+        return httpClient.post(route = "/users/$userId/block")
+    }
 }

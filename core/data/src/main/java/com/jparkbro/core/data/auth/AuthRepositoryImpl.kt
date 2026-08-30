@@ -19,15 +19,15 @@ class AuthRepositoryImpl(
     private val recentAnimeDataStore: RecentAnimeDataStore,
 ) : AuthRepository {
 
-    override suspend fun loginWithKakao(accessToken: String): Result<Boolean, DataError.Network> {
+    override suspend fun loginWithKakao(accessToken: String): Result<Boolean?, DataError.Network> {
         return login(AuthProvider.KAKAO, accessToken)
     }
 
-    override suspend fun loginWithGoogle(idToken: String): Result<Boolean, DataError.Network> {
+    override suspend fun loginWithGoogle(idToken: String): Result<Boolean?, DataError.Network> {
         return login(AuthProvider.GOOGLE, idToken)
     }
 
-    override suspend fun loginWithEmail(email: String, password: String): Result<Boolean, DataError.Network> {
+    override suspend fun loginWithEmail(email: String, password: String): Result<Boolean?, DataError.Network> {
         return authNetworkDataSource.loginWithEmail(email, password).map { it.saveSession() }
     }
 
@@ -35,7 +35,7 @@ class AuthRepositoryImpl(
         email: String,
         password: String,
         termsAndConditions: Boolean,
-    ): Result<Boolean, DataError.Network> {
+    ): Result<Boolean?, DataError.Network> {
         return authNetworkDataSource.signUpWithEmail(email, password, termsAndConditions).map { it.saveSession() }
     }
 
@@ -62,11 +62,11 @@ class AuthRepositoryImpl(
         recentAnimeDataStore.clearRecentAnimeId()
     }
 
-    private suspend fun login(provider: AuthProvider, code: String): Result<Boolean, DataError.Network> {
+    private suspend fun login(provider: AuthProvider, code: String): Result<Boolean?, DataError.Network> {
         return authNetworkDataSource.loginWithOAuth(provider, code).map { it.saveSession() }
     }
 
-    private suspend fun OAuthLoginResponse.saveSession(): Boolean {
+    private suspend fun OAuthLoginResponse.saveSession(): Boolean? {
         tokenProvider.saveTokens(accessToken = token.accessToken, refreshToken = token.refreshToken)
         userDataStore.saveUser(userId = userId, nickname = nickname)
         return reviewCompletedYn

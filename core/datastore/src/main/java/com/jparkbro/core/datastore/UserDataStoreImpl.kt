@@ -32,10 +32,10 @@ class UserDataStoreImpl(
 
     override suspend fun getEmail(): String? = email.first()
 
-    override suspend fun saveUser(userId: Long, nickname: String) {
+    override suspend fun saveUser(userId: Long, nickname: String?) {
         context.userDataStore.edit { prefs ->
             prefs[UserKeys.USER_ID] = userId
-            prefs[UserKeys.NICKNAME] = nickname
+            if (nickname != null) prefs[UserKeys.NICKNAME] = nickname else prefs.remove(UserKeys.NICKNAME)
         }
     }
 

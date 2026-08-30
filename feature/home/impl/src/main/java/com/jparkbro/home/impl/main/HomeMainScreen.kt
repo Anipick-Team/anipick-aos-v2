@@ -43,23 +43,24 @@ internal fun MainRoot(
         bottomNavigation = bottomNavigation,
         onAction = { action ->
             when (action) {
-                HomeMainAction.OnSearchClick -> onNavigateToSearch()
-                is HomeMainAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
-                HomeMainAction.OnTrendingMoreClick -> onNavigateToRanking()
-                HomeMainAction.OnRecommendationMoreClick -> onNavigateToDetail(HomeDetailType.Recommendation())
-                HomeMainAction.OnWeeklyMoreClick -> onNavigateToDetail(HomeDetailType.Weekly)
-                HomeMainAction.OnRecentReviewMoreClick -> onNavigateToRecentReview()
-                HomeMainAction.OnUpcomingSeasonMoreClick -> {
-                    onNavigateToExplore(state.upcomingSeason.seasonYear, state.upcomingSeason.season)
-                }
-                HomeMainAction.OnRecentAnimeRecommendationMoreClick -> {
-                    state.recentAnimeRecommendationAnimeId?.let {
-                        onNavigateToDetail(HomeDetailType.Recommendation(basedOnAnimeId = it))
+                is HomeMainAction.Navigation -> when (action) {
+                    HomeMainAction.OnSearchClick -> onNavigateToSearch()
+                    is HomeMainAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
+                    HomeMainAction.OnTrendingMoreClick -> onNavigateToRanking()
+                    HomeMainAction.OnRecommendationMoreClick -> onNavigateToDetail(HomeDetailType.Recommendation())
+                    HomeMainAction.OnWeeklyMoreClick -> onNavigateToDetail(HomeDetailType.Weekly)
+                    HomeMainAction.OnRecentReviewMoreClick -> onNavigateToRecentReview()
+                    HomeMainAction.OnUpcomingSeasonMoreClick -> {
+                        onNavigateToExplore(state.upcomingSeason.seasonYear, state.upcomingSeason.season)
                     }
+                    HomeMainAction.OnRecentAnimeRecommendationMoreClick -> {
+                        state.recentAnimeRecommendationAnimeId?.let {
+                            onNavigateToDetail(HomeDetailType.Recommendation(basedOnAnimeId = it))
+                        }
+                    }
+                    HomeMainAction.OnComingSoonMoreClick -> onNavigateToDetail(HomeDetailType.ComingSoon)
                 }
-                HomeMainAction.OnComingSoonMoreClick -> onNavigateToDetail(HomeDetailType.ComingSoon)
-                is HomeMainAction.OnDaySelected -> viewModel.onAction(action)
-                HomeMainAction.OnRetryClick -> viewModel.onAction(action)
+                else -> viewModel.onAction(action)
             }
         }
     )

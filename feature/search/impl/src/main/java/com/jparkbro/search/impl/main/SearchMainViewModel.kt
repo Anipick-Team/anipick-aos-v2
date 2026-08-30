@@ -39,10 +39,7 @@ class SearchMainViewModel(
             is SearchMainAction.OnRecentSearchRemove -> removeRecentSearch(action.query)
             SearchMainAction.OnRecentSearchClearAll -> clearRecentSearches()
             SearchMainAction.OnRetryClick -> loadPopularAnimes()
-            SearchMainAction.OnBackClick,
-            is SearchMainAction.OnRecentSearchClick,
-            is SearchMainAction.OnAnimeClick,
-            -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
+            is SearchMainAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 
@@ -62,11 +59,8 @@ class SearchMainViewModel(
 
     private fun search() {
         val query = _state.value.searchFieldState.text.toString()
-        if (query.isBlank()) {
-            sendEvent(SearchMainEvent.ShowToast("검색어를 입력해주세요"))
-        } else {
-            sendEvent(SearchMainEvent.NavigateToDetail(query))
-        }
+        if (query.isBlank()) return
+        sendEvent(SearchMainEvent.NavigateToDetail(query))
     }
 
     private fun sendEvent(event: SearchMainEvent) {

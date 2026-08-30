@@ -113,7 +113,7 @@ private fun PreferenceSetupScreen(
             showTypeTab = false,
             isMetadataError = state.isMetadataError,
             onMetadataRetryClick = { onAction(PreferenceSetupAction.OnMetadataRetryClick) },
-            onConfirm = { year, season, genre, type ->
+            onConfirm = { year, season, genre, type, _, _ ->
                 onAction(PreferenceSetupAction.OnAnimeFilterConfirm(year, season, genre, type))
             },
             onDismissRequest = { onAction(PreferenceSetupAction.OnFilterSheetDismiss) },

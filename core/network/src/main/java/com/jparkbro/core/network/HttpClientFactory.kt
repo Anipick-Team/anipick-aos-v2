@@ -25,16 +25,10 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import timber.log.Timber
 
-/** 이 서버는 토큰이 무효해도 HTTP 상태는 200으로 내려주고, body의 code로만 실패를 알려준다.
- *  (예: {"code":119,"errorReason":"토큰 값이 유효 X",...}) */
+/** 토큰 무효를 뜻하는 응답 code */
 private const val TOKEN_INVALID_CODE = 119
 
-/**
- * 앱 전역에서 쓰는 [HttpClient]를 생성하는 팩토리. Koin [di.networkModule]에서 싱글턴으로 등록된다.
- *
- * @param tokenProvider 요청에 붙일 인증 토큰을 읽어오는 인터페이스. 실제 구현(core:datastore)은 모르고,
- *                       Koin이 런타임에 알맞은 구현체를 연결해준다.
- */
+/** 앱 전역 [HttpClient] 생성 팩토리 */
 class HttpClientFactory(
     private val tokenProvider: TokenProvider,
 ) {

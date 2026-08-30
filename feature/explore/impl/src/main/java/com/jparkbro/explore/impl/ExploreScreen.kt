@@ -39,9 +39,11 @@ internal fun ExploreRoot(
         bottomNavigation = bottomNavigation,
         onAction = { action ->
             when (action) {
-                ExploreAction.OnSearchClick -> onNavigateToSearch()
-                is ExploreAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
-                is ExploreAction.OnCommunityBoardClick -> onNavigateToCommunity(action.board)
+                is ExploreAction.Navigation -> when (action) {
+                    ExploreAction.OnSearchClick -> onNavigateToSearch()
+                    is ExploreAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
+                    is ExploreAction.OnCommunityBoardClick -> onNavigateToCommunity(action.board)
+                }
                 else -> viewModel.onAction(action)
             }
         },
@@ -158,6 +160,26 @@ private fun ExploreScreenCommunityTabPreview() {
                 ),
             ),
         ),
+        bottomNavigation = {},
+        onAction = {},
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun ExploreScreenCommunityTabLoadingPreview() {
+    ExploreScreen(
+        state = ExploreState(tab = ExploreTab.COMMUNITY, isCommunityLoading = true),
+        bottomNavigation = {},
+        onAction = {},
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun ExploreScreenCommunityTabConnectionErrorPreview() {
+    ExploreScreen(
+        state = ExploreState(tab = ExploreTab.COMMUNITY, communityError = "네트워크 연결을 확인해주세요."),
         bottomNavigation = {},
         onAction = {},
     )

@@ -47,32 +47,31 @@ internal fun SettingMainRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                SettingMainAction.OnBackClick -> onBackClick()
-                is SettingMainAction.OnEditProfileClick -> onNavigateToDetail(action.type)
-                SettingMainAction.OnContactClick -> {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://forms.gle/SJ7mbQfyfoe2HDLd7".toUri())
-                    context.startActivity(intent)
+                is SettingMainAction.Navigation -> when (action) {
+                    SettingMainAction.OnBackClick -> onBackClick()
+                    is SettingMainAction.OnEditProfileClick -> onNavigateToDetail(action.type)
+                    SettingMainAction.OnContactClick -> {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://forms.gle/SJ7mbQfyfoe2HDLd7".toUri())
+                        context.startActivity(intent)
+                    }
+                    SettingMainAction.OnTermsClick -> {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://anipick.p-e.kr/terms.html".toUri())
+                        context.startActivity(intent)
+                    }
+                    SettingMainAction.OnPrivacyPolicyClick -> {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://anipick.p-e.kr/privacy.html".toUri())
+                        context.startActivity(intent)
+                    }
+                    SettingMainAction.OnOpenSourceLicenseClick -> {
+                        OssLicensesMenuActivity.setActivityTitle("오픈소스 라이선스")
+                        context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+                    }
+                    SettingMainAction.OnNoticeClick -> {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://spiral-cowl-f89.notion.site/227b3eed42088098a351ff047659bdcb?source=copy_link".toUri())
+                        context.startActivity(intent)
+                    }
                 }
-                SettingMainAction.OnTermsClick -> {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://anipick.p-e.kr/terms.html".toUri())
-                    context.startActivity(intent)
-                }
-                SettingMainAction.OnPrivacyPolicyClick -> {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://anipick.p-e.kr/privacy.html".toUri())
-                    context.startActivity(intent)
-                }
-                SettingMainAction.OnOpenSourceLicenseClick -> {
-                    OssLicensesMenuActivity.setActivityTitle("오픈소스 라이선스")
-                    context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
-                }
-                SettingMainAction.OnNoticeClick -> {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://spiral-cowl-f89.notion.site/227b3eed42088098a351ff047659bdcb?source=copy_link".toUri())
-                    context.startActivity(intent)
-                }
-                SettingMainAction.OnLogoutClick,
-                SettingMainAction.OnLogoutConfirm,
-                SettingMainAction.OnLogoutDialogDismiss,
-                -> viewModel.onAction(action)
+                else -> viewModel.onAction(action)
             }
         },
     )

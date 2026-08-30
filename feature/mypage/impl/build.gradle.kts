@@ -8,6 +8,9 @@ android {
 
 dependencies {
     implementation(projects.feature.mypage.api)
+    implementation(projects.feature.catalog.api)
+    implementation(projects.feature.community.api)
+    implementation(projects.feature.review.api)
 
     // Oss Licenses
     implementation(libs.androidx.appcompat)

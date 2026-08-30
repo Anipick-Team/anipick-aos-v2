@@ -1,6 +1,5 @@
 package com.jparkbro.search.impl.main
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,12 +33,10 @@ internal fun SearchMainRoot(
     viewModel: SearchMainViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             is SearchMainEvent.NavigateToDetail -> onNavigateToDetail(event.query)
-            is SearchMainEvent.ShowToast -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -48,9 +44,11 @@ internal fun SearchMainRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                SearchMainAction.OnBackClick -> onBackClick()
-                is SearchMainAction.OnRecentSearchClick -> onNavigateToDetail(action.query)
-                is SearchMainAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
+                is SearchMainAction.Navigation -> when (action) {
+                    SearchMainAction.OnBackClick -> onBackClick()
+                    is SearchMainAction.OnRecentSearchClick -> onNavigateToDetail(action.query)
+                    is SearchMainAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
+                }
                 else -> viewModel.onAction(action)
             }
         },

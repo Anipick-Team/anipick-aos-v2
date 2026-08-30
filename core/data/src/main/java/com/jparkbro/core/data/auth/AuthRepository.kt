@@ -7,17 +7,17 @@ import com.jparkbro.core.common.result.Result
 interface AuthRepository {
 
     /** 카카오 로그인 - `POST /oauth/KAKAO/callback`. */
-    suspend fun loginWithKakao(accessToken: String): Result<Boolean, DataError.Network>
+    suspend fun loginWithKakao(accessToken: String): Result<Boolean?, DataError.Network>
     /** 구글 로그인 - `POST /oauth/GOOGLE/callback`. */
-    suspend fun loginWithGoogle(idToken: String): Result<Boolean, DataError.Network>
+    suspend fun loginWithGoogle(idToken: String): Result<Boolean?, DataError.Network>
     /** 이메일 로그인 - `POST /users/login`. */
-    suspend fun loginWithEmail(email: String, password: String): Result<Boolean, DataError.Network>
+    suspend fun loginWithEmail(email: String, password: String): Result<Boolean?, DataError.Network>
     /** 이메일 회원가입 - `POST /users/signup`. */
     suspend fun signUpWithEmail(
         email: String,
         password: String,
         termsAndConditions: Boolean,
-    ): Result<Boolean, DataError.Network>
+    ): Result<Boolean?, DataError.Network>
     /** 이메일 인증코드 발송 - `POST /auth/email/send`. */
     suspend fun sendEmailVerification(email: String): Result<Unit, DataError.Network>
     /** 이메일 인증코드 확인 - `POST /auth/email/verify`. */

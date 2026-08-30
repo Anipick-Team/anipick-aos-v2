@@ -74,9 +74,7 @@ class RankingViewModel(
             RankingAction.OnRetryClick -> loadRankings(resetCursor = true)
             RankingAction.OnMetadataRetryClick -> fetchMetadata()
 
-            RankingAction.OnSearchClick,
-            is RankingAction.OnAnimeClick,
-            -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
+            is RankingAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 

@@ -9,7 +9,6 @@ data class Review(
     val content: String? = null,
     val nickname: String? = null,
     val profileImageUrl: String? = null,
-    val profileImageByteArray: ByteArray? = null,
     val createdAt: String? = null,
     val rating: Float? = null,
     val likeCount: Int? = null,

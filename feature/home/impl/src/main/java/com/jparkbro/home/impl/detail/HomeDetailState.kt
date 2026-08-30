@@ -24,3 +24,9 @@ data class HomeDetailState(
     val isLoading: Boolean = false,
     val error: String? = null,
 )
+
+internal fun HomeDetailType.title(): String = when (this) {
+    is HomeDetailType.Recommendation -> "추천 애니메이션"
+    HomeDetailType.Weekly -> "요일별 신작"
+    HomeDetailType.ComingSoon -> "공개 예정"
+}

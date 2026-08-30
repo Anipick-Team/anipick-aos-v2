@@ -21,13 +21,13 @@ import com.jparkbro.auth.api.navigateToLogin
 import com.jparkbro.core.common.auth.TokenProvider
 import com.jparkbro.core.designsystem.component.AniPickSnackbar
 import com.jparkbro.core.designsystem.theme.AniPick_v2Theme
+import com.jparkbro.core.navigation.Navigator
+import com.jparkbro.core.navigation.rememberNavigationState
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import com.jparkbro.splash.api.SplashNavKey
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
-import kr.agromarket.at.core.navigation.Navigator
-import kr.agromarket.at.core.navigation.rememberNavigationState
 import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {

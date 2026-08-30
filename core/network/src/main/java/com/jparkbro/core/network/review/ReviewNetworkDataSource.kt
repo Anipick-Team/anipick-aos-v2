@@ -9,6 +9,7 @@ import com.jparkbro.core.network.review.dto.RecentReviewFeedResponse
 import com.jparkbro.core.network.review.dto.ReviewItem
 
 interface ReviewNetworkDataSource {
+
     /** 취향 설정 - 초기 리뷰 일괄 등록 - `POST /reviews/bulk`. */
     suspend fun submitReviews(reviews: List<ReviewItem>): Result<Unit, DataError.Network>
 
@@ -31,4 +32,16 @@ interface ReviewNetworkDataSource {
         animeId: Long,
         request: AnimeReviewsRequest,
     ): Result<AnimeReviewsResponse, DataError.Network>
+
+    /** 리뷰 삭제 - `DELETE /reviews/{reviewId}`. */
+    suspend fun deleteReview(reviewId: Long): Result<Unit, DataError.Network>
+
+    /** 리뷰 좋아요 - `POST /reviews/{reviewId}/like`. */
+    suspend fun likeReview(reviewId: Long): Result<Unit, DataError.Network>
+
+    /** 리뷰 좋아요 취소 - `DELETE /reviews/{reviewId}/like`. */
+    suspend fun unlikeReview(reviewId: Long): Result<Unit, DataError.Network>
+
+    /** 리뷰 신고 - `POST /reviews/{reviewId}/report`. */
+    suspend fun reportReview(reviewId: Long, reportCategory: String): Result<Unit, DataError.Network>
 }

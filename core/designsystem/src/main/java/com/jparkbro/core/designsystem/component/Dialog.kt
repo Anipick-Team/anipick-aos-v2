@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -60,6 +61,35 @@ private fun AniPickDialogContent(
     dismissText: String? = null,
     onDismiss: (() -> Unit)? = null,
 ) {
+    AniPickDialogFrame(
+        title = title,
+        confirmText = confirmText,
+        onConfirm = onConfirm,
+        modifier = modifier,
+        dismissText = dismissText,
+        onDismiss = onDismiss,
+    ) {
+        Text(
+            text = message,
+            style = AniPickTheme.typography.caption1,
+            color = AniPickTheme.colors.textGray,
+        )
+    }
+}
+
+/** 제목 + [content] + 하단 버튼으로 구성된 다이얼로그 뼈대 - 본문만 다른 다이얼로그가 이걸 재사용한다.
+ *  [Dialog] 안에서 호출한다(Preview에서는 이 함수를 직접 호출). */
+@Composable
+fun AniPickDialogFrame(
+    title: String,
+    confirmText: String,
+    onConfirm: () -> Unit,
+    modifier: Modifier = Modifier,
+    dismissText: String? = null,
+    onDismiss: (() -> Unit)? = null,
+    confirmEnabled: Boolean = true,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -71,18 +101,14 @@ private fun AniPickDialogContent(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             Text(
                 text = title,
                 style = AniPickTheme.typography.h3,
                 color = AniPickTheme.colors.black,
             )
-            Text(
-                text = message,
-                style = AniPickTheme.typography.caption1,
-                color = AniPickTheme.colors.textGray,
-            )
+            content()
         }
 
         if (dismissText != null) {
@@ -106,26 +132,28 @@ private fun AniPickDialogContent(
                     thickness = 1.dp,
                     color = AniPickTheme.colors.textGray
                 )
-                Text(
-                    text = confirmText,
-                    style = AniPickTheme.typography.body2,
-                    color = AniPickTheme.colors.primary,
-                    modifier = Modifier
-                        .clickable(onClick = { onConfirm() })
-                        .wrapContentWidth(Alignment.CenterHorizontally),
-                )
+                ConfirmText(text = confirmText, enabled = confirmEnabled, onClick = onConfirm)
             }
         } else {
-            Text(
-                text = confirmText,
-                style = AniPickTheme.typography.body2,
-                color = AniPickTheme.colors.primary,
-                modifier = Modifier
-                    .clickable(onClick = { onConfirm() })
-                    .wrapContentWidth(Alignment.CenterHorizontally),
-            )
+            ConfirmText(text = confirmText, enabled = confirmEnabled, onClick = onConfirm)
         }
     }
+}
+
+@Composable
+private fun ConfirmText(
+    text: String,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    Text(
+        text = text,
+        style = AniPickTheme.typography.body2,
+        color = if (enabled) AniPickTheme.colors.primary else AniPickTheme.colors.gray,
+        modifier = Modifier
+            .clickable(enabled = enabled, onClick = onClick)
+            .wrapContentWidth(Alignment.CenterHorizontally),
+    )
 }
 
 @Preview(showBackground = true)

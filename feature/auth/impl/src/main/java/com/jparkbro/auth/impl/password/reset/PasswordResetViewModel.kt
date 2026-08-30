@@ -46,7 +46,7 @@ class PasswordResetViewModel(
                 _state.update { it.copy(showPassword = !it.showPassword) }
             }
             PasswordResetAction.OnResetClick -> resetPassword()
-            PasswordResetAction.OnBackClick -> Unit
+            is PasswordResetAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 

@@ -13,8 +13,8 @@ import com.jparkbro.auth.impl.login.LoginRoot
 import com.jparkbro.auth.impl.password.reset.PasswordResetRoot
 import com.jparkbro.auth.impl.password.verification.PasswordVerificationRoot
 import com.jparkbro.auth.impl.preferencesetup.PreferenceSetupRoot
+import com.jparkbro.core.navigation.Navigator
 import com.jparkbro.home.api.navigateToHomeMain
-import kr.agromarket.at.core.navigation.Navigator
 
 const val LOGIN_CONTENT_KEY = "AuthNavKey.Login"
 const val EMAIL_LOGIN_CONTENT_KEY = "AuthNavKey.Email.Login"

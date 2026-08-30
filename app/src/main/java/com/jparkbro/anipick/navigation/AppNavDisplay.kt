@@ -14,16 +14,23 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.ui.NavDisplay
+import com.jparkbro.auth.api.navigateToLogin
 import com.jparkbro.auth.impl.navigation.authEntry
+import com.jparkbro.catalog.impl.navigation.catalogEntry
+import com.jparkbro.community.impl.navigation.communityEntry
+import com.jparkbro.core.navigation.NavigationState
+import com.jparkbro.core.navigation.Navigator
+import com.jparkbro.core.navigation.toEntries
 import com.jparkbro.explore.impl.navigation.exploreEntry
 import com.jparkbro.home.impl.navigation.homeEntry
 import com.jparkbro.mypage.impl.navigation.myPageEntry
 import com.jparkbro.ranking.impl.navigation.rankingEntry
+import com.jparkbro.review.impl.navigation.reviewEntry
+import com.jparkbro.search.impl.navigation.SEARCH_DETAIL_CONTENT_KEY
+import com.jparkbro.search.impl.navigation.SEARCH_MAIN_CONTENT_KEY
+import com.jparkbro.search.impl.navigation.searchEntry
 import com.jparkbro.splash.api.SplashNavKey
 import com.jparkbro.splash.impl.navigation.splashEntry
-import kr.agromarket.at.core.navigation.NavigationState
-import kr.agromarket.at.core.navigation.Navigator
-import kr.agromarket.at.core.navigation.toEntries
 
 private const val FADE_DURATION_MILLIS = 700
 private const val SLIDE_DURATION_MILLIS = 300
@@ -34,6 +41,9 @@ private const val SLIDE_DURATION_MILLIS = 300
  * [TopLevelNavItem.contentKey]를 그대로 가져다 쓴다 — 탭이 늘거나 줄면 그 맵만 고치면 된다.
  */
 private val TOP_LEVEL_CONTENT_KEYS = BOTTOM_NAV_ITEMS.values.map { it.contentKey }.toSet()
+
+/** Search Main↔Detail 전환도 슬라이드 대신 fade를 쓴다. */
+private val SEARCH_CONTENT_KEYS = setOf(SEARCH_MAIN_CONTENT_KEY, SEARCH_DETAIL_CONTENT_KEY)
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -50,7 +60,16 @@ fun AppNavDisplay(
             homeEntry(navigator, bottomNavigation)
             rankingEntry(navigator, bottomNavigation)
             exploreEntry(navigator, bottomNavigation)
-            myPageEntry(navigator, bottomNavigation)
+            myPageEntry(
+                navigator,
+                bottomNavigation,
+                onWithdrawSuccess = navigator::navigateToLogin,
+                onLogout = navigator::navigateToLogin,
+            )
+            searchEntry(navigator)
+            catalogEntry(navigator)
+            communityEntry(navigator)
+            reviewEntry(navigator)
         }
 
         NavDisplay(
@@ -79,9 +98,10 @@ fun AppNavDisplay(
 
 /**
  * Splash를 떠나는 전환(도착지가 어디든 상관없이 fade)이거나, 바텀 네비게이션 탭 루트끼리 오가는
- * 전환(양쪽 다 탭 루트여야 fade)일 때 true. 두 조건은 판단 기준이 서로 달라서(전자는 출발지만
- * 보고, 후자는 양쪽 다 봐야 함) 하나의 Set 검사로 합칠 수는 없지만, "fade를 써야 하는가"라는
- * 결론 하나로 묶어서 호출부에서는 이 함수 하나만 보면 되게 했다.
+ * 전환(양쪽 다 탭 루트여야 fade)이거나, Search Main↔Detail 전환(양쪽 다 Search여야 fade)일 때
+ * true. 세 조건은 판단 기준이 서로 달라서(첫 번째는 출발지만 보고, 나머지 둘은 양쪽 다 봐야 함)
+ * 하나의 Set 검사로 합칠 수는 없지만, "fade를 써야 하는가"라는 결론 하나로 묶어서 호출부에서는
+ * 이 함수 하나만 보면 되게 했다.
  */
 private fun AnimatedContentTransitionScope<Scene<NavKey>>.isFadeTransition(): Boolean {
     val fromKey = initialState.entries.lastOrNull()?.contentKey
@@ -89,6 +109,7 @@ private fun AnimatedContentTransitionScope<Scene<NavKey>>.isFadeTransition(): Bo
 
     val isLeavingSplash = fromKey == TOP_LEVEL_ITEMS.getValue(SplashNavKey.Splash).contentKey
     val isTopLevelSwitch = fromKey in TOP_LEVEL_CONTENT_KEYS && toKey in TOP_LEVEL_CONTENT_KEYS
+    val isSearchSwitch = fromKey in SEARCH_CONTENT_KEYS && toKey in SEARCH_CONTENT_KEYS
 
-    return isLeavingSplash || isTopLevelSwitch
+    return isLeavingSplash || isTopLevelSwitch || isSearchSwitch
 }

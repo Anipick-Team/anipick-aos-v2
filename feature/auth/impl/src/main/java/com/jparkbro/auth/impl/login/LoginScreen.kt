@@ -62,11 +62,13 @@ internal fun LoginRoot(
         modifier = headerModifier,
         onAction = { action ->
             when (action) {
-                LoginAction.OnEmailLoginClick -> onNavigateToEmailLogin()
-                LoginAction.OnEmailSignupClick -> onNavigateToEmailSignup()
-                LoginAction.OnProblemClick -> {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://forms.gle/SJ7mbQfyfoe2HDLd7".toUri())
-                    context.startActivity(intent)
+                is LoginAction.Navigation -> when (action) {
+                    LoginAction.OnEmailLoginClick -> onNavigateToEmailLogin()
+                    LoginAction.OnEmailSignupClick -> onNavigateToEmailSignup()
+                    LoginAction.OnProblemClick -> {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://forms.gle/SJ7mbQfyfoe2HDLd7".toUri())
+                        context.startActivity(intent)
+                    }
                 }
                 else -> viewModel.onAction(action)
             }

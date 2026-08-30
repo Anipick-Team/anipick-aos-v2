@@ -5,6 +5,10 @@ import com.jparkbro.core.model.metadata.Genre
 import com.jparkbro.core.model.metadata.Season
 
 sealed interface RankingAction {
+
+    /** Root에서 처리하는 화면 이탈 액션(앱 내 이동 + 외부 인텐트) - ViewModel로 내려가지 않는다. */
+    sealed interface Navigation : RankingAction
+
     data class OnRankingTypeSelected(val rankingType: RankingType) : RankingAction
     data class OnFilterChipClick(val filterType: FilterType) : RankingAction
     data object OnFilterSheetDismiss : RankingAction
@@ -16,6 +20,6 @@ sealed interface RankingAction {
     data object OnLoadMore : RankingAction
     data object OnRetryClick : RankingAction
     data object OnMetadataRetryClick : RankingAction
-    data object OnSearchClick : RankingAction
-    data class OnAnimeClick(val animeId: Long) : RankingAction
+    data object OnSearchClick : Navigation
+    data class OnAnimeClick(val animeId: Long) : Navigation
 }

@@ -78,4 +78,7 @@ interface UserNetworkDataSource {
         lastId: Long? = null,
         size: Int = 20,
     ): Result<MyPageCommunityCommentsResponse, DataError.Network>
+
+    /** 유저 차단 - `POST /users/{userId}/block`. */
+    suspend fun blockUser(userId: Long): Result<Unit, DataError.Network>
 }

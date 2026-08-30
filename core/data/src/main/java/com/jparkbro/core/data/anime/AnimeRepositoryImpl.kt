@@ -7,7 +7,7 @@ import com.jparkbro.core.datastore.RecentAnimeDataStore
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.AnimeDetail
 import com.jparkbro.core.model.anime.ComingSoonResult
-import com.jparkbro.core.model.anime.PreferenceSetupSearchResult
+import com.jparkbro.core.model.pagination.CursorPage
 import com.jparkbro.core.model.anime.UpcomingSeasonResult
 import com.jparkbro.core.model.character.AnimeCharacter
 import com.jparkbro.core.network.anime.AnimeNetworkDataSource
@@ -22,10 +22,14 @@ import kotlinx.coroutines.flow.Flow
 
 class AnimeRepositoryImpl(
     private val animeNetworkDataSource: AnimeNetworkDataSource,
-    recentAnimeDataStore: RecentAnimeDataStore,
+    private val recentAnimeDataStore: RecentAnimeDataStore,
 ) : AnimeRepository {
 
     override val recentAnimeId: Flow<Long?> = recentAnimeDataStore.recentAnimeId
+
+    override suspend fun saveRecentAnimeId(animeId: Long) {
+        recentAnimeDataStore.saveRecentAnimeId(animeId)
+    }
 
     override suspend fun searchPreferenceSetupAnimes(
         query: String?,
@@ -34,7 +38,7 @@ class AnimeRepositoryImpl(
         genres: Int?,
         lastId: Long?,
         size: Int?,
-    ): Result<PreferenceSetupSearchResult, DataError.Network> {
+    ): Result<CursorPage<Anime>, DataError.Network> {
         val request = PreferenceSetupSearchRequest(
             query = query,
             year = year,
@@ -44,10 +48,10 @@ class AnimeRepositoryImpl(
             size = size,
         )
         return animeNetworkDataSource.searchPreferenceSetupAnimes(request).map { response ->
-            PreferenceSetupSearchResult(
-                count = response.count,
+            CursorPage(
                 cursor = response.cursor.toCursor(),
-                animes = response.animes?.map { it.toAnime() },
+                items = response.animes?.map { it.toAnime() },
+                count = response.count,
             )
         }
     }

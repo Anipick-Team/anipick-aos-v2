@@ -19,6 +19,8 @@ data class MyPageAnimeResponse(
     val title: String? = null,
     val coverImageUrl: String? = null,
     val isAdult: Boolean? = null,
+    /** 완료(FINISHED) 목록에서만 채워짐 - 내가 남긴 평점. */
+    val myRating: Float? = null,
 )
 
 fun MyPageAnimeResponse.toAnime(): Anime = Anime(
@@ -27,4 +29,5 @@ fun MyPageAnimeResponse.toAnime(): Anime = Anime(
     title = title,
     coverImageUrl = coverImageUrl,
     isAdult = isAdult,
+    myRating = myRating,
 )

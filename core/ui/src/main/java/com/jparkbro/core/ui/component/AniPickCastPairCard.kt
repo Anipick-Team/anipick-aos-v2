@@ -47,8 +47,8 @@ fun AniPickCastPairCard(
     ) {
         Column(modifier = Modifier.width(cardWidth)) {
             AniPickAnimeCoverImage(
-                coverImageUrl = animeCharacter.character.imageUrl,
-                contentDescription = "${animeCharacter.character.name ?: "-"} 캐릭터 이미지",
+                coverImageUrl = animeCharacter.character?.imageUrl,
+                contentDescription = "${animeCharacter.character?.name ?: "-"} 캐릭터 이미지",
                 modifier = Modifier.width(cardWidth),
                 background = background,
                 shape = RoundedCornerShape(topStart = 8.dp),
@@ -60,7 +60,7 @@ fun AniPickCastPairCard(
                 contentAlignment = Alignment.CenterStart,
             ) {
                 Text(
-                    text = animeCharacter.character.name ?: "-",
+                    text = animeCharacter.character?.name ?: "-",
                     style = AniPickTheme.typography.body2,
                     color = AniPickTheme.colors.black,
                     overflow = TextOverflow.Ellipsis,

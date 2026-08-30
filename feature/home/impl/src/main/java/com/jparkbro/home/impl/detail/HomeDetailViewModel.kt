@@ -137,13 +137,13 @@ class HomeDetailViewModel(
     }
 
     /** [append]가 false면 초기 로드(첫 페이지로 교체), true면 무한스크롤(뒤에 이어붙임). 두 경우 다
-     *  [animes]가 [PAGE_SIZE]보다 적게 오면 마지막 페이지로 본다. */
+     *  [animes]가 [PAGE_SIZE]보다 적게 오거나 [cursor]가 null이면 마지막 페이지로 본다. */
     private fun applyLoadedPage(animes: List<Anime>, cursor: Cursor?, append: Boolean) {
         _state.update {
             it.copy(
                 animes = if (append) it.animes + animes else animes,
                 cursor = cursor,
-                endReached = animes.size < PAGE_SIZE,
+                endReached = animes.size < PAGE_SIZE || cursor == null,
                 isLoading = false,
                 isLoadingMore = false,
             )
@@ -165,8 +165,7 @@ class HomeDetailViewModel(
             }
             HomeDetailAction.OnLoadMore -> loadMore()
             HomeDetailAction.OnRetryClick -> retry()
-            is HomeDetailAction.OnAnimeClick,
-            HomeDetailAction.OnBackClick -> Unit // 네비게이션만 필요한 액션은 Root에서 처리한다.
+            is HomeDetailAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 
@@ -189,7 +188,7 @@ class HomeDetailViewModel(
         //             _state.update { it.copy(animes = animes, isLoading = false, endReached = true) }
         //         }
         //         .onFailure { error ->
-        //             _state.update { it.copy(isLoading = false, error = error.toString()) }
+        //             _state.update { it.copy(isLoading = false, error = error.toDisplayMessage()) }
         //         }
         // }
     }

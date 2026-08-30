@@ -42,8 +42,10 @@ internal fun RankingRoot(
         bottomNavigation = bottomNavigation,
         onAction = { action ->
             when (action) {
-                RankingAction.OnSearchClick -> onNavigateToSearch()
-                is RankingAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
+                is RankingAction.Navigation -> when (action) {
+                    RankingAction.OnSearchClick -> onNavigateToSearch()
+                    is RankingAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
+                }
                 else -> viewModel.onAction(action)
             }
         },
@@ -130,7 +132,7 @@ private fun RankingScreen(
             showTypeTab = false,
             isMetadataError = state.isMetadataError,
             onMetadataRetryClick = { onAction(RankingAction.OnMetadataRetryClick) },
-            onConfirm = { year, season, genre, _ ->
+            onConfirm = { year, season, genre, _, _, _ ->
                 onAction(RankingAction.OnAnimeFilterConfirm(year, season, genre))
             },
             onDismissRequest = { onAction(RankingAction.OnFilterSheetDismiss) },

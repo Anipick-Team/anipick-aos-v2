@@ -29,7 +29,7 @@ fun AniPickPillChip(
             .clip(CircleShape)
             .background(if (isSelected) AniPickTheme.colors.primary else AniPickTheme.colors.lightGray)
             .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp, vertical = 2.dp),
+            .padding(8.dp),
     )
 }
 

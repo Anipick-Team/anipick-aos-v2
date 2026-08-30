@@ -38,9 +38,11 @@ internal fun EmailLoginRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                EmailLoginAction.OnBackClick -> onBackClick()
-                EmailLoginAction.OnEmailSignupClick -> onNavigateToEmailSignup()
-                EmailLoginAction.OnFindPasswordClick -> onNavigateToPasswordVerification()
+                is EmailLoginAction.Navigation -> when (action) {
+                    EmailLoginAction.OnBackClick -> onBackClick()
+                    EmailLoginAction.OnEmailSignupClick -> onNavigateToEmailSignup()
+                    EmailLoginAction.OnFindPasswordClick -> onNavigateToPasswordVerification()
+                }
                 else -> viewModel.onAction(action)
             }
         }

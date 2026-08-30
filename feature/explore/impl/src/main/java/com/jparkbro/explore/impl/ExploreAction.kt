@@ -6,6 +6,10 @@ import com.jparkbro.core.model.metadata.Genre
 import com.jparkbro.core.model.metadata.Season
 
 sealed interface ExploreAction {
+
+    /** Root에서 처리하는 화면 이탈 액션(앱 내 이동 + 외부 인텐트) - ViewModel로 내려가지 않는다. */
+    sealed interface Navigation : ExploreAction
+
     data class OnTabSelected(val tab: ExploreTab) : ExploreAction
     data class OnSortSelected(val sort: ExploreSort) : ExploreAction
     data class OnFilterChipClick(val filterType: FilterType) : ExploreAction
@@ -24,11 +28,11 @@ sealed interface ExploreAction {
     data object OnLoadMore : ExploreAction
     data object OnRetryClick : ExploreAction
     data object OnMetadataRetryClick : ExploreAction
-    data object OnSearchClick : ExploreAction
-    data class OnAnimeClick(val animeId: Long) : ExploreAction
+    data object OnSearchClick : Navigation
+    data class OnAnimeClick(val animeId: Long) : Navigation
     data object OnCommunitySearchClick : ExploreAction
     data object OnCommunitySearchClearClick : ExploreAction
-    data class OnCommunityBoardClick(val board: CommunityBoard) : ExploreAction
+    data class OnCommunityBoardClick(val board: CommunityBoard) : Navigation
     data object OnCommunityLoadMore : ExploreAction
     data object OnCommunityRetryClick : ExploreAction
 }

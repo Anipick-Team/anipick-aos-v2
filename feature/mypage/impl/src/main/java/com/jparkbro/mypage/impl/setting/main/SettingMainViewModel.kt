@@ -68,7 +68,7 @@ class SettingMainViewModel(
             SettingMainAction.OnLogoutClick -> _state.update { it.copy(showLogoutDialog = true) }
             SettingMainAction.OnLogoutDialogDismiss -> _state.update { it.copy(showLogoutDialog = false) }
             SettingMainAction.OnLogoutConfirm -> logout()
-            else -> Unit // 네비게이션/외부 링크 액션은 Root에서 처리한다.
+            is SettingMainAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 

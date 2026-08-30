@@ -1,8 +1,8 @@
 package com.jparkbro.auth.api
 
 import androidx.navigation3.runtime.NavKey
+import com.jparkbro.core.navigation.Navigator
 import kotlinx.serialization.Serializable
-import kr.agromarket.at.core.navigation.Navigator
 
 sealed interface AuthNavKey : NavKey {
 
@@ -30,7 +30,7 @@ sealed interface AuthNavKey : NavKey {
 }
 
 fun Navigator.navigateToLogin() {
-    navigateAndClearStack(AuthNavKey.Login)
+    navigateAndClearAllStacks(AuthNavKey.Login)
 }
 
 fun Navigator.navigateToPreferenceSetup() {

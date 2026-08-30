@@ -4,10 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OAuthLoginResponse(
-    val reviewCompletedYn: Boolean,
     val userId: Long,
-    val nickname: String,
     val token: Token,
+    val reviewCompletedYn: Boolean? = null,
+    val nickname: String? = null,
 ) {
     @Serializable
     data class Token(

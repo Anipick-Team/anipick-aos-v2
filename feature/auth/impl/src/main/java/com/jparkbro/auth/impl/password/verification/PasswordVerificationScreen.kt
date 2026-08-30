@@ -34,7 +34,9 @@ internal fun PasswordVerificationRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                PasswordVerificationAction.OnBackClick -> onBackClick()
+                is PasswordVerificationAction.Navigation -> when (action) {
+                    PasswordVerificationAction.OnBackClick -> onBackClick()
+                }
                 else -> viewModel.onAction(action)
             }
         }

@@ -3,8 +3,9 @@ package com.jparkbro.core.data.community
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
+import com.jparkbro.core.common.result.onFailure
+import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.model.community.CommunityBoard
-import com.jparkbro.core.model.community.CommunityBoardsResult
 import com.jparkbro.core.model.community.CommunityComment
 import com.jparkbro.core.model.community.CommunityPost
 import com.jparkbro.core.model.pagination.CursorPage
@@ -18,11 +19,62 @@ import com.jparkbro.core.network.community.dto.toCommunityBoard
 import com.jparkbro.core.network.community.dto.toCommunityComment
 import com.jparkbro.core.network.community.dto.toCommunityPost
 import com.jparkbro.core.network.image.ImageNetworkDataSource
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class CommunityRepositoryImpl(
     private val communityNetworkDataSource: CommunityNetworkDataSource,
     private val imageNetworkDataSource: ImageNetworkDataSource,
 ) : CommunityRepository {
+
+    private val _communityBoardPosts = MutableStateFlow(CommunityBoardPostsState())
+    override val communityBoardPosts: StateFlow<CommunityBoardPostsState> = _communityBoardPosts.asStateFlow()
+
+    override suspend fun loadCommunityBoardPosts(seriesId: Long, sort: String?, resetCursor: Boolean) {
+        val current = _communityBoardPosts.value
+
+        _communityBoardPosts.update {
+            if (resetCursor) {
+                it.copy(seriesId = seriesId, sort = sort, isLoading = true, error = null)
+            } else {
+                it.copy(isLoadingMore = true)
+            }
+        }
+
+        val lastId = if (resetCursor) null else current.cursor?.lastId
+        val lastValue = if (resetCursor) null else current.cursor?.lastValue
+
+        getCommunityPosts(seriesId = seriesId, sort = sort, lastId = lastId, lastValue = lastValue, size = PAGE_SIZE)
+            .onSuccess { page ->
+                val items = page.items ?: emptyList()
+                _communityBoardPosts.update {
+                    it.copy(
+                        seriesId = seriesId,
+                        sort = sort,
+                        posts = if (resetCursor) items else it.posts + items,
+                        cursor = page.cursor,
+                        endReached = items.size < PAGE_SIZE || page.cursor == null,
+                        isLoading = false,
+                        isLoadingMore = false,
+                    )
+                }
+            }
+            .onFailure { error ->
+                _communityBoardPosts.update { it.copy(isLoading = false, isLoadingMore = false, error = error) }
+            }
+    }
+
+    override suspend fun refreshCommunityBoardPosts() {
+        val cache = _communityBoardPosts.value
+        val seriesId = cache.seriesId ?: return
+        loadCommunityBoardPosts(seriesId = seriesId, sort = cache.sort, resetCursor = true)
+    }
+
+    override fun clearCommunityBoardPosts() {
+        _communityBoardPosts.value = CommunityBoardPostsState()
+    }
 
     override suspend fun getCommunityBoardByAnime(animeId: Long): Result<CommunityBoard, DataError.Network> {
         return communityNetworkDataSource.getCommunityBoardByAnime(animeId).map { it.toCommunityBoard() }
@@ -34,7 +86,7 @@ class CommunityRepositoryImpl(
         lastId: Long?,
         lastValue: String?,
         size: Int,
-    ): Result<CommunityBoardsResult, DataError.Network> {
+    ): Result<CursorPage<CommunityBoard>, DataError.Network> {
         val request = CommunityExploreBoardsRequest(
             sort = sort,
             keyword = keyword,
@@ -43,10 +95,10 @@ class CommunityRepositoryImpl(
             size = size,
         )
         return communityNetworkDataSource.getExploreCommunityBoards(request).map { response ->
-            CommunityBoardsResult(
-                count = response.count,
+            CursorPage(
                 cursor = response.cursor.toCursor(),
-                boards = response.boards?.map { it.toCommunityBoard() },
+                items = response.boards?.map { it.toCommunityBoard() },
+                count = response.count,
             )
         }
     }
@@ -162,5 +214,9 @@ class CommunityRepositoryImpl(
         reportCategory: ReportCategory,
     ): Result<Unit, DataError.Network> {
         return communityNetworkDataSource.report(targetType, targetId, reportCategory)
+    }
+
+    companion object {
+        private const val PAGE_SIZE = 20
     }
 }

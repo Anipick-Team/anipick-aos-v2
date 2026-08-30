@@ -51,12 +51,10 @@ internal fun SettingDetailRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                SettingDetailAction.OnBackClick -> onBackClick()
-                SettingDetailAction.OnSaveClick,
-                SettingDetailAction.OnPasswordVisibilityToggle,
-                SettingDetailAction.OnWithdrawConfirm,
-                SettingDetailAction.OnWithdrawDialogDismiss,
-                -> viewModel.onAction(action)
+                is SettingDetailAction.Navigation -> when (action) {
+                    SettingDetailAction.OnBackClick -> onBackClick()
+                }
+                else -> viewModel.onAction(action)
             }
         },
     )

@@ -66,9 +66,7 @@ class EmailSignupViewModel(
             }
             EmailSignupAction.OnSignUpClick -> signUp()
 
-            EmailSignupAction.OnBackClick,
-            EmailSignupAction.OnTermsOfServiceDetailClick,
-            EmailSignupAction.OnPrivacyPolicyDetailClick -> Unit
+            is EmailSignupAction.Navigation -> Unit // Root에서 처리한다.
         }
     }
 

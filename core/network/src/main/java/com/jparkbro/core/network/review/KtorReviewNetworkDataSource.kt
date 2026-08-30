@@ -2,6 +2,7 @@ package com.jparkbro.core.network.review
 
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
+import com.jparkbro.core.network.delete
 import com.jparkbro.core.network.get
 import com.jparkbro.core.network.patch
 import com.jparkbro.core.network.post
@@ -9,6 +10,7 @@ import com.jparkbro.core.network.review.dto.AnimeReviewsRequest
 import com.jparkbro.core.network.review.dto.AnimeReviewsResponse
 import com.jparkbro.core.network.review.dto.MyReviewResponse
 import com.jparkbro.core.network.review.dto.RecentReviewFeedResponse
+import com.jparkbro.core.network.review.dto.ReportReviewRequest
 import com.jparkbro.core.network.review.dto.ReviewItem
 import com.jparkbro.core.network.review.dto.UpdateReviewRequest
 import io.ktor.client.HttpClient
@@ -63,6 +65,25 @@ class KtorReviewNetworkDataSource(
                 "lastValue" to request.lastValue,
                 "size" to request.size,
             ),
+        )
+    }
+
+    override suspend fun deleteReview(reviewId: Long): Result<Unit, DataError.Network> {
+        return httpClient.delete(route = "/reviews/$reviewId")
+    }
+
+    override suspend fun likeReview(reviewId: Long): Result<Unit, DataError.Network> {
+        return httpClient.post(route = "/reviews/$reviewId/like")
+    }
+
+    override suspend fun unlikeReview(reviewId: Long): Result<Unit, DataError.Network> {
+        return httpClient.delete(route = "/reviews/$reviewId/like")
+    }
+
+    override suspend fun reportReview(reviewId: Long, reportCategory: String): Result<Unit, DataError.Network> {
+        return httpClient.post(
+            route = "/reviews/$reviewId/report",
+            body = ReportReviewRequest(reportCategory = reportCategory),
         )
     }
 }

@@ -35,14 +35,16 @@ internal fun EmailSignupRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                EmailSignupAction.OnBackClick -> onBackClick()
-                EmailSignupAction.OnTermsOfServiceDetailClick -> {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://anipick.p-e.kr/terms.html".toUri())
-                    context.startActivity(intent)
-                }
-                EmailSignupAction.OnPrivacyPolicyDetailClick -> {
-                    val intent = Intent(Intent.ACTION_VIEW, "https://anipick.p-e.kr/privacy.html".toUri())
-                    context.startActivity(intent)
+                is EmailSignupAction.Navigation -> when (action) {
+                    EmailSignupAction.OnBackClick -> onBackClick()
+                    EmailSignupAction.OnTermsOfServiceDetailClick -> {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://anipick.p-e.kr/terms.html".toUri())
+                        context.startActivity(intent)
+                    }
+                    EmailSignupAction.OnPrivacyPolicyDetailClick -> {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://anipick.p-e.kr/privacy.html".toUri())
+                        context.startActivity(intent)
+                    }
                 }
                 else -> viewModel.onAction(action)
             }
