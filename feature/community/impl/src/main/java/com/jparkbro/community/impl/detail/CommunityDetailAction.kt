@@ -28,4 +28,6 @@ sealed interface CommunityDetailAction {
     data object OnCommentDeleteConfirm : CommunityDetailAction
     data object OnCommentDeleteDismiss : CommunityDetailAction
     data class OnCommentReportClick(val commentId: Long) : CommunityDetailAction
+    data class OnCommentEditClick(val commentId: Long) : CommunityDetailAction
+    data object OnCommentEditCancelClick : CommunityDetailAction
 }

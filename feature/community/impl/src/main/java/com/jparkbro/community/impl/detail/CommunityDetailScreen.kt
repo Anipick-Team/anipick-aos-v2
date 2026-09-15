@@ -33,6 +33,7 @@ import com.jparkbro.core.designsystem.component.AniPickDialog
 import com.jparkbro.core.designsystem.component.AniPickDropdownMenuIcon
 import com.jparkbro.core.designsystem.component.AniPickEmptyState
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.icon.MoreHorizontal
 import com.jparkbro.core.designsystem.model.AniPickDropdownMenuItem
 import com.jparkbro.core.designsystem.theme.AniPickTheme
@@ -125,7 +126,14 @@ private fun CommunityDetailScreen(
                     enabled = state.commentInputState.text.isNotBlank() && !state.isCommentSubmitting,
                     isSubmitting = state.isCommentSubmitting,
                     replyTargetContent = state.replyTargetComment?.content,
-                    onCancelReplyClick = { onAction(CommunityDetailAction.OnReplyTargetCancelClick) },
+                    isEditing = state.editTargetComment != null,
+                    onCancelClick = {
+                        if (state.editTargetComment != null) {
+                            onAction(CommunityDetailAction.OnCommentEditCancelClick)
+                        } else {
+                            onAction(CommunityDetailAction.OnReplyTargetCancelClick)
+                        }
+                    },
                     onSendClick = { onAction(CommunityDetailAction.OnCommentSendClick) },
                 )
             }
@@ -134,7 +142,8 @@ private fun CommunityDetailScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(top = BottomEdgeShadowClearance),
             contentPadding = PaddingValues(bottom = 40.dp),
         ) {
             if (state.isContentLoading) {
@@ -180,7 +189,7 @@ private fun CommunityDetailScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(AniPickTheme.colors.white)
-                                .padding(top = 40.dp),
+                                .padding(top = 20.dp),
                         )
                         Spacer(
                             modifier = Modifier
@@ -196,6 +205,7 @@ private fun CommunityDetailScreen(
                             comment = comment,
                             onReplyClick = { onAction(CommunityDetailAction.OnCommentReplyClick(it)) },
                             onLikeClick = { onAction(CommunityDetailAction.OnCommentLikeClick(it)) },
+                            onEditClick = { onAction(CommunityDetailAction.OnCommentEditClick(it)) },
                             onDeleteClick = { onAction(CommunityDetailAction.OnCommentDeleteClick(it)) },
                             onReportClick = { onAction(CommunityDetailAction.OnCommentReportClick(it)) },
                         )

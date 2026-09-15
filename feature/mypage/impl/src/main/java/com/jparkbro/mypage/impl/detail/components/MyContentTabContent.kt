@@ -42,8 +42,7 @@ internal fun MyContentTabContent(
     LoadMoreEffect(state = listState, onLoadMore = { onAction(MyPageDetailAction.OnLoadMore) })
 
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier
     ) {
         AniPickSecondaryTabRow(
             tabs = MY_CONTENT_TABS,

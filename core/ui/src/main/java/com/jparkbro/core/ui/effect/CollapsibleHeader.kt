@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -42,9 +43,10 @@ fun CollapsibleHeader(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    // clipToBounds() 없으면 접히는 중 콘텐츠가 줄어든 높이 위로 그대로 그려져 위쪽 다른 뷰와 겹친다
     Layout(
         content = { Box { content() } },
-        modifier = modifier,
+        modifier = modifier.clipToBounds(),
     ) { measurables, constraints ->
         val placeable = measurables.first().measure(constraints.copy(minHeight = 0))
         state.heightPx = placeable.height.toFloat()

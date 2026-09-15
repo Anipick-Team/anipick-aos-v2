@@ -7,12 +7,11 @@ import com.jparkbro.core.common.result.map
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.data.auth.AuthRepository
+import com.jparkbro.core.data.image.compressImage
 import com.jparkbro.core.datastore.UserDataStore
 import com.jparkbro.core.model.actor.Actor
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.AnimeWatchStatus
-import com.jparkbro.core.model.community.CommunityPost
-import com.jparkbro.core.model.mypage.MyCommunityComment
 import com.jparkbro.core.model.mypage.MyPageProfile
 import com.jparkbro.core.model.pagination.CursorPage
 import com.jparkbro.core.model.review.Review
@@ -35,6 +34,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -125,7 +125,9 @@ class UserRepositoryImpl(
         fileName: String,
         mimeType: String,
     ): Result<Unit, DataError.Network> {
-        return imageNetworkDataSource.updateProfileImage(imageBytes, fileName, mimeType)
+        val compressed = imageBytes.compressImage(mimeType)
+        val compressedFileName = fileName.substringBeforeLast('.', fileName) + "." + compressed.extension
+        return imageNetworkDataSource.updateProfileImage(compressed.bytes, compressedFileName, compressed.mimeType)
             .onSuccess { refreshMyPage() }
             .asEmptyDataResult()
     }
@@ -197,33 +199,89 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun getMyCommunityPosts(
-        lastId: Long?,
-        size: Int,
-    ): Result<CursorPage<CommunityPost>, DataError.Network> {
-        return userNetworkDataSource.getMyCommunityPosts(lastId, size).map { response ->
-            CursorPage(
-                cursor = response.cursor.toCursor(),
-                items = response.posts?.map { it.toCommunityPost() },
-                count = response.count,
-            )
+    private val _myCommunityPosts = MutableStateFlow(MyCommunityPostsState())
+    override val myCommunityPosts: StateFlow<MyCommunityPostsState> = _myCommunityPosts.asStateFlow()
+
+    override suspend fun loadMyCommunityPosts(resetCursor: Boolean) {
+        val current = _myCommunityPosts.value
+        if (resetCursor && current.posts.isNotEmpty()) return
+        if (!resetCursor && (current.isLoading || current.isLoadingMore || current.endReached)) return
+
+        _myCommunityPosts.update {
+            if (resetCursor) it.copy(isLoading = true, error = null) else it.copy(isLoadingMore = true)
         }
+        val lastId = if (resetCursor) null else current.cursor?.lastId
+
+        userNetworkDataSource.getMyCommunityPosts(lastId, CONTENT_PAGE_SIZE)
+            .onSuccess { response ->
+                val items = response.posts?.map { it.toCommunityPost() } ?: emptyList()
+                _myCommunityPosts.update {
+                    it.copy(
+                        posts = if (resetCursor) items else it.posts + items,
+                        cursor = response.cursor.toCursor(),
+                        totalCount = response.count ?: it.totalCount,
+                        endReached = items.size < CONTENT_PAGE_SIZE,
+                        isLoading = false,
+                        isLoadingMore = false,
+                    )
+                }
+            }
+            .onFailure { error ->
+                _myCommunityPosts.update {
+                    if (resetCursor) it.copy(isLoading = false, error = error) else it.copy(isLoadingMore = false, error = error)
+                }
+            }
     }
 
-    override suspend fun getMyCommunityComments(
-        lastId: Long?,
-        size: Int,
-    ): Result<CursorPage<MyCommunityComment>, DataError.Network> {
-        return userNetworkDataSource.getMyCommunityComments(lastId, size).map { response ->
-            CursorPage(
-                cursor = response.cursor.toCursor(),
-                items = response.comments?.map { it.toMyCommunityComment() },
-                count = response.count,
-            )
+    override suspend fun refreshMyCommunityPosts() {
+        _myCommunityPosts.update { it.copy(posts = emptyList(), cursor = null, endReached = false) }
+        loadMyCommunityPosts(resetCursor = true)
+    }
+
+    private val _myCommunityComments = MutableStateFlow(MyCommunityCommentsState())
+    override val myCommunityComments: StateFlow<MyCommunityCommentsState> = _myCommunityComments.asStateFlow()
+
+    override suspend fun loadMyCommunityComments(resetCursor: Boolean) {
+        val current = _myCommunityComments.value
+        if (resetCursor && current.comments.isNotEmpty()) return
+        if (!resetCursor && (current.isLoading || current.isLoadingMore || current.endReached)) return
+
+        _myCommunityComments.update {
+            if (resetCursor) it.copy(isLoading = true, error = null) else it.copy(isLoadingMore = true)
         }
+        val lastId = if (resetCursor) null else current.cursor?.lastId
+
+        userNetworkDataSource.getMyCommunityComments(lastId, CONTENT_PAGE_SIZE)
+            .onSuccess { response ->
+                val items = response.comments?.map { it.toMyCommunityComment() } ?: emptyList()
+                _myCommunityComments.update {
+                    it.copy(
+                        comments = if (resetCursor) items else it.comments + items,
+                        cursor = response.cursor.toCursor(),
+                        totalCount = response.count ?: it.totalCount,
+                        endReached = items.size < CONTENT_PAGE_SIZE,
+                        isLoading = false,
+                        isLoadingMore = false,
+                    )
+                }
+            }
+            .onFailure { error ->
+                _myCommunityComments.update {
+                    if (resetCursor) it.copy(isLoading = false, error = error) else it.copy(isLoadingMore = false, error = error)
+                }
+            }
+    }
+
+    override suspend fun refreshMyCommunityComments() {
+        _myCommunityComments.update { it.copy(comments = emptyList(), cursor = null, endReached = false) }
+        loadMyCommunityComments(resetCursor = true)
     }
 
     override suspend fun blockUser(userId: Long): Result<Unit, DataError.Network> {
         return userNetworkDataSource.blockUser(userId)
+    }
+
+    companion object {
+        private const val CONTENT_PAGE_SIZE = 20
     }
 }

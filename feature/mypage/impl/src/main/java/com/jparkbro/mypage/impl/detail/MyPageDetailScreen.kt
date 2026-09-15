@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.mypage.api.MyPageDetailType
 import com.jparkbro.mypage.impl.detail.components.MyContentTabContent
@@ -74,7 +75,7 @@ private fun MyPageDetailScreen(
                 totalCount = state.totalCount,
                 isLoading = state.isLoading,
                 onAnimeClick = { onAction(MyPageDetailAction.OnAnimeClick(it)) },
-                modifier = Modifier.padding(innerPadding).fillMaxSize(),
+                modifier = Modifier.padding(innerPadding).padding(top = BottomEdgeShadowClearance).fillMaxSize(),
                 isLoadingMore = state.isLoadingMore,
                 onLoadMore = { onAction(MyPageDetailAction.OnLoadMore) },
                 emptyMessage = state.error ?: state.type.emptyMessage(),
@@ -91,7 +92,7 @@ private fun MyPageDetailScreen(
                 totalCount = state.totalCount,
                 isLoading = state.isLoading,
                 onPersonClick = { onAction(MyPageDetailAction.OnPersonClick(it)) },
-                modifier = Modifier.padding(innerPadding).fillMaxSize(),
+                modifier = Modifier.padding(innerPadding).padding(top = BottomEdgeShadowClearance).fillMaxSize(),
                 isLoadingMore = state.isLoadingMore,
                 onLoadMore = { onAction(MyPageDetailAction.OnLoadMore) },
                 emptyMessage = state.error ?: state.type.emptyMessage(),

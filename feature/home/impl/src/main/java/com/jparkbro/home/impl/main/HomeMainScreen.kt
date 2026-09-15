@@ -1,5 +1,6 @@
 package com.jparkbro.home.impl.main
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,11 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.core.designsystem.component.AniPickEmptyState
 import com.jparkbro.core.designsystem.component.AniPickShellTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.home.api.HomeDetailType
 import com.jparkbro.home.impl.main.components.MainScreenSkeleton
@@ -33,6 +37,7 @@ internal fun MainRoot(
     viewModel: HomeMainViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.refresh()
@@ -46,6 +51,10 @@ internal fun MainRoot(
                 is HomeMainAction.Navigation -> when (action) {
                     HomeMainAction.OnSearchClick -> onNavigateToSearch()
                     is HomeMainAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
+                    HomeMainAction.OnInstagramClick -> {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://www.instagram.com/anipick.official/".toUri())
+                        context.startActivity(intent)
+                    }
                     HomeMainAction.OnTrendingMoreClick -> onNavigateToRanking()
                     HomeMainAction.OnRecommendationMoreClick -> onNavigateToDetail(HomeDetailType.Recommendation())
                     HomeMainAction.OnWeeklyMoreClick -> onNavigateToDetail(HomeDetailType.Weekly)
@@ -94,8 +103,9 @@ private fun MainScreen(
 
             else -> LazyColumn(
                 modifier = Modifier
-                    .padding(innerPadding),
-                contentPadding = PaddingValues(vertical = 40.dp),
+                    .padding(innerPadding)
+                    .padding(top = BottomEdgeShadowClearance),
+                contentPadding = PaddingValues(top = 20.dp, bottom = 40.dp),
                 verticalArrangement = Arrangement.spacedBy(100.dp)
             ) {
                 homeMainSections(state = state, onAction = onAction)

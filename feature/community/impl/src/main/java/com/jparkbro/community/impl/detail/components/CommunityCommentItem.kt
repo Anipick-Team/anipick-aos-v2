@@ -35,6 +35,7 @@ internal fun CommunityCommentItem(
     comment: CommunityComment,
     onReplyClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
+    onEditClick: (Long) -> Unit,
     onDeleteClick: (Long) -> Unit,
     onReportClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -47,6 +48,7 @@ internal fun CommunityCommentItem(
             comment = comment,
             onReplyClick = { onReplyClick(comment.commentId) },
             onLikeClick = { onLikeClick(comment.commentId) },
+            onEditClick = { onEditClick(comment.commentId) },
             onDeleteClick = { onDeleteClick(comment.commentId) },
             onReportClick = { onReportClick(comment.commentId) },
         )
@@ -66,6 +68,7 @@ internal fun CommunityCommentItem(
                     comment = reply,
                     onReplyClick = null,
                     onLikeClick = { onLikeClick(reply.commentId) },
+                    onEditClick = { onEditClick(reply.commentId) },
                     onDeleteClick = { onDeleteClick(reply.commentId) },
                     onReportClick = { onReportClick(reply.commentId) },
                     modifier = Modifier.weight(1f),
@@ -81,6 +84,7 @@ private fun CommentBody(
     comment: CommunityComment,
     onReplyClick: (() -> Unit)?,
     onLikeClick: () -> Unit,
+    onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -111,7 +115,10 @@ private fun CommentBody(
                     AniPickProfileNickname(profileImageUrl = comment.profileImageUrl, nickname = comment.nickname ?: "-")
                     AniPickDropdownMenuIcon(
                         items = if (comment.isMine == true) {
-                            listOf(commentMenuItem("삭제", onDeleteClick))
+                            listOf(
+                                commentMenuItem("수정", onEditClick),
+                                commentMenuItem("삭제", onDeleteClick),
+                            )
                         } else {
                             listOf(commentMenuItem("신고", onReportClick))
                         },
@@ -239,6 +246,7 @@ private fun CommunityCommentItemPreview() {
         ),
         onReplyClick = {},
         onLikeClick = {},
+        onEditClick = {},
         onDeleteClick = {},
         onReportClick = {},
     )

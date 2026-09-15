@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.catalog.impl.studio.components.StudioAnimeSectionGrid
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.ui.component.AniPickAnimeGridSkeleton
@@ -64,7 +65,9 @@ private fun CatalogStudioScreen(
                 isLoadingMore = state.isLoadingMore,
                 onAnimeClick = { anime -> anime.animeId?.let { onAction(CatalogStudioAction.OnAnimeClick(it)) } },
                 onLoadMore = { onAction(CatalogStudioAction.OnLoadMore) },
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(top = BottomEdgeShadowClearance),
             )
         }
     }

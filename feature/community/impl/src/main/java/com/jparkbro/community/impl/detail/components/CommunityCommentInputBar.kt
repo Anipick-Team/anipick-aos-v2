@@ -32,14 +32,15 @@ import com.jparkbro.core.designsystem.icon.Send
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
 /** 게시글 상세 최하단 댓글 입력 바 - 유튜브/카카오톡 댓글창처럼 화면 하단에 고정해서 쓴다.
- *  [replyTargetContent]가 있으면 상단 divider 위로 답글 대상 미리보기 행을 보여준다. */
+ *  [replyTargetContent]가 있으면 답글 대상 미리보기, [isEditing]이면 수정 중 안내를 상단 divider 위로 보여준다. */
 @Composable
 internal fun CommunityCommentInputBar(
     state: TextFieldState,
     enabled: Boolean,
     isSubmitting: Boolean,
     replyTargetContent: String?,
-    onCancelReplyClick: () -> Unit,
+    isEditing: Boolean,
+    onCancelClick: () -> Unit,
     onSendClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -50,7 +51,7 @@ internal fun CommunityCommentInputBar(
             // edge-to-edge라 직접 처리해야 함 - 키보드 닫혀있으면 네비게이션 바 위로, 열려있으면 키보드 위로.
             .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime)),
     ) {
-        if (replyTargetContent != null) {
+        if (replyTargetContent != null || isEditing) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -58,27 +59,36 @@ internal fun CommunityCommentInputBar(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    imageVector = ArrowRight,
-                    contentDescription = null,
-                    tint = AniPickTheme.colors.black,
-                    modifier = Modifier.size(24.dp),
-                )
-                Text(
-                    text = replyTargetContent,
-                    style = AniPickTheme.typography.body2,
-                    color = AniPickTheme.colors.black,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
+                if (isEditing) {
+                    Text(
+                        text = "댓글 수정 중",
+                        style = AniPickTheme.typography.body2,
+                        color = AniPickTheme.colors.black,
+                        modifier = Modifier.weight(1f),
+                    )
+                } else {
+                    Icon(
+                        imageVector = ArrowRight,
+                        contentDescription = null,
+                        tint = AniPickTheme.colors.black,
+                        modifier = Modifier.size(24.dp),
+                    )
+                    Text(
+                        text = replyTargetContent.orEmpty(),
+                        style = AniPickTheme.typography.body2,
+                        color = AniPickTheme.colors.black,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
                 Icon(
                     imageVector = Close,
-                    contentDescription = "답글 취소",
+                    contentDescription = if (isEditing) "수정 취소" else "답글 취소",
                     tint = AniPickTheme.colors.black,
                     modifier = Modifier
                         .size(24.dp)
-                        .clickable(onClick = onCancelReplyClick),
+                        .clickable(onClick = onCancelClick),
                 )
             }
         }
@@ -120,7 +130,8 @@ private fun CommunityCommentInputBarPreview() {
         enabled = false,
         isSubmitting = false,
         replyTargetContent = null,
-        onCancelReplyClick = {},
+        isEditing = false,
+        onCancelClick = {},
         onSendClick = {},
     )
 }
@@ -133,7 +144,22 @@ private fun CommunityCommentInputBarReplyPreview() {
         enabled = false,
         isSubmitting = false,
         replyTargetContent = "저도 이번 화 보고 소름 돋았어요 ㅋㅋ 진짜 연출 미쳤음",
-        onCancelReplyClick = {},
+        isEditing = false,
+        onCancelClick = {},
+        onSendClick = {},
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun CommunityCommentInputBarEditingPreview() {
+    CommunityCommentInputBar(
+        state = rememberTextFieldState(),
+        enabled = false,
+        isSubmitting = false,
+        replyTargetContent = null,
+        isEditing = true,
+        onCancelClick = {},
         onSendClick = {},
     )
 }
@@ -146,7 +172,8 @@ private fun CommunityCommentInputBarSubmittingPreview() {
         enabled = false,
         isSubmitting = true,
         replyTargetContent = null,
-        onCancelReplyClick = {},
+        isEditing = false,
+        onCancelClick = {},
         onSendClick = {},
     )
 }

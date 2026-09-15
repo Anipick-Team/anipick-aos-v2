@@ -5,8 +5,6 @@ import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.model.actor.Actor
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.AnimeWatchStatus
-import com.jparkbro.core.model.community.CommunityPost
-import com.jparkbro.core.model.mypage.MyCommunityComment
 import com.jparkbro.core.model.mypage.MyPageProfile
 import com.jparkbro.core.model.pagination.CursorPage
 import com.jparkbro.core.model.review.Review
@@ -89,17 +87,23 @@ interface UserRepository {
     /** 마이페이지 "찜한 인물" 목록 - `GET /mypage/persons/like`. */
     suspend fun getLikedPersons(lastId: Long? = null, size: Int = 18): Result<CursorPage<Actor>, DataError.Network>
 
-    /** 마이페이지 "내가 쓴 게시글" 목록 - `GET /mypage/community/posts`. */
-    suspend fun getMyCommunityPosts(
-        lastId: Long? = null,
-        size: Int = 20,
-    ): Result<CursorPage<CommunityPost>, DataError.Network>
+    /** 캐시된 "내가 쓴 게시글" 목록 - 마이페이지 MyContent(POSTS) 화면이 이 값을 구독한다 */
+    val myCommunityPosts: StateFlow<MyCommunityPostsState>
 
-    /** 마이페이지 "내가 쓴 댓글" 목록 - `GET /mypage/community/comments`. */
-    suspend fun getMyCommunityComments(
-        lastId: Long? = null,
-        size: Int = 20,
-    ): Result<CursorPage<MyCommunityComment>, DataError.Network>
+    /** [resetCursor]가 true면 캐시 있으면 그대로 두고(없으면 첫 페이지 조회), false면 다음 페이지를 이어붙인다 */
+    suspend fun loadMyCommunityPosts(resetCursor: Boolean = true)
+
+    /** 캐시 무시하고 첫 페이지부터 다시 불러와 [myCommunityPosts]를 갱신한다 - 게시글 작성/수정/삭제 후 호출 */
+    suspend fun refreshMyCommunityPosts()
+
+    /** 캐시된 "내가 쓴 댓글" 목록 - 마이페이지 MyContent(COMMENTS) 화면이 이 값을 구독한다 */
+    val myCommunityComments: StateFlow<MyCommunityCommentsState>
+
+    /** [resetCursor]가 true면 캐시 있으면 그대로 두고(없으면 첫 페이지 조회), false면 다음 페이지를 이어붙인다 */
+    suspend fun loadMyCommunityComments(resetCursor: Boolean = true)
+
+    /** 캐시 무시하고 첫 페이지부터 다시 불러와 [myCommunityComments]를 갱신한다 - 댓글 작성/수정/삭제 후 호출 */
+    suspend fun refreshMyCommunityComments()
 
     /** 유저 차단 - `POST /users/{userId}/block`. */
     suspend fun blockUser(userId: Long): Result<Unit, DataError.Network>

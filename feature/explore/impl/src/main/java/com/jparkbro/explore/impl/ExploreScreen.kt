@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.core.designsystem.component.AniPickShellTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.community.CommunityBoard
 import com.jparkbro.core.model.metadata.FilterType
@@ -69,7 +70,9 @@ private fun ExploreScreen(
         containerColor = AniPickTheme.colors.white
     ) { innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(top = BottomEdgeShadowClearance),
         ) {
             CollapsibleHeader(state = filterHeaderState) {
                 ExploreFilterHeader(

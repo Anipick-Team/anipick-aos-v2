@@ -5,6 +5,7 @@ import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.data.image.compressImage
 import com.jparkbro.core.model.community.CommunityBoard
 import com.jparkbro.core.model.community.CommunityComment
 import com.jparkbro.core.model.community.CommunityPost
@@ -18,23 +19,31 @@ import com.jparkbro.core.network.community.dto.CommunityPostsRequest
 import com.jparkbro.core.network.community.dto.toCommunityBoard
 import com.jparkbro.core.network.community.dto.toCommunityComment
 import com.jparkbro.core.network.community.dto.toCommunityPost
+import com.jparkbro.core.data.user.UserRepository
 import com.jparkbro.core.network.image.ImageNetworkDataSource
 import com.jparkbro.core.network.image.toImageId
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class CommunityRepositoryImpl(
     private val communityNetworkDataSource: CommunityNetworkDataSource,
     private val imageNetworkDataSource: ImageNetworkDataSource,
+    private val userRepository: UserRepository,
 ) : CommunityRepository {
 
     private val _communityBoardPosts = MutableStateFlow(CommunityBoardPostsState())
     override val communityBoardPosts: StateFlow<CommunityBoardPostsState> = _communityBoardPosts.asStateFlow()
+
+    private val _updatedPostId = MutableSharedFlow<Long>(extraBufferCapacity = 1)
+    override val updatedPostId: SharedFlow<Long> = _updatedPostId.asSharedFlow()
 
     override suspend fun loadCommunityBoardPosts(seriesId: Long, sort: String?, resetCursor: Boolean) {
         val current = _communityBoardPosts.value
@@ -158,7 +167,9 @@ class CommunityRepositoryImpl(
         fileName: String,
         mimeType: String,
     ): Result<Long, DataError.Network> {
-        return imageNetworkDataSource.uploadCommunityPostImage(imageBytes, fileName, mimeType)
+        val compressed = imageBytes.compressImage(mimeType)
+        val compressedFileName = fileName.substringBeforeLast('.', fileName) + "." + compressed.extension
+        return imageNetworkDataSource.uploadCommunityPostImage(compressed.bytes, compressedFileName, compressed.mimeType)
             .map { it.imageId }
     }
 
@@ -171,6 +182,7 @@ class CommunityRepositoryImpl(
     ): Result<Long, DataError.Network> {
         return communityNetworkDataSource.createPost(seriesId, title, content, isSpoiler, imageIds)
             .map { it.postId }
+            .onSuccess { userRepository.refreshMyCommunityPosts() }
     }
 
     override suspend fun getPostDetail(postId: Long): Result<CommunityPost, DataError.Network> {
@@ -185,10 +197,12 @@ class CommunityRepositoryImpl(
         imageIds: List<Long>,
     ): Result<Unit, DataError.Network> {
         return communityNetworkDataSource.updatePost(postId, title, content, isSpoiler, imageIds)
+            .onSuccess { userRepository.refreshMyCommunityPosts() }
     }
 
     override suspend fun deletePost(postId: Long): Result<Unit, DataError.Network> {
         return communityNetworkDataSource.deletePost(postId)
+            .onSuccess { userRepository.refreshMyCommunityPosts() }
     }
 
     override suspend fun likePost(postId: Long): Result<Unit, DataError.Network> {
@@ -219,14 +233,17 @@ class CommunityRepositoryImpl(
     ): Result<Long, DataError.Network> {
         return communityNetworkDataSource.createComment(postId, content, parentCommentId)
             .map { it.commentId }
+            .onSuccess { userRepository.refreshMyCommunityComments() }
     }
 
     override suspend fun updateComment(commentId: Long, content: String): Result<Unit, DataError.Network> {
         return communityNetworkDataSource.updateComment(commentId, content)
+            .onSuccess { userRepository.refreshMyCommunityComments() }
     }
 
     override suspend fun deleteComment(commentId: Long): Result<Unit, DataError.Network> {
         return communityNetworkDataSource.deleteComment(commentId)
+            .onSuccess { userRepository.refreshMyCommunityComments() }
     }
 
     override suspend fun likeComment(commentId: Long): Result<Unit, DataError.Network> {

@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.catalog.impl.recommendation.components.CatalogRecommendationHeader
 import com.jparkbro.core.designsystem.component.AniPickLoadMoreIndicator
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.ui.component.AniPickAnimeGridSkeleton
@@ -64,7 +65,9 @@ private fun CatalogRecommendationScreen(
             AniPickAnimeInfiniteGrid(
                 animes = state.animes,
                 onAnimeClick = { anime -> anime.animeId?.let { onAction(CatalogRecommendationAction.OnAnimeClick(it)) } },
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(top = BottomEdgeShadowClearance),
                 onLoadMore = { onAction(CatalogRecommendationAction.OnLoadMore) },
                 header = {
                     item(span = { GridItemSpan(maxLineSpan) }) {

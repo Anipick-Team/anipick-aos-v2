@@ -9,4 +9,5 @@ android {
 dependencies {
     implementation(projects.core.network)
     implementation(projects.core.datastore)
+    implementation(libs.androidx.exifinterface)
 }

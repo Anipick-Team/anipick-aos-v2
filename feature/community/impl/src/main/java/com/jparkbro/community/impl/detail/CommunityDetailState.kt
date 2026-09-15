@@ -27,6 +27,8 @@ data class CommunityDetailState(
     val isCommentSubmitting: Boolean = false,
     /** 답글 대상 댓글 - null이 아니면 입력창이 답글 모드(대상 미리보기 표시, 등록 시 parentCommentId로 전달). */
     val replyTargetComment: CommunityComment? = null,
+    /** 수정 대상 댓글 - null이 아니면 입력창이 수정 모드(내용 프리필, 등록 시 updateComment로 전달). */
+    val editTargetComment: CommunityComment? = null,
 ) {
     /** 게시글/댓글 목록이 둘 다 끝나야(둘 중 하나라도 로딩 중이면 false) 실제 콘텐츠를 그린다. */
     val isContentLoading: Boolean

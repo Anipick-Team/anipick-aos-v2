@@ -14,6 +14,7 @@ import com.jparkbro.catalog.impl.series.components.CatalogSeriesHeader
 import com.jparkbro.core.designsystem.component.AniPickCountLabel
 import com.jparkbro.core.designsystem.component.AniPickLoadMoreIndicator
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.ui.component.AniPickAnimeGridSkeleton
@@ -68,7 +69,9 @@ private fun CatalogSeriesScreen(
             AniPickAnimeInfiniteGrid(
                 animes = state.animes,
                 onAnimeClick = { anime -> anime.animeId?.let { onAction(CatalogSeriesAction.OnAnimeClick(it)) } },
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(top = BottomEdgeShadowClearance),
                 onLoadMore = { onAction(CatalogSeriesAction.OnLoadMore) },
                 header = {
                     item(span = { GridItemSpan(maxLineSpan) }) {

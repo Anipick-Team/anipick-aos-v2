@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import com.jparkbro.core.designsystem.component.AniPickDialog
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.ui.effect.ObserveAsEvents
 import com.jparkbro.mypage.api.SettingDetailType
@@ -94,7 +95,8 @@ private fun SettingMainScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(top = BottomEdgeShadowClearance),
             contentPadding = PaddingValues(vertical = 40.dp),
             verticalArrangement = Arrangement.spacedBy(40.dp)
         ) {

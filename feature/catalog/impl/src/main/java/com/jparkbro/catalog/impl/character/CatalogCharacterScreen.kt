@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.core.designsystem.component.AniPickLoadMoreIndicator
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.actor.Actor
 import com.jparkbro.core.model.character.AnimeCharacter
@@ -90,7 +91,8 @@ private fun CatalogCharacterScreen(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(top = BottomEdgeShadowClearance),
         ) {
             val layoutDirection = LocalLayoutDirection.current
             val horizontalPadding = GRID_CONTENT_PADDING.calculateStartPadding(layoutDirection) +

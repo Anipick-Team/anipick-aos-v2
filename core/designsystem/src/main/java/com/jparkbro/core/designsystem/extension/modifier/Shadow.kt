@@ -31,6 +31,9 @@ fun Modifier.topEdgeShadow(
     )
 }
 
+/** [bottomEdgeShadow] 기본값(height+offsetY) 기준 - 그 아래에 스크롤 콘텐츠를 둘 때 겹치지 않게 띄우는 용도 */
+val BottomEdgeShadowClearance = 14.dp
+
 /** 자신의 아래쪽에 그림자를 그린다. 상단 고정 바(앱바 등)가 콘텐츠 위에 떠 있는 느낌을 줄 때 사용. */
 fun Modifier.bottomEdgeShadow(
     height: Dp = 12.dp,

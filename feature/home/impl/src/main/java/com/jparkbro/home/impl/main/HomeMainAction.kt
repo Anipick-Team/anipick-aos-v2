@@ -9,6 +9,9 @@ sealed interface HomeMainAction {
     data class OnAnimeClick(val animeId: Long) : Navigation
     data class OnDaySelected(val day: String) : HomeMainAction
 
+    /** 인스타그램 배너 - 공식 계정으로 이동. */
+    data object OnInstagramClick : Navigation
+
     /** 실시간 인기 더보기 — 랭킹 탭으로 이동. */
     data object OnTrendingMoreClick : Navigation
 

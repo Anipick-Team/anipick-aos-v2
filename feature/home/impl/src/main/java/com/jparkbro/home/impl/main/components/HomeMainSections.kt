@@ -1,14 +1,21 @@
 package com.jparkbro.home.impl.main.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.theme.AniPickTheme
@@ -21,18 +28,32 @@ internal fun LazyListScope.homeMainSections(
     state: HomeMainState,
     onAction: (HomeMainAction) -> Unit,
 ) {
-    // 실시간 인기 ( Trending Animes )
-    if (state.trendingAnimes.isNotEmpty()) {
-        item {
-            HomeSection(
-                title = "실시간 인기 애니메이션",
-                titlePadding = PaddingValues(horizontal = 20.dp),
-                onMoreClick = { onAction(HomeMainAction.OnTrendingMoreClick) },
+    item {
+        Column(verticalArrangement = Arrangement.spacedBy(40.dp)) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center,
             ) {
-                AnimeCardRow(
-                    animes = state.trendingAnimes,
-                    onAnimeClick = { onAction(HomeMainAction.OnAnimeClick(it)) },
+                Image(
+                    painter = painterResource(R.drawable.instagram_banner),
+                    contentDescription = "인스타그램 배너",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onAction(HomeMainAction.OnInstagramClick) },
                 )
+            }
+
+            if (state.trendingAnimes.isNotEmpty()) {
+                HomeSection(
+                    title = "실시간 인기 애니메이션",
+                    titlePadding = PaddingValues(horizontal = 20.dp),
+                    onMoreClick = { onAction(HomeMainAction.OnTrendingMoreClick) },
+                ) {
+                    AnimeCardRow(
+                        animes = state.trendingAnimes,
+                        onAnimeClick = { onAction(HomeMainAction.OnAnimeClick(it)) },
+                    )
+                }
             }
         }
     }

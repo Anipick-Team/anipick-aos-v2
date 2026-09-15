@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.core.designsystem.component.AniPickDialog
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.review.impl.rated.components.RatedReviewContent
 import org.koin.compose.viewmodel.koinViewModel
@@ -55,7 +56,7 @@ private fun RatedReviewScreen(
         RatedReviewContent(
             state = state,
             onAction = onAction,
-            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            modifier = Modifier.padding(innerPadding).padding(top = BottomEdgeShadowClearance).fillMaxSize(),
         )
 
         if (state.deleteTargetReviewId != null) {

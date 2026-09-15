@@ -44,6 +44,8 @@ class CommunityDetailViewModel(
             CommunityDetailAction.OnShareClick -> Unit
             is CommunityDetailAction.OnCommentReplyClick -> onCommentReplyClick(action.commentId)
             CommunityDetailAction.OnReplyTargetCancelClick -> _state.update { it.copy(replyTargetComment = null) }
+            is CommunityDetailAction.OnCommentEditClick -> onCommentEditClick(action.commentId)
+            CommunityDetailAction.OnCommentEditCancelClick -> cancelCommentEdit()
             CommunityDetailAction.OnRetryClick -> {
                 loadPostDetail()
                 loadComments(showLoading = true)
@@ -89,32 +91,73 @@ class CommunityDetailViewModel(
         }
     }
 
-    /** 답글 대상 지정 - 대댓글까지 재귀로 뒤져서 대상 댓글을 찾아 미리보기에 쓴다. */
+    /** 답글 대상 지정 - 대댓글까지 재귀로 뒤져서 대상 댓글을 찾아 미리보기에 쓴다 - 수정 모드였다면 해제 */
     private fun onCommentReplyClick(commentId: Long) {
         val target = findComment(_state.value.comments, commentId) ?: return
-        _state.update { it.copy(replyTargetComment = target) }
+        if (_state.value.editTargetComment != null) {
+            _state.value.commentInputState.setTextAndPlaceCursorAtEnd("")
+        }
+        _state.update { it.copy(replyTargetComment = target, editTargetComment = null) }
     }
 
-    /** 댓글/답글 등록 - [CommunityDetailState.replyTargetComment]가 있으면 그 댓글의 답글로 등록한다.
-     *  성공하면 입력창을 비우고, 답글 모드를 해제하고, 목록을 다시 불러온다. */
+    /** 수정 모드 진입 - 입력창에 원래 내용을 채워 넣는다. 답글 모드였다면 해제한다. */
+    private fun onCommentEditClick(commentId: Long) {
+        val target = findComment(_state.value.comments, commentId) ?: return
+        _state.update { it.copy(editTargetComment = target, replyTargetComment = null) }
+        _state.value.commentInputState.setTextAndPlaceCursorAtEnd(target.content.orEmpty())
+    }
+
+    private fun cancelCommentEdit() {
+        _state.value.commentInputState.setTextAndPlaceCursorAtEnd("")
+        _state.update { it.copy(editTargetComment = null) }
+    }
+
+    /** 댓글/답글 등록 또는 수정 - [CommunityDetailState.editTargetComment]가 있으면 수정, 아니면
+     *  [CommunityDetailState.replyTargetComment] 유무에 따라 댓글/답글로 등록한다 */
     private fun onCommentSendClick() {
         val current = _state.value
         val content = current.commentInputState.text.toString().trim()
         if (content.isBlank() || current.isCommentSubmitting) return
 
+        val editTargetId = current.editTargetComment?.commentId
+        if (editTargetId != null) {
+            onCommentEditSendClick(editTargetId, content)
+        } else {
+            onCommentCreateSendClick(content, current.replyTargetComment?.commentId)
+        }
+    }
+
+    private fun onCommentCreateSendClick(content: String, parentCommentId: Long?) {
         viewModelScope.launch {
             _state.update { it.copy(isCommentSubmitting = true) }
 
             communityRepository.createComment(
-                postId = current.postId,
+                postId = _state.value.postId,
                 content = content,
-                parentCommentId = current.replyTargetComment?.commentId,
+                parentCommentId = parentCommentId,
             )
                 .onSuccess {
-                    val wasReply = current.replyTargetComment != null
-                    current.commentInputState.setTextAndPlaceCursorAtEnd("")
+                    _state.value.commentInputState.setTextAndPlaceCursorAtEnd("")
                     _state.update { it.copy(isCommentSubmitting = false, replyTargetComment = null) }
-                    globalSnackbarManager.showSnackbar(if (wasReply) "답글이 등록되었습니다." else "댓글이 등록되었습니다.")
+                    globalSnackbarManager.showSnackbar(if (parentCommentId != null) "답글이 등록되었습니다." else "댓글이 등록되었습니다.")
+                    loadComments(showLoading = false)
+                }
+                .onFailure { error ->
+                    _state.update { it.copy(isCommentSubmitting = false) }
+                    globalSnackbarManager.showSnackbar(error.toDisplayMessage())
+                }
+        }
+    }
+
+    private fun onCommentEditSendClick(commentId: Long, content: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isCommentSubmitting = true) }
+
+            communityRepository.updateComment(commentId, content)
+                .onSuccess {
+                    _state.value.commentInputState.setTextAndPlaceCursorAtEnd("")
+                    _state.update { it.copy(isCommentSubmitting = false, editTargetComment = null) }
+                    globalSnackbarManager.showSnackbar("댓글이 수정되었습니다.")
                     loadComments(showLoading = false)
                 }
                 .onFailure { error ->

@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.core.designsystem.component.AniPickDialog
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.ui.component.AniPickReportDialog
 import com.jparkbro.review.impl.recent.components.ReviewListContent
@@ -66,7 +67,9 @@ private fun RecentReviewScreen(
                 onDeleteClick = { reviewId -> onAction(RecentReviewAction.OnDeleteClick(reviewId)) },
                 onReportClick = { reviewId -> onAction(RecentReviewAction.OnReportClick(reviewId)) },
                 onBlockClick = { userId -> onAction(RecentReviewAction.OnBlockClick(userId)) },
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(top = BottomEdgeShadowClearance),
             )
         }
 

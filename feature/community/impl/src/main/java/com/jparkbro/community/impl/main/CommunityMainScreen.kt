@@ -25,6 +25,7 @@ import com.jparkbro.community.impl.main.components.CommunityPostItem
 import com.jparkbro.community.impl.main.components.CommunityPostItemSkeleton
 import com.jparkbro.core.designsystem.component.AniPickEmptyState
 import com.jparkbro.core.designsystem.component.AniPickTitleTopAppBar
+import com.jparkbro.core.designsystem.extension.modifier.BottomEdgeShadowClearance
 import com.jparkbro.core.designsystem.icon.Edit
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.community.CommunityPost
@@ -107,7 +108,8 @@ private fun CommunityMainScreen(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(top = BottomEdgeShadowClearance),
             contentPadding = PaddingValues(bottom = 40.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
