@@ -38,7 +38,7 @@ internal fun CommunityDetailImagePager(
                 contentDescription = null,
                 error = painterResource(R.drawable.banner_default_img),
                 placeholder = painterResource(R.drawable.banner_default_img),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp),

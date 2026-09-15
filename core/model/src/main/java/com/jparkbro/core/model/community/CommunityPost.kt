@@ -15,6 +15,7 @@ data class CommunityPost(
     val thumbnailImageUrl: String? = null,
     val thumbnailImageBytes: ByteArray? = null,
     val imageCount: Int? = null,
+    val imageIds: List<Long>? = null,
     val imageUrls: List<String>? = null,
     val imageBytesList: List<ByteArray?>? = null,
     val isSpoiler: Boolean? = null,

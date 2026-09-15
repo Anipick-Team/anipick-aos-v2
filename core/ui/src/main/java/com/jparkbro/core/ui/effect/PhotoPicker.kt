@@ -27,3 +27,26 @@ fun rememberPhotoPickerWithPermission(
         )
     }
 }
+
+/** 갤러리에서 이미지 여러 장(최대 [maxItems]) 선택 후 [onImagesSelected] 호출하는 런처 반환 */
+@Composable
+fun rememberMultiPhotoPickerWithPermission(
+    maxItems: Int,
+    onImagesSelected: (List<Uri>) -> Unit,
+): () -> Unit {
+    val photoPicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems.coerceAtLeast(2))
+    ) { uris ->
+        if (uris.isNotEmpty()) {
+            onImagesSelected(uris)
+        }
+    }
+
+    return {
+        photoPicker.launch(
+            PickVisualMediaRequest(
+                mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
+            )
+        )
+    }
+}

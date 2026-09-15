@@ -10,6 +10,6 @@ sealed interface CommunityWriteAction {
     data object OnBackClick : Navigation
     data object OnSubmitClick : CommunityWriteAction
     data class OnSpoilerToggle(val isSpoiler: Boolean) : CommunityWriteAction
-    data class OnImageAdd(val uri: Uri) : CommunityWriteAction
-    data class OnImageRemove(val uri: Uri) : CommunityWriteAction
+    data class OnImagesAdd(val uris: List<Uri>) : CommunityWriteAction
+    data class OnPhotoRemove(val key: Any) : CommunityWriteAction
 }

@@ -8,6 +8,7 @@ import com.jparkbro.core.model.community.CommunityPost
 import com.jparkbro.core.model.pagination.CursorPage
 import com.jparkbro.core.model.report.ReportCategory
 import com.jparkbro.core.model.report.ReportTargetType
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /** 커뮤니티 관련 데이터를 읽어오는 인터페이스 */
@@ -15,6 +16,9 @@ interface CommunityRepository {
 
     /** 현재 열려 있는 커뮤니티 게시판의 게시글 목록 캐시 - 게시판 화면(ViewModel)이 이 값을 구독한다. */
     val communityBoardPosts: StateFlow<CommunityBoardPostsState>
+
+    /** 게시글이 수정된 순간마다 그 postId를 흘려보낸다 - 게시글 상세 화면이 자신이 보고 있는 글이면 재조회한다 */
+    val updatedPostId: SharedFlow<Long>
 
     /** [seriesId] 게시판 게시글 목록을 조회해 [communityBoardPosts]에 반영한다.
      *  [resetCursor]가 true면 첫 페이지부터 새로 시작하고, false면 다음 페이지를 이어붙인다. */

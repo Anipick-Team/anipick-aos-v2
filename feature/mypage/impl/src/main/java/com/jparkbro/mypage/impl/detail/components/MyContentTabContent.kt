@@ -38,7 +38,13 @@ internal fun MyContentTabContent(
     onAction: (MyPageDetailAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState()
+    // 탭마다 스크롤 위치가 따로 유지되도록 리스트 상태를 탭별로 분리한다
+    val postsListState = rememberLazyListState()
+    val commentsListState = rememberLazyListState()
+    val listState = when (state.myContentTab) {
+        MyContentTab.POSTS -> postsListState
+        MyContentTab.COMMENTS -> commentsListState
+    }
     LoadMoreEffect(state = listState, onLoadMore = { onAction(MyPageDetailAction.OnLoadMore) })
 
     Column(

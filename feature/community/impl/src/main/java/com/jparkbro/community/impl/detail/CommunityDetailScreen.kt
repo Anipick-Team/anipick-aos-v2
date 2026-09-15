@@ -199,6 +199,17 @@ private fun CommunityDetailScreen(
                         )
                     }
                 }
+                if (state.comments.isEmpty()) {
+                    item {
+                        AniPickEmptyState(
+                            message = "아직 댓글이 없습니다.",
+                            onRetryClick = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 20.dp),
+                        )
+                    }
+                }
                 itemsIndexed(state.comments, key = { _, comment -> comment.commentId }) { index, comment ->
                     Column {
                         CommunityCommentItem(

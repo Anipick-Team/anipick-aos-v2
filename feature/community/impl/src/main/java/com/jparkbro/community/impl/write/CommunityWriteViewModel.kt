@@ -48,15 +48,19 @@ class CommunityWriteViewModel(
             is CommunityWriteAction.Navigation -> Unit // Root에서 처리한다.
             CommunityWriteAction.OnSubmitClick -> onSubmitClick()
             is CommunityWriteAction.OnSpoilerToggle -> _state.update { it.copy(isSpoiler = action.isSpoiler) }
-            is CommunityWriteAction.OnImageAdd -> onImageAdd(action.uri)
-            is CommunityWriteAction.OnImageRemove -> _state.update { it.copy(images = it.images - action.uri) }
+            is CommunityWriteAction.OnImagesAdd -> onImagesAdd(action.uris)
+            is CommunityWriteAction.OnPhotoRemove -> {
+                _state.update { it.copy(photos = it.photos.filterNot { photo -> photo.key == action.key }) }
+            }
         }
     }
 
-    private fun onImageAdd(uri: Uri) {
-        val current = _state.value.images
-        if (current.size >= MAX_IMAGE_COUNT) return
-        _state.update { it.copy(images = current + uri) }
+    private fun onImagesAdd(uris: List<Uri>) {
+        val current = _state.value.photos
+        val remaining = MAX_IMAGE_COUNT - current.size
+        if (remaining <= 0) return
+        val newPhotos = uris.take(remaining).map { CommunityWritePhoto.New(it) }
+        _state.update { it.copy(photos = current + newPhotos) }
     }
 
     private fun observeSubmitEnabled() {
@@ -72,8 +76,7 @@ class CommunityWriteViewModel(
         }
     }
 
-    /** 수정 모드 진입 시 기존 글 내용을 채운다 - 기존에 첨부된 이미지는 원격 URL이라 로컬 [Uri] 기반
-     *  첨부 목록에 그대로 못 채운다. 유지하려면 다시 첨부해야 한다. */
+    /** 수정 모드 진입 시 기존 글 내용을 채운다 - 기존 첨부 이미지도 [CommunityWritePhoto.Existing]으로 채워서 유지한다 */
     private fun loadExistingPost(postId: Long) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
@@ -82,7 +85,16 @@ class CommunityWriteViewModel(
                 .onSuccess { post ->
                     post.title?.let { _state.value.titleState.setTextAndPlaceCursorAtEnd(it) }
                     post.content?.let { _state.value.contentState.setTextAndPlaceCursorAtEnd(it) }
-                    _state.update { it.copy(isSpoiler = post.isSpoiler == true, isLoading = false) }
+                    val existingPhotos = post.imageIds.orEmpty().mapIndexed { index, imageId ->
+                        CommunityWritePhoto.Existing(
+                            imageId = imageId,
+                            bytes = post.imageBytesList?.getOrNull(index),
+                            url = post.imageUrls?.getOrNull(index),
+                        )
+                    }
+                    _state.update {
+                        it.copy(isSpoiler = post.isSpoiler == true, photos = existingPhotos, isLoading = false)
+                    }
                 }
                 .onFailure { error ->
                     _state.update { it.copy(isLoading = false, error = error.toDisplayMessage()) }
@@ -98,15 +110,19 @@ class CommunityWriteViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isSubmitting = true) }
 
-            val imageIds = mutableListOf<Long>()
-            for (uri in current.images) {
+            val existingImageIds = current.photos.filterIsInstance<CommunityWritePhoto.Existing>().map { it.imageId }
+            val newUris = current.photos.filterIsInstance<CommunityWritePhoto.New>().map { it.uri }
+
+            val uploadedImageIds = mutableListOf<Long>()
+            for (uri in newUris) {
                 val imageId = uploadImage(uri)
                 if (imageId == null) {
                     _state.update { it.copy(isSubmitting = false) }
                     return@launch
                 }
-                imageIds += imageId
+                uploadedImageIds += imageId
             }
+            val imageIds = existingImageIds + uploadedImageIds
 
             val title = current.titleState.text.toString()
             val content = current.contentState.text.toString()

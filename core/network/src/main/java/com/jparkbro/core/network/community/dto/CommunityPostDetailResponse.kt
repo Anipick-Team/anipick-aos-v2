@@ -34,6 +34,7 @@ fun CommunityPostDetailResponse.toCommunityPost(): CommunityPost = CommunityPost
     profileImageUrl = profileImageId?.toImageUrl(),
     title = title,
     content = content,
+    imageIds = imageIds,
     imageUrls = imageIds?.map { it.toImageUrl() },
     isSpoiler = isSpoiler,
     viewCount = viewCount,

@@ -1,6 +1,5 @@
 package com.jparkbro.community.impl.write
 
-import android.net.Uri
 import androidx.compose.foundation.text.input.TextFieldState
 
 data class CommunityWriteState(
@@ -11,7 +10,7 @@ data class CommunityWriteState(
     val contentState: TextFieldState = TextFieldState(),
     val titleError: String? = null,
     val isSpoiler: Boolean = false,
-    val images: List<Uri> = emptyList(),
+    val photos: List<CommunityWritePhoto> = emptyList(),
     val isSubmitEnabled: Boolean = false,
     val isLoading: Boolean = false,
     val isSubmitting: Boolean = false,

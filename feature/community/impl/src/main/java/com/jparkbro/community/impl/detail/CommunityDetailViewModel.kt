@@ -14,6 +14,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,6 +35,18 @@ class CommunityDetailViewModel(
     init {
         loadPostDetail()
         loadComments(showLoading = true)
+        observePostUpdates()
+    }
+
+    /** 글 수정 화면에서 이 글을 수정하고 돌아왔을 때, 같은 화면 인스턴스가 재사용되는 경우를 대비해 재조회한다 */
+    private fun observePostUpdates() {
+        communityRepository.updatedPostId
+            .onEach { updatedPostId ->
+                if (updatedPostId != _state.value.postId) return@onEach
+                loadPostDetail()
+                loadComments(showLoading = false)
+            }
+            .launchIn(viewModelScope)
     }
 
     fun onAction(action: CommunityDetailAction) {

@@ -1,15 +1,13 @@
 package com.jparkbro.community.impl.write.components
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -23,34 +21,39 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.jparkbro.community.impl.write.CommunityWritePhoto
 import com.jparkbro.community.impl.write.MAX_IMAGE_COUNT
 import com.jparkbro.core.designsystem.icon.Close
 import com.jparkbro.core.designsystem.icon.Image
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/** 사진 첨부 - 선택된 사진 미리보기 + 추가 타일 + 최대 장수/용량 안내 */
+/** 사진 첨부 - 선택된 사진 미리보기(기존 첨부 + 새로 고른 것) + 추가 타일 + 최대 장수/용량 안내 */
 @Composable
 internal fun CommunityWritePhotoSection(
-    images: List<Uri>,
+    photos: List<CommunityWritePhoto>,
     onAddClick: () -> Unit,
-    onRemoveClick: (Uri) -> Unit,
+    onRemoveClick: (Any) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(images) { uri ->
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            photos.forEach { photo ->
                 SelectedPhotoThumbnail(
-                    uri = uri,
-                    onRemoveClick = { onRemoveClick(uri) },
+                    model = when (photo) {
+                        is CommunityWritePhoto.Existing -> photo.bytes ?: photo.url
+                        is CommunityWritePhoto.New -> photo.uri
+                    },
+                    onRemoveClick = { onRemoveClick(photo.key) },
                 )
             }
-            if (images.size < MAX_IMAGE_COUNT) {
-                item {
-                    AddPhotoTile(onClick = onAddClick)
-                }
+            if (photos.size < MAX_IMAGE_COUNT) {
+                AddPhotoTile(onClick = onAddClick)
             }
         }
         Column(
@@ -72,13 +75,13 @@ internal fun CommunityWritePhotoSection(
 
 @Composable
 private fun SelectedPhotoThumbnail(
-    uri: Uri,
+    model: Any?,
     onRemoveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.size(112.dp)) {
         AsyncImage(
-            model = uri,
+            model = model,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -125,7 +128,7 @@ private fun AddPhotoTile(onClick: () -> Unit, modifier: Modifier = Modifier) {
 @Composable
 private fun CommunityWritePhotoSectionPreview() {
     CommunityWritePhotoSection(
-        images = emptyList(),
+        photos = emptyList(),
         onAddClick = {},
         onRemoveClick = {},
     )

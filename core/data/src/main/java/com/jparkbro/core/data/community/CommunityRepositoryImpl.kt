@@ -197,7 +197,10 @@ class CommunityRepositoryImpl(
         imageIds: List<Long>,
     ): Result<Unit, DataError.Network> {
         return communityNetworkDataSource.updatePost(postId, title, content, isSpoiler, imageIds)
-            .onSuccess { userRepository.refreshMyCommunityPosts() }
+            .onSuccess {
+                userRepository.refreshMyCommunityPosts()
+                _updatedPostId.emit(postId)
+            }
     }
 
     override suspend fun deletePost(postId: Long): Result<Unit, DataError.Network> {

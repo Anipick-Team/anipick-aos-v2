@@ -96,9 +96,9 @@ internal fun LazyListScope.communityWriteFields(
     }
     item {
         CommunityWritePhotoSection(
-            images = state.images,
+            photos = state.photos,
             onAddClick = onAddPhotoClick,
-            onRemoveClick = { uri -> onAction(CommunityWriteAction.OnImageRemove(uri)) },
+            onRemoveClick = { key -> onAction(CommunityWriteAction.OnPhotoRemove(key)) },
         )
     }
 }
