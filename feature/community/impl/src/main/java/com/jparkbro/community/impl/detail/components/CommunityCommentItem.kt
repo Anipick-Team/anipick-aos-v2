@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.component.AniPickAnimatedHeartIcon
 import com.jparkbro.core.designsystem.component.AniPickDropdownMenuIcon
+import com.jparkbro.core.designsystem.component.AniPickGenreTag
 import com.jparkbro.core.designsystem.icon.ArrowRight
 import com.jparkbro.core.designsystem.icon.Comment
 import com.jparkbro.core.designsystem.icon.MoreHorizontal
@@ -113,28 +114,36 @@ private fun CommentBody(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     AniPickProfileNickname(profileImageUrl = comment.profileImageUrl, nickname = comment.nickname ?: "-")
-                    AniPickDropdownMenuIcon(
-                        items = if (comment.isMine == true) {
-                            listOf(
-                                commentMenuItem("수정", onEditClick),
-                                commentMenuItem("삭제", onDeleteClick),
-                            )
-                        } else {
-                            listOf(commentMenuItem("신고", onReportClick))
-                        },
-                        trigger = {
-                            Icon(
-                                imageVector = MoreHorizontal,
-                                contentDescription = "더보기",
-                                tint = AniPickTheme.colors.black,
-                                modifier = Modifier.size(20.dp),
-                            )
-                        },
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        if (comment.isEdited == true) {
+                            AniPickGenreTag(genre = "수정됨")
+                        }
+                        AniPickDropdownMenuIcon(
+                            items = if (comment.isMine == true) {
+                                listOf(
+                                    commentMenuItem("수정", onEditClick),
+                                    commentMenuItem("삭제", onDeleteClick),
+                                )
+                            } else {
+                                listOf(commentMenuItem("신고", onReportClick))
+                            },
+                            trigger = {
+                                Icon(
+                                    imageVector = MoreHorizontal,
+                                    contentDescription = "더보기",
+                                    tint = AniPickTheme.colors.black,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                            },
+                        )
+                    }
                 }
                 comment.createdAt?.let { createdAt ->
                     Text(
-                        text = if (comment.isEdited == true) "$createdAt (수정됨)" else createdAt,
+                        text = createdAt,
                         style = AniPickTheme.typography.caption2,
                         color = AniPickTheme.colors.textGray,
                     )
