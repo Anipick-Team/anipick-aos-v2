@@ -61,7 +61,7 @@ internal fun PasswordVerificationFields(
                     type = TextFieldType.TEXT,
                     placeholder = "인증번호를 입력해주세요",
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
+                        keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Done
                     ),
                     onKeyboardAction = {

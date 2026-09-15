@@ -74,8 +74,10 @@ internal fun LazyListScope.animeInfoTabContent(
     isDescriptionExpanded: Boolean,
     onToggleDescriptionExpanded: () -> Unit,
     onCastMoreClick: () -> Unit,
+    onCastClick: (Long) -> Unit,
     onSeriesMoreClick: () -> Unit,
     onRecommendationMoreClick: () -> Unit,
+    onAnimeClick: (Long) -> Unit,
     onStudioClick: (Long) -> Unit,
 ) {
     if (!detail.description.isNullOrBlank()) {
@@ -216,7 +218,11 @@ internal fun LazyListScope.animeInfoTabContent(
             if (cast.isNotEmpty()) {
                 AnimeInfoSection(title = "캐릭터 / 성우진", onMoreClick = onCastMoreClick) {
                     itemsIndexed(cast, key = { index, item -> "$index-${item.character?.characterId}" }) { _, animeCharacter ->
-                        AniPickCastPairCard(animeCharacter = animeCharacter, cardWidth = 100.dp)
+                        AniPickCastPairCard(
+                            animeCharacter = animeCharacter,
+                            cardWidth = 100.dp,
+                            onClick = { animeCharacter.voiceActor?.personId?.let(onCastClick) },
+                        )
                     }
                 }
             }
@@ -224,7 +230,12 @@ internal fun LazyListScope.animeInfoTabContent(
             if (series.isNotEmpty()) {
                 AnimeInfoSection(title = "시리즈 정보", onMoreClick = onSeriesMoreClick) {
                     itemsIndexed(series, key = { index, item -> "$index-${item.animeId}" }) { _, anime ->
-                        AniPickAnimeCard(anime = anime, cardWidth = 114.dp, background = AniPickCardBackground.GRAY)
+                        AniPickAnimeCard(
+                            anime = anime,
+                            cardWidth = 114.dp,
+                            background = AniPickCardBackground.GRAY,
+                            onClick = { anime.animeId?.let(onAnimeClick) },
+                        )
                     }
                 }
             }
@@ -232,7 +243,12 @@ internal fun LazyListScope.animeInfoTabContent(
             if (recommendations.isNotEmpty()) {
                 AnimeInfoSection(title = "함께 볼만한 작품", onMoreClick = onRecommendationMoreClick) {
                     itemsIndexed(recommendations, key = { index, item -> "$index-${item.animeId}" }) { _, anime ->
-                        AniPickAnimeCard(anime = anime, cardWidth = 114.dp, background = AniPickCardBackground.GRAY)
+                        AniPickAnimeCard(
+                            anime = anime,
+                            cardWidth = 114.dp,
+                            background = AniPickCardBackground.GRAY,
+                            onClick = { anime.animeId?.let(onAnimeClick) },
+                        )
                     }
                 }
             }
@@ -417,8 +433,10 @@ private fun AnimeInfoTabContentPreview() {
             isDescriptionExpanded = false,
             onToggleDescriptionExpanded = {},
             onCastMoreClick = {},
+            onCastClick = {},
             onSeriesMoreClick = {},
             onRecommendationMoreClick = {},
+            onAnimeClick = {},
             onStudioClick = {},
         )
     }

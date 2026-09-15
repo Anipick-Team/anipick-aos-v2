@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.actor.Actor
+import com.jparkbro.core.ui.component.AniPickActorCard
 import com.jparkbro.core.ui.component.AniPickSectionHeader
 
 private val MYPAGE_SECTION_ICON_SIZE = 18.dp
@@ -65,7 +66,7 @@ private fun MyPageListSectionPreview() {
         // 실제 사용처(MyPageMainScreen)에서는 "작품" 대신 "인물"만 바꿔서 넘긴다.
         emptyContentText = "아직 좋아요한 인물이 없어요.\n좋아요를 누르러 가볼까요 ?",
     ) { actor ->
-        LikedPersonCard(actor = actor)
+        AniPickActorCard(actor = actor, cardWidth = 114.dp)
     }
 }
 
@@ -78,6 +79,6 @@ private fun MyPageListSectionEmptyPreview() {
         onMoreClick = {},
         // 실제 사용처(MyPageMainScreen)에서는 "작품" 대신 "인물"만 바꿔서 넘긴다.
         emptyContentText = "아직 좋아요한 인물이 없어요.\n좋아요를 누르러 가볼까요 ?",
-        itemContent = { actor -> LikedPersonCard(actor = actor) },
+        itemContent = { actor -> AniPickActorCard(actor = actor, cardWidth = 114.dp) },
     )
 }

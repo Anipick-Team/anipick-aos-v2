@@ -7,6 +7,7 @@ import com.jparkbro.core.model.mypage.WatchCounts
 data class MyPageMainState(
     val nickname: String? = null,
     val profileImageUrl: String? = null,
+    val profileImageBytes: ByteArray? = null,
     val watchCounts: WatchCounts = WatchCounts(),
     val likedAnimes: List<Anime> = emptyList(),
     val likedPersons: List<Actor> = emptyList(),

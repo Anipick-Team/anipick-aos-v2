@@ -12,6 +12,7 @@ import com.jparkbro.core.model.pagination.CursorPage
 import com.jparkbro.core.model.review.Review
 import com.jparkbro.core.model.user.UserSetting
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 /** 유저 정보 관련 데이터를 읽고 쓰는 인터페이스 */
 interface UserRepository {
@@ -21,8 +22,14 @@ interface UserRepository {
     /** 이메일 */
     val email: Flow<String?>
 
-    /** 마이페이지 프로필 - `GET /mypage`. */
-    suspend fun getMyPage(): Result<MyPageProfile, DataError.Network>
+    /** 캐시된 마이페이지 프로필 - 아직 조회 안 됐으면 null */
+    val myPageProfile: StateFlow<MyPageProfile?>
+
+    /** 캐시 있으면 유지, 없으면 `GET /mypage`로 조회 */
+    suspend fun loadMyPage(): Result<Unit, DataError.Network>
+
+    /** 캐시 무시하고 `GET /mypage`로 재조회해 [myPageProfile] 갱신 */
+    suspend fun refreshMyPage(): Result<Unit, DataError.Network>
 
     /** 설정 화면 - `GET /setting/view`. */
     suspend fun getUserSetting(): Result<UserSetting, DataError.Network>
@@ -43,20 +50,20 @@ interface UserRepository {
     /** 회원 탈퇴 - `PATCH /setting/withdrawal`. */
     suspend fun withdraw(): Result<Unit, DataError.Network>
 
-    /** 프로필 이미지 변경 - `POST /image/profile-image`. */
+    /** 프로필 이미지 변경 - `POST /image/profile-image`, 성공하면 [myPageProfile]도 새 이미지로 갱신 */
     suspend fun updateProfileImage(
         imageBytes: ByteArray,
         fileName: String,
         mimeType: String,
-    ): Result<Long, DataError.Network>
+    ): Result<Unit, DataError.Network>
 
-    /** 애니 보기 상태 등록 - `POST /users/{animeId}/status`. */
+    /** 애니 보기 상태 등록 - `POST /users/{animeId}/status`. 성공하면 [refreshMyPage]로 [myPageProfile]을 갱신한다. */
     suspend fun addAnimeStatus(animeId: Long, status: AnimeWatchStatus): Result<Unit, DataError.Network>
 
-    /** 애니 보기 상태 수정 - `PATCH /users/{animeId}/status`. */
+    /** 애니 보기 상태 수정 - `PATCH /users/{animeId}/status`. 성공하면 [refreshMyPage]로 [myPageProfile]을 갱신한다. */
     suspend fun updateAnimeStatus(animeId: Long, status: AnimeWatchStatus): Result<Unit, DataError.Network>
 
-    /** 애니 보기 상태 삭제 - `DELETE /users/{animeId}/status`. */
+    /** 애니 보기 상태 삭제 - `DELETE /users/{animeId}/status`. 성공하면 [refreshMyPage]로 [myPageProfile]을 갱신한다. */
     suspend fun deleteAnimeStatus(animeId: Long): Result<Unit, DataError.Network>
 
     /** 마이페이지 보기 상태별 애니 목록 - `GET /mypage/animes/{watchlist|watching|finished}`. */

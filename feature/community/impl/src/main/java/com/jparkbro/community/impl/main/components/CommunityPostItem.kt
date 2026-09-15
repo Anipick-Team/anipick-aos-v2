@@ -3,11 +3,14 @@ package com.jparkbro.community.impl.main.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,10 +23,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.jparkbro.community.impl.components.PostStat
-import com.jparkbro.community.impl.components.PostStatDivider
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.component.AniPickGenreTag
+import com.jparkbro.core.designsystem.component.AniPickPostStat
+import com.jparkbro.core.designsystem.component.AniPickPostStatDivider
 import com.jparkbro.core.designsystem.icon.Comment
 import com.jparkbro.core.designsystem.icon.HeartOutlined
 import com.jparkbro.core.designsystem.icon.VisibilityOn
@@ -84,15 +87,34 @@ internal fun CommunityPostItem(
                 )
             }
             post.thumbnailImageUrl?.let { url ->
-                AsyncImage(
-                    model = url,
-                    contentDescription = "커뮤니티 게시글 썸네일 이미지",
-                    error = painterResource(R.drawable.portrait_default_img),
-                    placeholder = painterResource(R.drawable.portrait_default_img),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(112.dp),
-                )
+                Box(modifier = Modifier.size(112.dp)) {
+                    AsyncImage(
+                        model = post.thumbnailImageBytes ?: url,
+                        contentDescription = "커뮤니티 게시글 썸네일 이미지",
+                        error = painterResource(R.drawable.portrait_default_img),
+                        placeholder = painterResource(R.drawable.portrait_default_img),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    val imageCount = post.imageCount
+                    if (imageCount != null && imageCount > 1) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(8.dp)
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(AniPickTheme.colors.black),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "+$imageCount",
+                                style = AniPickTheme.typography.body2,
+                                color = AniPickTheme.colors.white,
+                            )
+                        }
+                    }
+                }
             }
         }
         Row(
@@ -104,11 +126,11 @@ internal fun CommunityPostItem(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                PostStat(icon = VisibilityOn, count = post.viewCount)
-                PostStatDivider()
-                PostStat(icon = HeartOutlined, count = post.likeCount)
-                PostStatDivider()
-                PostStat(icon = Comment, count = post.commentCount)
+                AniPickPostStat(icon = VisibilityOn, count = post.viewCount)
+                AniPickPostStatDivider()
+                AniPickPostStat(icon = HeartOutlined, count = post.likeCount)
+                AniPickPostStatDivider()
+                AniPickPostStat(icon = Comment, count = post.commentCount)
             }
             if (post.isSpoiler == true) {
                 AniPickGenreTag(genre = "스포일러")
@@ -131,7 +153,8 @@ private fun CommunityPostItemPreview() {
             likeCount = 32,
             commentCount = 8,
             createdAt = "2025. 04. 03",
-            thumbnailImageUrl = ""
+            thumbnailImageUrl = "",
+            imageCount = 4,
         ),
         onClick = {},
     )

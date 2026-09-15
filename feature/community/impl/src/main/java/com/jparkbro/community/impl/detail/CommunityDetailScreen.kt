@@ -1,6 +1,7 @@
 package com.jparkbro.community.impl.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,7 +82,14 @@ private fun CommunityDetailScreen(
     state: CommunityDetailState,
     onAction: (CommunityDetailAction) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
+
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { focusManager.clearFocus() })
+            },
         topBar = {
             AniPickTitleTopAppBar(
                 onBackClick = { onAction(CommunityDetailAction.OnBackClick) },
@@ -136,7 +146,6 @@ private fun CommunityDetailScreen(
                                 .background(AniPickTheme.colors.white)
                                 .padding(top = 40.dp),
                         )
-                        // 좋아요/공유 아래 divider 다음 - 흰 배경 40dp, 그 아래(댓글 영역)는 Scaffold 기본색(lightGray).
                         Spacer(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -163,7 +172,9 @@ private fun CommunityDetailScreen(
                     Column {
                         CommunityDetailHeader(
                             post = state.post,
-                            images = state.post.imageUrls ?: emptyList(),
+                            images = state.post.imageUrls.orEmpty().mapIndexed { index, url ->
+                                state.post.imageBytesList?.getOrNull(index) ?: url
+                            },
                             onLikeClick = { onAction(CommunityDetailAction.OnPostLikeClick) },
                             onShareClick = { onAction(CommunityDetailAction.OnShareClick) },
                             modifier = Modifier

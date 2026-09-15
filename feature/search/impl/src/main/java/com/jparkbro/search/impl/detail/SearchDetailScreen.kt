@@ -90,6 +90,8 @@ private fun SearchDetailScreen(
                     animes = state.animeResult.animes,
                     isLoading = state.isLoading,
                     onAnimeClick = { animeId -> onAction(SearchDetailAction.OnAnimeClick(animeId)) },
+                    onAnimeClickLog = { url -> onAction(SearchDetailAction.OnAnimeClickLog(url)) },
+                    onAnimeImpression = { url -> onAction(SearchDetailAction.OnAnimeImpressionLog(url)) },
                     modifier = Modifier.weight(1f),
                     isLoadingMore = state.isLoadingMore,
                     onLoadMore = { onAction(SearchDetailAction.OnLoadMore) },

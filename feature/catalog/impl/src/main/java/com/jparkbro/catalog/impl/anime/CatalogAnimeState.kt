@@ -20,8 +20,7 @@ data class CatalogAnimeState(
     val series: List<Anime> = emptyList(),
     val recommendations: List<Anime> = emptyList(),
 
-    // 리뷰 탭 - [selectedTab]이 REVIEW로 처음 바뀔 때 지연 로딩된다.
-    val hasLoadedReviews: Boolean = false,
+    // 리뷰 탭 - 화면 진입 시 [작품정보] 탭과 함께 바로 로딩된다.
     val myReview: Review = Review(),
     /** 별점 드래그 중인 값 - null이면 드래그 중이 아니라는 뜻이라 [myReview]의 확정된 값을 보여준다.
      *  API 성공 전까지는 [myReview]를 건드리지 않는다 - "상세 리뷰 작성하기" 활성화 여부가 [myReview]를 보기 때문. */

@@ -15,6 +15,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.content.PartData
+import io.ktor.http.isSuccess
 import io.ktor.util.network.UnresolvedAddressException
 import io.ktor.utils.io.CancellationException
 import kotlinx.serialization.SerializationException
@@ -121,6 +122,25 @@ suspend inline fun <reified Response : Any> HttpClient.postMultipart(
             url(constructRoute(route))
             setBody(MultiPartFormDataContent(formData))
         }
+    }
+}
+
+/** 인증이 필요한 이미지를 GET으로 받아온다 - 응답이 [ApiResponse] JSON 래핑이 아니라 이미지 바이트 그대로라 [safeCall]/[responseToResult]를 안 쓴다 */
+suspend fun HttpClient.getImageBytes(route: String): Result<ByteArray, DataError.Network> {
+    return try {
+        val response = get { url(constructRoute(route)) }
+        if (response.status.isSuccess()) {
+            Result.Success(response.body())
+        } else {
+            Result.Failure(DataError.Network.Api(code = response.status.value, message = null, reason = null))
+        }
+    } catch (e: UnresolvedAddressException) {
+        e.printStackTrace()
+        Result.Failure(DataError.Network.NO_INTERNET)
+    } catch (e: Exception) {
+        if (e is CancellationException) throw e
+        e.printStackTrace()
+        Result.Failure(DataError.Network.UNKNOWN)
     }
 }
 

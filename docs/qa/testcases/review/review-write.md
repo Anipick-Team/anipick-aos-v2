@@ -1,6 +1,6 @@
 # Review - 리뷰 작성/수정 (ReviewWriteScreen)
 
-패키지: `feature/review/impl/write`. 근거 파일: `ReviewWriteAction.kt`, `ReviewWriteState.kt`, `ReviewWriteViewModel.kt`, `ReviewWriteScreen.kt`. 애니 상세 리뷰 탭의 "상세 리뷰 작성하기" 버튼에서 `animeId` 기준으로 진입한다 - 기존 리뷰가 있으면(`getMyReview`가 `reviewId` 있는 값을 반환) 수정 모드, 없으면 작성 모드로 자동 분기(`isEditMode`).
+패키지: `feature/review/impl/write`. 근거 파일: `ReviewWriteAction.kt`, `ReviewWriteState.kt`, `ReviewWriteViewModel.kt`, `ReviewWriteScreen.kt`. 애니 상세 리뷰 탭의 "상세 리뷰 작성하기" 버튼/내 리뷰 카드의 "수정" 메뉴 둘 다 `animeId` 기준으로 같은 화면에 진입한다 - 기존 리뷰에 상세 리뷰 글이 있으면(`getMyReview`가 `content` 있는 값을 반환) 수정 모드, 없으면(평점만 매긴 상태 포함) 작성 모드로 자동 분기(`isEditMode`). `reviewId`가 아니라 `content`로 분기하는 이유: 평점만 매겨도 `reviewId`는 이미 생기기 때문.
 
 | ID | 이벤트/트리거 | 사전조건 | 예상 결과 | 실패 케이스 | 실패 시 UI | 근거 | 테스트 결과 | 특이사항 | 테스터 | 테스트 일자 | 앱 버전 | OS | OS 버전 | 기종 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -14,8 +14,9 @@
 | REVIEW-REVIEWWRITE-06 | 리뷰 내용 입력란에 텍스트 입력 | - | 텍스트 반영 + `0/200`~`200/200` 글자 수 카운터 갱신, 200자 초과 입력 불가(`maxLength`, 라벨 없는 단순 텍스트 필드) | - | - | `ReviewWriteScreen`(`state.contentState`, `REVIEW_CONTENT_MAX_LENGTH=200`) |  |  |  |  |  |  |  |  |
 | REVIEW-REVIEWWRITE-07 | (자동) 화면 진입 - 애니 정보 조회 | - | `getAnimeDetailInfo(animeId)` 성공 → `state.animeTitle`/`animeCoverImageUrl` 저장 | - | - | `ReviewWriteViewModel.loadAnimeInfo` |  | 이 값들을 실제로 화면에 렌더링하는 곳이 현재 없음(아래 "알려진 미완성" 참고) | | | | | | |
 | REVIEW-REVIEWWRITE-07b | (자동) 화면 진입 | - | 위와 동일 | `getAnimeDetailInfo()` 실패 | 스낵바(`toDisplayMessage()`) | `ReviewWriteViewModel.loadAnimeInfo` |  |  |  |  |  |  |  |  |
-| REVIEW-REVIEWWRITE-08 | (자동) 화면 진입 - 기존 리뷰 조회 | - | `getMyReview(animeId)` 성공 → 기존 별점/내용/스포일러 여부로 폼 초기값 채움(수정 모드면 상단바 타이틀 "리뷰 수정"/버튼 "수정", 아니면 "리뷰 작성"/"등록") | - | - | `ReviewWriteViewModel.loadCurrentReview` |  |  |  |  |  |  |  |  |
-| REVIEW-REVIEWWRITE-08b | (자동) 화면 진입 | - | 위와 동일 | `getMyReview()` 실패(네트워크/Api/알 수 없음 무관) | UI 반응 없음 - `state.error`만 갱신되고 `ReviewWriteScreen`은 렌더링하지 않음(로딩 스피너/스켈레톤도 없음) | `ReviewWriteViewModel.loadCurrentReview` |  |  |  |  |  |  |  |  |
+| REVIEW-REVIEWWRITE-08 | (자동) 화면 진입 - 기존 리뷰 조회 중(`state.isLoading == true`) | - | 상단바 타이틀/등록·수정 버튼 자리에 셰이머(`AniPickShimmerBox`) 표시 - `isEditMode`가 아직 확정 안 돼 "작성"/"등록"으로 잘못 단정해 깜빡이는 걸 막는다 | - | - | `ReviewWriteScreen`(`state.isLoading`) |  |  |  |  |  |  |  |  |
+| REVIEW-REVIEWWRITE-08b | (자동) 화면 진입 - 기존 리뷰 조회 성공 | - | `getMyReview(animeId)` 성공 → 기존 별점/내용/스포일러 여부로 폼 초기값 채움(수정 모드면 상단바 타이틀 "리뷰 수정"/버튼 "수정", 아니면 "리뷰 작성"/"등록"), 셰이머는 사라짐 | - | - | `ReviewWriteViewModel.loadCurrentReview` |  |  |  |  |  |  |  |  |
+| REVIEW-REVIEWWRITE-08c | (자동) 화면 진입 | - | 위와 동일 | `getMyReview()` 실패(네트워크/Api/알 수 없음 무관) | 셰이머는 사라지지만 `state.error`만 갱신되고 `ReviewWriteScreen`은 렌더링하지 않음(스낵바 등 별도 피드백 없음) | `ReviewWriteViewModel.loadCurrentReview` |  |  |  |  |  |  |  |  |
 
 ## 알려진 미완성/이슈
 

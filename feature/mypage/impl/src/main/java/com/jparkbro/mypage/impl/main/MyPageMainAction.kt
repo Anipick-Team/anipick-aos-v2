@@ -13,6 +13,7 @@ sealed interface MyPageMainAction {
     data class OnPersonClick(val personId: Long) : Navigation
     data object OnSettingClick : Navigation
     data object OnRatedAnimesClick : Navigation
+    data object OnFeedbackClick : Navigation
 
     /** 포토 피커에서 프로필 이미지를 1장 선택 완료했을 때 - ViewModel이 저장 API를 호출한다. */
     data class OnChangeProfileImage(val image: Uri) : MyPageMainAction

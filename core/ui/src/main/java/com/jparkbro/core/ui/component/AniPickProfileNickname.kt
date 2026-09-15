@@ -24,6 +24,7 @@ fun AniPickProfileNickname(
     profileImageUrl: String?,
     nickname: String?,
     modifier: Modifier = Modifier,
+    profileImageBytes: ByteArray? = null,
     imageSize: Dp = 30.dp,
 ) {
     Row(
@@ -32,7 +33,7 @@ fun AniPickProfileNickname(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
-            model = profileImageUrl,
+            model = profileImageBytes ?: profileImageUrl,
             contentDescription = null,
             error = painterResource(R.drawable.profile_default_img),
             placeholder = painterResource(R.drawable.profile_default_img),

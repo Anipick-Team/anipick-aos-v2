@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.theme.AniPickTheme
+import com.jparkbro.core.ui.component.AniPickActorCard
 import com.jparkbro.core.ui.component.AniPickAnimeCard
 import com.jparkbro.core.ui.component.AniPickSectionHeader
 import com.jparkbro.mypage.api.MyPageDetailType
@@ -23,7 +24,7 @@ internal fun LazyListScope.myPageMainSections(
     item {
         FeedbackLinkCard(
             modifier = Modifier,
-            onFeedbackClick = { }
+            onFeedbackClick = { onAction(MyPageMainAction.OnFeedbackClick) }
         )
     }
     item {
@@ -88,7 +89,11 @@ internal fun LazyListScope.myPageMainSections(
             emptyContentText = "아직 좋아요한 인물이 없어요.\n좋아요를 누르러 가볼까요 ?",
             itemKey = { it.personId },
         ) { actor ->
-            LikedPersonCard(actor = actor, onClick = { onAction(MyPageMainAction.OnPersonClick(actor.personId)) })
+            AniPickActorCard(
+                actor = actor,
+                cardWidth = 114.dp,
+                onClick = { onAction(MyPageMainAction.OnPersonClick(actor.personId)) },
+            )
         }
     }
 }

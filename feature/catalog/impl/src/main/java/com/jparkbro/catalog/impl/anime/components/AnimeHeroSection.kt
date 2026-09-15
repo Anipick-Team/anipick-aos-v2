@@ -25,6 +25,8 @@ private val WATCH_STATUSES = listOf(
 internal fun LazyListScope.animeHeroSection(
     state: CatalogAnimeState,
     onAction: (CatalogAnimeAction) -> Unit,
+    onBannerImageClick: () -> Unit,
+    onCoverImageClick: () -> Unit,
 ) {
     item {
         Column(
@@ -44,8 +46,8 @@ internal fun LazyListScope.animeHeroSection(
                     bannerImageUrl = state.animeDetail.bannerImageUrl,
                     coverImageUrl = state.animeDetail.coverImageUrl,
                     onBackClick = { onAction(CatalogAnimeAction.OnBackClick) },
-                    onBannerClick = { onAction(CatalogAnimeAction.OnBannerImageClick) },
-                    onCoverClick = { onAction(CatalogAnimeAction.OnCoverImageClick) },
+                    onBannerClick = onBannerImageClick,
+                    onCoverClick = onCoverImageClick,
                 )
                 AnimeTitleSection(
                     title = state.animeDetail.title ?: "-",

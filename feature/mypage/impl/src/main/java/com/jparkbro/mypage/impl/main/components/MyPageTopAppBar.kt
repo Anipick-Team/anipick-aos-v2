@@ -35,7 +35,7 @@ import com.jparkbro.core.ui.effect.rememberPhotoPickerWithPermission
 
 @Composable
 internal fun MyPageTopAppBar(
-    profileImage: String?,
+    profileImage: ByteArray?,
     onSettingClick: () -> Unit,
     onProfileImageSelected: (Uri) -> Unit,
     modifier: Modifier = Modifier,
@@ -83,7 +83,7 @@ internal fun MyPageTopAppBar(
 
 @Composable
 private fun ProfileImage(
-    profileImage: String?,
+    profileImage: ByteArray?,
     onProfileImageSelected: (Uri) -> Unit,
 ) {
     val launchPhotoPicker = rememberPhotoPickerWithPermission(onImageSelected = onProfileImageSelected)

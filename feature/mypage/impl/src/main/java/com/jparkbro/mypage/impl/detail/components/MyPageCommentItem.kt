@@ -23,7 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.jparkbro.core.designsystem.R
+import com.jparkbro.core.designsystem.component.AniPickPostStat
 import com.jparkbro.core.designsystem.component.AniPickShimmerBox
+import com.jparkbro.core.designsystem.icon.HeartOutlined
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.mypage.MyCommunityComment
 import com.jparkbro.core.ui.util.orNullIfDefaultCover
@@ -57,13 +59,27 @@ internal fun MyPageCommentItem(
                 contentScale = ContentScale.Crop,
             )
             Text(
-                text = comment.postTitle ?: "-",
+                text = comment.animeTitle ?: "-",
                 style = AniPickTheme.typography.body2,
                 color = AniPickTheme.colors.black,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
         }
+        comment.createdAt?.let {
+            Text(
+                text = it.replace("-", "."),
+                style = AniPickTheme.typography.caption2,
+                color = AniPickTheme.colors.textGray,
+            )
+        }
+        Text(
+            text = comment.postTitle ?: "-",
+            style = AniPickTheme.typography.body2,
+            color = AniPickTheme.colors.textGray,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
         Text(
             text = comment.content ?: "",
             style = AniPickTheme.typography.body2,
@@ -71,23 +87,7 @@ internal fun MyPageCommentItem(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                text = "좋아요 ${comment.likeCount ?: 0}",
-                style = AniPickTheme.typography.caption1,
-                color = AniPickTheme.colors.textGray,
-            )
-            comment.createdAt?.let {
-                Text(
-                    text = it.replace("-", "."),
-                    style = AniPickTheme.typography.caption2,
-                    color = AniPickTheme.colors.textGray,
-                )
-            }
-        }
+        AniPickPostStat(icon = HeartOutlined, count = comment.likeCount)
     }
 }
 
@@ -108,14 +108,10 @@ internal fun MyPageCommentItemSkeleton(modifier: Modifier = Modifier) {
             AniPickShimmerBox(modifier = Modifier.size(width = 116.dp, height = 108.dp))
             AniPickShimmerBox(modifier = Modifier.fillMaxWidth(0.5f).height(16.dp))
         }
+        AniPickShimmerBox(modifier = Modifier.width(80.dp).height(12.dp))
+        AniPickShimmerBox(modifier = Modifier.fillMaxWidth(0.7f).height(16.dp))
         AniPickShimmerBox(modifier = Modifier.fillMaxWidth().height(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            AniPickShimmerBox(modifier = Modifier.width(60.dp).height(12.dp))
-            AniPickShimmerBox(modifier = Modifier.width(60.dp).height(12.dp))
-        }
+        AniPickShimmerBox(modifier = Modifier.width(30.dp).height(12.dp))
     }
 }
 

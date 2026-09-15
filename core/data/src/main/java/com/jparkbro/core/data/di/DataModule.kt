@@ -16,6 +16,8 @@ import com.jparkbro.core.data.explore.ExploreRepository
 import com.jparkbro.core.data.explore.ExploreRepositoryImpl
 import com.jparkbro.core.data.home.HomeRepository
 import com.jparkbro.core.data.home.HomeRepositoryImpl
+import com.jparkbro.core.data.log.LogRepository
+import com.jparkbro.core.data.log.LogRepositoryImpl
 import com.jparkbro.core.data.ranking.RankingRepository
 import com.jparkbro.core.data.ranking.RankingRepositoryImpl
 import com.jparkbro.core.data.rating.RatingRepository
@@ -45,6 +47,7 @@ val dataModule = module {
     singleOf(::CommunityRepositoryImpl) { bind<CommunityRepository>() }
     singleOf(::ExploreRepositoryImpl) { bind<ExploreRepository>() }
     singleOf(::HomeRepositoryImpl) { bind<HomeRepository>() }
+    singleOf(::LogRepositoryImpl) { bind<LogRepository>() }
     singleOf(::RankingRepositoryImpl) { bind<RankingRepository>() }
     singleOf(::RatingRepositoryImpl) { bind<RatingRepository>() }
     singleOf(::RecommendationRepositoryImpl) { bind<RecommendationRepository>() }

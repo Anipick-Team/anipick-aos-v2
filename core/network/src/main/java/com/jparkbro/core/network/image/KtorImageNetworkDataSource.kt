@@ -4,6 +4,7 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.network.image.dto.CommunityPostImageUploadResponse
 import com.jparkbro.core.network.image.dto.UpdateProfileImageResponse
+import com.jparkbro.core.network.getImageBytes
 import com.jparkbro.core.network.postMultipart
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.formData
@@ -13,6 +14,10 @@ import io.ktor.http.HttpHeaders
 class KtorImageNetworkDataSource(
     private val httpClient: HttpClient,
 ) : ImageNetworkDataSource {
+
+    override suspend fun getImage(imageId: Long): Result<ByteArray, DataError.Network> {
+        return httpClient.getImageBytes("/image/$imageId")
+    }
 
     override suspend fun updateProfileImage(
         imageBytes: ByteArray,

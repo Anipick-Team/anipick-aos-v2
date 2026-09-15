@@ -8,4 +8,5 @@ sealed interface CatalogActorAction {
     data object OnBackClick : Navigation
     data class OnAnimeClick(val animeId: Long) : Navigation
     data object OnLoadMore : CatalogActorAction
+    data object OnLikeClick : CatalogActorAction
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.common.result.toDisplayMessage
+import com.jparkbro.core.data.log.LogRepository
 import com.jparkbro.core.data.search.SearchRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 class SearchDetailViewModel(
     query: String,
     private val searchRepository: SearchRepository,
+    private val logRepository: LogRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SearchDetailState(searchFieldState = TextFieldState(query)))
@@ -34,8 +36,14 @@ class SearchDetailViewModel(
             is SearchDetailAction.OnTabChanged -> onTabChanged(action.type)
             SearchDetailAction.OnLoadMore -> loadMore()
             SearchDetailAction.OnRetryClick -> search(resetCursor = true)
+            is SearchDetailAction.OnAnimeClickLog -> sendLog(action.url)
+            is SearchDetailAction.OnAnimeImpressionLog -> sendLog(action.url)
             is SearchDetailAction.Navigation -> Unit // Root에서 처리한다.
         }
+    }
+
+    private fun sendLog(url: String) {
+        viewModelScope.launch { logRepository.sendLog(url) }
     }
 
     private fun onSearch() {

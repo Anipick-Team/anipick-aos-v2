@@ -23,7 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.jparkbro.core.designsystem.R
+import com.jparkbro.core.designsystem.component.AniPickGenreTag
+import com.jparkbro.core.designsystem.component.AniPickPostStat
+import com.jparkbro.core.designsystem.component.AniPickPostStatDivider
 import com.jparkbro.core.designsystem.component.AniPickShimmerBox
+import com.jparkbro.core.designsystem.icon.Comment
+import com.jparkbro.core.designsystem.icon.HeartOutlined
+import com.jparkbro.core.designsystem.icon.VisibilityOn
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.community.CommunityPost
 import com.jparkbro.core.ui.util.orNullIfDefaultCover
@@ -50,42 +56,58 @@ internal fun MyPagePostItem(
         ) {
             AsyncImage(
                 model = post.animeCoverImageUrl.orNullIfDefaultCover(),
-                contentDescription = "${post.title} 커버 이미지",
+                contentDescription = "${post.seriesTitle} 커버 이미지",
                 error = painterResource(R.drawable.review_card_default_img),
                 placeholder = painterResource(R.drawable.review_card_default_img),
                 modifier = Modifier.size(width = 116.dp, height = 108.dp),
                 contentScale = ContentScale.Crop,
             )
             Text(
-                text = post.title ?: "-",
+                text = post.seriesTitle ?: "-",
                 style = AniPickTheme.typography.body2,
                 color = AniPickTheme.colors.black,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
         }
+        post.createdAt?.let {
+            Text(
+                text = it.replace("-", "."),
+                style = AniPickTheme.typography.caption2,
+                color = AniPickTheme.colors.textGray,
+            )
+        }
+        Text(
+            text = post.title ?: "-",
+            style = AniPickTheme.typography.body2,
+            color = AniPickTheme.colors.black,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
         Text(
             text = post.content ?: "",
             style = AniPickTheme.typography.body2,
-            color = AniPickTheme.colors.black,
+            color = AniPickTheme.colors.textGray,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = "조회 ${post.viewCount ?: 0} · 좋아요 ${post.likeCount ?: 0} · 댓글 ${post.commentCount ?: 0}",
-                style = AniPickTheme.typography.caption1,
-                color = AniPickTheme.colors.textGray,
-            )
-            post.createdAt?.let {
-                Text(
-                    text = it.replace("-", "."),
-                    style = AniPickTheme.typography.caption2,
-                    color = AniPickTheme.colors.textGray,
-                )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                AniPickPostStat(icon = VisibilityOn, count = post.viewCount)
+                AniPickPostStatDivider()
+                AniPickPostStat(icon = HeartOutlined, count = post.likeCount)
+                AniPickPostStatDivider()
+                AniPickPostStat(icon = Comment, count = post.commentCount)
+            }
+            if (post.isSpoiler == true) {
+                AniPickGenreTag(genre = "스포일러")
             }
         }
     }
@@ -108,13 +130,15 @@ internal fun MyPagePostItemSkeleton(modifier: Modifier = Modifier) {
             AniPickShimmerBox(modifier = Modifier.size(width = 116.dp, height = 108.dp))
             AniPickShimmerBox(modifier = Modifier.fillMaxWidth(0.5f).height(16.dp))
         }
+        AniPickShimmerBox(modifier = Modifier.width(80.dp).height(12.dp))
+        AniPickShimmerBox(modifier = Modifier.fillMaxWidth(0.7f).height(16.dp))
         AniPickShimmerBox(modifier = Modifier.fillMaxWidth().height(16.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            AniPickShimmerBox(modifier = Modifier.width(120.dp).height(12.dp))
-            AniPickShimmerBox(modifier = Modifier.width(60.dp).height(12.dp))
+            AniPickShimmerBox(modifier = Modifier.width(30.dp).height(12.dp))
+            AniPickShimmerBox(modifier = Modifier.width(30.dp).height(12.dp))
+            AniPickShimmerBox(modifier = Modifier.width(30.dp).height(12.dp))
         }
     }
 }
@@ -125,9 +149,11 @@ private fun MyPagePostItemPreview() {
     MyPagePostItem(
         post = CommunityPost(
             postId = 1L,
+            seriesTitle = "장송의 프리렌",
             animeCoverImageUrl = "",
             title = "이번 화 진짜 미쳤다",
             content = "이번 화 전개 보고 소름 돋았음... 다들 봤어?",
+            isSpoiler = true,
             viewCount = 102,
             likeCount = 32,
             commentCount = 8,

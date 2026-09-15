@@ -9,8 +9,7 @@ data class ReviewWriteState(
     val animeId: Long = 0L,
     val animeTitle: String? = null,
     val animeCoverImageUrl: String? = null,
-    /** `getMyReview(animeId)`로 불러온 기존 리뷰. [Review.reviewId]가 null이면 아직 리뷰를
-     *  안 썼다는 뜻이라 작성 모드, 있으면 수정 모드로 화면을 채운다. */
+    /** `getMyReview(animeId)`로 불러온 기존 리뷰 - [Review.content] 유무로 작성/수정 모드 분기 */
     val currentReview: Review = Review(),
     val rating: Float = 0f,
     val contentState: TextFieldState = TextFieldState(),
@@ -20,7 +19,7 @@ data class ReviewWriteState(
     val error: String? = null,
 ) {
     val isEditMode: Boolean
-        get() = currentReview.reviewId != null
+        get() = currentReview.content != null
 
     val isSubmitEnabled: Boolean
         get() = rating > 0f && !isSubmitting

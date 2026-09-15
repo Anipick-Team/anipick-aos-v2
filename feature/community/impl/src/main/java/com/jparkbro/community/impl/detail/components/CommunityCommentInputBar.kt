@@ -5,9 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,7 +46,9 @@ internal fun CommunityCommentInputBar(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(AniPickTheme.colors.white),
+            .background(AniPickTheme.colors.white)
+            // edge-to-edge라 직접 처리해야 함 - 키보드 닫혀있으면 네비게이션 바 위로, 열려있으면 키보드 위로.
+            .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime)),
     ) {
         if (replyTargetContent != null) {
             Row(

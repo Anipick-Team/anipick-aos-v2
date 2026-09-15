@@ -33,6 +33,7 @@
 | MYPAGE-MYPAGEDETAIL-16 | (자동) 탭 전환 후 - MyContent(내 댓글) 목록 조회 | type == MyContent, COMMENTS 탭 선택 | `getMyCommunityComments()` 성공 → 댓글 카드 목록(`MyPageCommentItem`) 표시 | - | - | `MyPageDetailViewModel.loadMyComments` |  |  |  |  |  |  |  |  |
 | MYPAGE-MYPAGEDETAIL-16b~d | (자동) 탭 전환 후 | 위와 동일 | 위와 동일 | 네트워크 없음 / 그 외 Api / 알 수 없음 | MYPAGE-MYPAGEDETAIL-11b/c/d와 동일 패턴 | `MyPageDetailViewModel.loadMyComments` |  |  |  |  |  |  |  |  |
 | MYPAGE-MYPAGEDETAIL-17 | (자동, 결과 없음) 각 type별 빈 목록 | 조회 성공했지만 항목 0개 | type별 안내 문구 표시 - WatchList "아직 볼 애니가 없어요.", Watching "아직 보는 중인 애니가 없어요.", Finished "아직 다 본 애니가 없어요.", LikedAnimes/LikedPersons "아직 좋아요한 작품/인물이 없어요.\n좋아요를 누르러 가볼까요 ?", MyContent "아직 작성한 게시글/댓글이 없어요." (RatedAnimes 빈 목록은 `review/review-rated.md`의 `REVIEW-RATEDREVIEW-12` 참고) | - | - | `MyPageDetailType.emptyMessage()` / `MyContentTabContent` |  |  |  |  |  |  |  |  |
+| MYPAGE-MYPAGEDETAIL-18 | (화면 간 자동 반영 확인) 이 화면이 떠 있는 상태에서 애니/성우 상세에서 찜 토글, 또는 애니 상세에서 시청 상태 변경 | type이 WatchList/Watching/Finished/LikedAnimes/LikedPersons 중 하나(MyContent 제외)로 이 화면이 백스택에 살아있는 상태에서 카탈로그 애니/성우 상세로 이동 | 재진입 없이 1페이지부터 자동 재조회되어, 해당 목록에서 항목이 추가/제거되거나 순서가 바뀐다 | `userRepository.myPageProfile` 갱신이 반영 안 됨(구독이 끊기는 등) | (버그) 돌아왔는데도 목록이 갱신 안 됨 | 읽는 곳: `MyPageDetailViewModel.observeMyPageProfileChanges` — 쓰는 곳은 [`catalog/catalog-anime.md`](../catalog/catalog-anime.md)의 CATALOG-CATALOGANIME-03/07, [`catalog/catalog-actor.md`](../catalog/catalog-actor.md)의 CATALOG-CATALOGACTOR-05 참고 |  |  |  |  |  |  |  |  |
 
 ## 알려진 미완성/이슈
 

@@ -13,10 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jparkbro.community.impl.components.PostStat
-import com.jparkbro.community.impl.components.PostStatDivider
 import com.jparkbro.core.designsystem.component.AniPickAnimatedHeartIcon
 import com.jparkbro.core.designsystem.component.AniPickGenreTag
+import com.jparkbro.core.designsystem.component.AniPickPostStat
+import com.jparkbro.core.designsystem.component.AniPickPostStatDivider
 import com.jparkbro.core.designsystem.component.AniPickSectionDivider
 import com.jparkbro.core.designsystem.icon.Comment
 import com.jparkbro.core.designsystem.icon.HeartOutlined
@@ -30,7 +30,7 @@ import com.jparkbro.core.ui.component.AniPickProfileNickname
 @Composable
 internal fun CommunityDetailHeader(
     post: CommunityPost,
-    images: List<String>,
+    images: List<Any>,
     onLikeClick: () -> Unit,
     onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -107,11 +107,11 @@ private fun PostBody(post: CommunityPost, modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            PostStat(icon = VisibilityOn, count = post.viewCount)
-            PostStatDivider()
-            PostStat(icon = HeartOutlined, count = post.likeCount)
-            PostStatDivider()
-            PostStat(icon = Comment, count = post.commentCount)
+            AniPickPostStat(icon = VisibilityOn, count = post.viewCount)
+            AniPickPostStatDivider()
+            AniPickPostStat(icon = HeartOutlined, count = post.likeCount)
+            AniPickPostStatDivider()
+            AniPickPostStat(icon = Comment, count = post.commentCount)
         }
     }
 }
@@ -146,7 +146,7 @@ private fun PostActionsRow(
                 Text(
                     text = "좋아요",
                     style = AniPickTheme.typography.caption1,
-                    color = AniPickTheme.colors.textGray,
+                    color = if (isLiked) AniPickTheme.colors.point else AniPickTheme.colors.textGray,
                 )
             }
         }

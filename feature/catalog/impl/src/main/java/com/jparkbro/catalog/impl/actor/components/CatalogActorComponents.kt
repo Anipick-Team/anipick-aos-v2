@@ -48,6 +48,8 @@ internal fun CatalogActorContent(
         CatalogActorProfileHeader(
             profileImageUrl = state.profileImageUrl,
             name = state.name,
+            isLiked = state.isLiked,
+            onLikeClick = { onAction(CatalogActorAction.OnLikeClick) },
             modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp),
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -77,6 +79,8 @@ internal fun CatalogActorContent(
 internal fun CatalogActorProfileHeader(
     profileImageUrl: String?,
     name: String?,
+    isLiked: Boolean,
+    onLikeClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -102,8 +106,8 @@ internal fun CatalogActorProfileHeader(
         )
         Spacer(modifier = Modifier.width(8.dp))
         AniPickAnimatedHeartIcon(
-            isLiked = false,
-            onClick = {},
+            isLiked = isLiked,
+            onClick = onLikeClick,
             unlikedTint = AniPickTheme.colors.gray,
         )
     }

@@ -38,7 +38,6 @@ interface SearchRepository {
     /** 최근 검색어 목록 */
     val recentSearches: Flow<List<String>>
 
-    suspend fun getRecentSearches(): List<String>
     suspend fun saveRecentSearch(query: String)
     suspend fun removeRecentSearch(query: String)
     suspend fun clearRecentSearches()

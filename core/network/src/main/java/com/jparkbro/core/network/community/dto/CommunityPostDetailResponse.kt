@@ -1,7 +1,7 @@
 package com.jparkbro.core.network.community.dto
 
 import com.jparkbro.core.model.community.CommunityPost
-import com.jparkbro.core.network.BuildConfig
+import com.jparkbro.core.network.image.toImageUrl
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -31,10 +31,10 @@ fun CommunityPostDetailResponse.toCommunityPost(): CommunityPost = CommunityPost
     seriesTitle = seriesTitle,
     userId = userId,
     nickname = nickname,
-    profileImageUrl = profileImageId?.let { "${BuildConfig.BASE_URL}/image/$it" },
+    profileImageUrl = profileImageId?.toImageUrl(),
     title = title,
     content = content,
-    imageUrls = imageIds?.map { "${BuildConfig.BASE_URL}/image/$it" },
+    imageUrls = imageIds?.map { it.toImageUrl() },
     isSpoiler = isSpoiler,
     viewCount = viewCount,
     likeCount = likeCount,

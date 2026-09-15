@@ -12,6 +12,7 @@ import com.jparkbro.core.data.rating.RatingRepository
 import com.jparkbro.core.data.review.ReviewRepository
 import com.jparkbro.core.data.user.UserRepository
 import com.jparkbro.core.model.anime.AnimeWatchStatus
+import com.jparkbro.core.model.review.Review
 import com.jparkbro.core.model.review.ReviewSort
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import kotlinx.coroutines.async
@@ -42,6 +43,8 @@ class CatalogAnimeViewModel(
 
     init {
         loadAnimeInfo()
+        loadMyReview()
+        loadReviews(resetCursor = true)
     }
 
     fun onAction(action: CatalogAnimeAction) {
@@ -49,8 +52,6 @@ class CatalogAnimeViewModel(
             is CatalogAnimeAction.Navigation -> Unit // Root에서 처리한다.
             CatalogAnimeAction.OnLikeClick -> toggleLike()
             is CatalogAnimeAction.OnWatchStatusClick -> toggleWatchStatus(action.status)
-            CatalogAnimeAction.OnBannerImageClick,
-            CatalogAnimeAction.OnCoverImageClick -> Unit // TODO: 이미지 상세보기 화면이 추가되면 연동
             is CatalogAnimeAction.OnTabChanged -> onTabChanged(action.tab)
             is CatalogAnimeAction.OnReviewSortChanged -> onReviewSortChanged(action.sort)
             is CatalogAnimeAction.OnSpoilerToggle -> onSpoilerToggle(action.enabled)
@@ -75,9 +76,12 @@ class CatalogAnimeViewModel(
         }
     }
 
-    /** 리뷰 목록 좋아요 낙관적 토글 - 실패하면 해당 리뷰만 원상복구하고 스낵바를 띄운다. */
+    /** 리뷰 목록 + 내 리뷰 좋아요 낙관적 토글 - 실패하면 해당 리뷰만 원상복구하고 스낵바를 띄운다. */
     private fun toggleReviewLike(reviewId: Long) {
-        val target = _state.value.reviews.find { it.reviewId == reviewId } ?: return
+        val current = _state.value
+        val target = current.reviews.find { it.reviewId == reviewId }
+            ?: current.myReview.takeIf { it.reviewId == reviewId }
+            ?: return
         val wasLiked = target.isLiked == true
         applyReviewLikeState(reviewId, isLiked = !wasLiked)
 
@@ -91,18 +95,12 @@ class CatalogAnimeViewModel(
     }
 
     private fun applyReviewLikeState(reviewId: Long, isLiked: Boolean) {
+        fun Review.applyLike() = copy(isLiked = isLiked, likeCount = (likeCount ?: 0) + if (isLiked) 1 else -1)
+
         _state.update { state ->
             state.copy(
-                reviews = state.reviews.map { review ->
-                    if (review.reviewId == reviewId) {
-                        review.copy(
-                            isLiked = isLiked,
-                            likeCount = (review.likeCount ?: 0) + if (isLiked) 1 else -1,
-                        )
-                    } else {
-                        review
-                    }
-                },
+                reviews = state.reviews.map { review -> if (review.reviewId == reviewId) review.applyLike() else review },
+                myReview = if (state.myReview.reviewId == reviewId) state.myReview.applyLike() else state.myReview,
             )
         }
     }
@@ -143,6 +141,7 @@ class CatalogAnimeViewModel(
                     _state.update {
                         it.copy(
                             reviews = it.reviews.filterNot { review -> review.reviewId == reviewId },
+                            myReview = if (it.myReview.reviewId == reviewId) Review() else it.myReview,
                             animeDetail = it.animeDetail.copy(
                                 reviewCount = ((it.animeDetail.reviewCount ?: 1) - 1).coerceAtLeast(0),
                             ),
@@ -218,12 +217,23 @@ class CatalogAnimeViewModel(
 
             result
                 .onSuccess {
-                    _state.update { it.copy(myReviewDraftRating = null) }
+                    // draftRating 해제와 myReview.rating 반영을 한 번에 묶음
+                    _state.update {
+                        it.copy(
+                            myReviewDraftRating = null,
+                            myReview = it.myReview.copy(rating = if (isDelete) null else rating),
+                        )
+                    }
+                    globalSnackbarManager.showSnackbar(
+                        when {
+                            reviewId == null -> "평점을 등록했습니다."
+                            isDelete -> "평점을 삭제했습니다."
+                            else -> "평점을 수정했습니다."
+                        }
+                    )
                     if (reviewId == null || isDelete) {
-                        // 신규 생성은 reviewId를, 삭제는 리뷰가 사라졌다는 걸 서버에서 다시 받아와야 한다.
+                        // 신규 생성/삭제 후 reviewId 갱신을 위한 재조회
                         loadMyReview()
-                    } else {
-                        _state.update { it.copy(myReview = it.myReview.copy(rating = rating)) }
                     }
                 }
                 .onFailure { error ->
@@ -286,10 +296,6 @@ class CatalogAnimeViewModel(
         }
         if (_state.value.selectedTab == tab) return
         _state.update { it.copy(selectedTab = tab) }
-        if (tab == CatalogAnimeTab.REVIEW && !_state.value.hasLoadedReviews) {
-            loadMyReview()
-            loadReviews(resetCursor = true)
-        }
     }
 
     /** 커뮤니티 게시판 조회
@@ -370,7 +376,6 @@ class CatalogAnimeViewModel(
                             reviews = if (resetCursor) items else it.reviews + items,
                             reviewsCursor = page.cursor,
                             reviewsEndReached = items.size < PAGE_SIZE || page.cursor == null,
-                            hasLoadedReviews = true,
                             isReviewsLoading = false,
                             isLoadingMoreReviews = false,
                         )

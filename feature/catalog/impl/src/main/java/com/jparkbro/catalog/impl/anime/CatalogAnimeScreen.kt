@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.catalog.impl.anime.components.AnimeStickyTabHeader
 import com.jparkbro.catalog.impl.anime.components.CommunityBoardSkeleton
+import com.jparkbro.catalog.impl.anime.components.ImagePreviewDialog
 import com.jparkbro.catalog.impl.anime.components.animeHeroSection
 import com.jparkbro.catalog.impl.anime.components.animeInfoTabContent
 import com.jparkbro.catalog.impl.anime.components.animeInfoTabSkeleton
@@ -32,6 +33,7 @@ import com.jparkbro.core.model.community.CommunityBoard
 import com.jparkbro.core.ui.component.AniPickReportDialog
 import com.jparkbro.core.ui.effect.LoadMoreEffect
 import com.jparkbro.core.ui.effect.ObserveAsEvents
+import com.jparkbro.core.ui.util.orNullIfDefaultCover
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -42,6 +44,11 @@ internal fun CatalogAnimeRoot(
     onNavigateToStudio: (Long) -> Unit,
     onNavigateToCommunity: (CommunityBoard) -> Unit,
     onNavigateToReviewWrite: (Long) -> Unit,
+    onNavigateToCharacterList: (Long) -> Unit,
+    onNavigateToActorDetail: (Long) -> Unit,
+    onNavigateToSeries: (Long, String) -> Unit,
+    onNavigateToRecommendation: (Long) -> Unit,
+    onNavigateToAnimeDetail: (Long) -> Unit,
     viewModel: CatalogAnimeViewModel = koinViewModel(parameters = { parametersOf(animeId) }),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -68,6 +75,11 @@ internal fun CatalogAnimeRoot(
                     }
                     is CatalogAnimeAction.OnStudioClick -> onNavigateToStudio(action.studioId)
                     CatalogAnimeAction.OnWriteReviewClick -> onNavigateToReviewWrite(animeId)
+                    CatalogAnimeAction.OnCastMoreClick -> onNavigateToCharacterList(animeId)
+                    is CatalogAnimeAction.OnCastClick -> onNavigateToActorDetail(action.personId)
+                    CatalogAnimeAction.OnSeriesMoreClick -> onNavigateToSeries(animeId, state.animeDetail.title.orEmpty())
+                    CatalogAnimeAction.OnRecommendationMoreClick -> onNavigateToRecommendation(animeId)
+                    is CatalogAnimeAction.OnAnimeClick -> onNavigateToAnimeDetail(action.animeId)
                 }
                 else -> viewModel.onAction(action)
             }
@@ -86,6 +98,8 @@ private fun CatalogAnimeScreen(
         derivedStateOf { listState.firstVisibleItemIndex >= 1 }
     }
     var isDescriptionExpanded by remember { mutableStateOf(false) }
+    // null이면 다이얼로그 숨김 - 배너/커버 중 어느 쪽을 눌렀는지에 따라 보여줄 이미지 URL을 담는다.
+    var previewImageUrl by remember { mutableStateOf<String?>(null) }
 
     if (state.selectedTab == CatalogAnimeTab.REVIEW) {
         LoadMoreEffect(state = listState, threshold = 3) {
@@ -101,7 +115,15 @@ private fun CatalogAnimeScreen(
                 .windowInsetsPadding(WindowInsets.safeDrawing)
                 .background(AniPickTheme.colors.white),
         ) {
-            animeHeroSection(state = state, onAction = onAction)
+            animeHeroSection(
+                state = state,
+                onAction = onAction,
+                onBannerImageClick = {
+                    previewImageUrl = state.animeDetail.bannerImageUrl.orNullIfDefaultCover()
+                        ?: state.animeDetail.coverImageUrl.orNullIfDefaultCover()
+                },
+                onCoverImageClick = { previewImageUrl = state.animeDetail.coverImageUrl.orNullIfDefaultCover() },
+            )
 
             stickyHeader {
                 AnimeStickyTabHeader(
@@ -122,9 +144,11 @@ private fun CatalogAnimeScreen(
                         recommendations = state.recommendations,
                         isDescriptionExpanded = isDescriptionExpanded,
                         onToggleDescriptionExpanded = { isDescriptionExpanded = !isDescriptionExpanded },
-                        onCastMoreClick = {},
-                        onSeriesMoreClick = {},
-                        onRecommendationMoreClick = {},
+                        onCastMoreClick = { onAction(CatalogAnimeAction.OnCastMoreClick) },
+                        onCastClick = { personId -> onAction(CatalogAnimeAction.OnCastClick(personId)) },
+                        onSeriesMoreClick = { onAction(CatalogAnimeAction.OnSeriesMoreClick) },
+                        onRecommendationMoreClick = { onAction(CatalogAnimeAction.OnRecommendationMoreClick) },
+                        onAnimeClick = { animeId -> onAction(CatalogAnimeAction.OnAnimeClick(animeId)) },
                         onStudioClick = { studioId -> onAction(CatalogAnimeAction.OnStudioClick(studioId)) },
                     )
                 }
@@ -188,6 +212,14 @@ private fun CatalogAnimeScreen(
             onConfirm = { onAction(CatalogAnimeAction.OnReviewDeleteConfirm) },
             dismissText = "취소",
             onDismiss = { onAction(CatalogAnimeAction.OnReviewDeleteDismiss) },
+        )
+    }
+
+    previewImageUrl?.let { imageUrl ->
+        ImagePreviewDialog(
+            title = state.animeDetail.title ?: "-",
+            imageUrl = imageUrl,
+            onDismissRequest = { previewImageUrl = null },
         )
     }
 }

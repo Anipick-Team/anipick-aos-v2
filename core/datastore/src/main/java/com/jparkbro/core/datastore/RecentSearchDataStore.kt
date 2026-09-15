@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface RecentSearchDataStore {
     val recentSearches: Flow<List<String>>
 
-    suspend fun getRecentSearches(): List<String>
     suspend fun saveRecentSearch(query: String)
     suspend fun removeRecentSearch(query: String)
     suspend fun clearRecentSearches()

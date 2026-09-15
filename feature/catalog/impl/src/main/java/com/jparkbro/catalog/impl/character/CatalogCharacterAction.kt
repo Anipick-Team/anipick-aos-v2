@@ -7,4 +7,5 @@ sealed interface CatalogCharacterAction {
 
     data object OnBackClick : Navigation
     data object OnLoadMore : CatalogCharacterAction
+    data class OnCastClick(val personId: Long) : Navigation
 }

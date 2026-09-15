@@ -97,6 +97,10 @@ val Edit: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_edit)
 
+val Expand: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_expand)
+
 val HeartFilled: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_heart_filled)

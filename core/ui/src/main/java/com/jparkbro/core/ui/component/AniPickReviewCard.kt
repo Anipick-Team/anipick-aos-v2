@@ -43,15 +43,15 @@ import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.review.Review
 import com.jparkbro.core.ui.util.orNullIfDefaultCover
 
-/** 리뷰 카드 - 최근 리뷰/마이페이지 "평가한 작품"/애니 상세 "리뷰" 탭에서 공통으로 쓴다.
- *  [showAnimeHeader]는 애니 상세처럼 이미 그 애니 화면 안이라 커버/제목이 불필요할 때 false로,
- *  [showProfile]은 마이페이지 "평가한 작품"처럼 항상 내 리뷰라 프로필/닉네임이 불필요할 때 false로 끈다. */
+/** 리뷰 카드 - [showAnimeHeader]는 커버/제목 노출 여부, [showProfile]은 프로필/닉네임 노출 여부,
+ *  [ratingAlignedToStart]는 별점 Row를 왼쪽에 붙일지 여부 */
 @Composable
 fun AniPickReviewCard(
     review: Review,
     modifier: Modifier = Modifier,
     showAnimeHeader: Boolean = true,
     showProfile: Boolean = true,
+    ratingAlignedToStart: Boolean = false,
     onAnimeClick: () -> Unit = {},
     onLikeClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
@@ -97,11 +97,19 @@ fun AniPickReviewCard(
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = if (showProfile) Arrangement.SpaceBetween else Arrangement.End,
+                horizontalArrangement = when {
+                    showProfile -> Arrangement.SpaceBetween
+                    ratingAlignedToStart -> Arrangement.Start
+                    else -> Arrangement.End
+                },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (showProfile) {
-                    AniPickProfileNickname(profileImageUrl = review.profileImageUrl, nickname = review.nickname)
+                    AniPickProfileNickname(
+                        profileImageUrl = review.profileImageUrl,
+                        profileImageBytes = review.profileImageBytes,
+                        nickname = review.nickname,
+                    )
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -131,37 +139,39 @@ fun AniPickReviewCard(
                 )
             }
         }
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = review.content ?: "",
-                style = AniPickTheme.typography.body2,
-                color = AniPickTheme.colors.black,
-                maxLines = if (isExpanded) Int.MAX_VALUE else 2,
-                overflow = TextOverflow.Ellipsis,
-                onTextLayout = { result ->
-                    if (!isExpanded) isOverflowing = result.hasVisualOverflow
-                },
-            )
-            if (isOverflowing) {
-                Row(
-                    modifier = Modifier.clickable(onClick = { isExpanded = !isExpanded }),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = if (isExpanded) "접기" else "더보기",
-                        style = AniPickTheme.typography.body1,
-                        color = AniPickTheme.colors.primary,
-                    )
-                    AniPickAnimatedChevronIcon(
-                        isExpanded = isExpanded,
-                        contentDescription = if (isExpanded) "접기 아이콘" else "더보기 아이콘",
-                        modifier = Modifier.size(16.dp),
-                        tint = AniPickTheme.colors.primary,
-                    )
+        review.content?.let { content ->
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = content,
+                    style = AniPickTheme.typography.body2,
+                    color = AniPickTheme.colors.black,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 2,
+                    overflow = TextOverflow.Ellipsis,
+                    onTextLayout = { result ->
+                        if (!isExpanded) isOverflowing = result.hasVisualOverflow
+                    },
+                )
+                if (isOverflowing) {
+                    Row(
+                        modifier = Modifier.clickable(onClick = { isExpanded = !isExpanded }),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = if (isExpanded) "접기" else "더보기",
+                            style = AniPickTheme.typography.body1,
+                            color = AniPickTheme.colors.primary,
+                        )
+                        AniPickAnimatedChevronIcon(
+                            isExpanded = isExpanded,
+                            contentDescription = if (isExpanded) "접기 아이콘" else "더보기 아이콘",
+                            modifier = Modifier.size(16.dp),
+                            tint = AniPickTheme.colors.primary,
+                        )
+                    }
                 }
             }
         }
@@ -318,20 +328,34 @@ private fun AniPickReviewCardPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun AniPickReviewCardNoProfilePreview() {
-    AniPickReviewCard(
-        review = Review(
-            reviewId = 1L,
-            animeId = 1L,
-            animeTitle = "샘플 애니메이션",
-            animeCoverImageUrl = "",
-            content = "이 작품은 정말 인상 깊었습니다.",
-            createdAt = "2026-08-01",
-            rating = 4.5f,
-            likeCount = 12,
-            isMine = true,
-        ),
-        showProfile = false,
-    )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        AniPickReviewCard(
+            review = Review(
+                reviewId = 1L,
+                animeId = 1L,
+                animeTitle = "샘플 애니메이션",
+                animeCoverImageUrl = "",
+                content = "이 작품은 정말 인상 깊었습니다.",
+                createdAt = "2026-08-01",
+                rating = 4.5f,
+                likeCount = 12,
+                isMine = true,
+            ),
+            showProfile = false,
+        )
+        AniPickReviewCard(
+            review = Review(
+                reviewId = 1L,
+                animeId = 1L,
+                animeTitle = "샘플 애니메이션",
+                animeCoverImageUrl = "",
+                createdAt = "2026-08-01",
+                rating = 4.5f,
+                isMine = true,
+            ),
+            showProfile = false,
+        )
+    }
 }
 
 @Preview(showBackground = true)

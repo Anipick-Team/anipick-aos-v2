@@ -6,6 +6,9 @@ import com.jparkbro.core.network.image.dto.CommunityPostImageUploadResponse
 import com.jparkbro.core.network.image.dto.UpdateProfileImageResponse
 
 interface ImageNetworkDataSource {
+    /** id로 이미지 바이트 조회 - `GET /image/{imageId}`, 인증 필요 */
+    suspend fun getImage(imageId: Long): Result<ByteArray, DataError.Network>
+
     /** 마이페이지 프로필 이미지 변경 - `POST /image/profile-image`. */
     suspend fun updateProfileImage(
         imageBytes: ByteArray,

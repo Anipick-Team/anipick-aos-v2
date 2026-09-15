@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -31,6 +33,14 @@ internal fun ColumnScope.ExploreTabContent(
 ) {
     when (state.tab) {
         ExploreTab.ANIME -> {
+            val animeGridState = rememberLazyGridState()
+
+            // 정렬/필터 바뀌면 내용은 완전히 새로 불러오는데 스크롤 위치는 그대로 남아있어서, 이전 스크롤
+            // 위치에 새 목록이 겹쳐 보이는 문제가 있었다 - 조건이 바뀔 때마다 맨 위로 되돌린다.
+            LaunchedEffect(state.sort, state.year, state.season, state.genres, state.type) {
+                animeGridState.scrollToItem(0)
+            }
+
             if (state.isLoading) {
                 AniPickAnimeGridSkeleton(
                     modifier = Modifier.weight(1f),
@@ -50,6 +60,7 @@ internal fun ColumnScope.ExploreTabContent(
                     modifier = Modifier
                         .weight(1f)
                         .nestedScroll(nestedScrollConnection),
+                    state = animeGridState,
                     onLoadMore = { onAction(ExploreAction.OnLoadMore) },
                     footer = if (state.isLoadingMore) {
                         { item(span = { GridItemSpan(maxLineSpan) }) { AniPickLoadMoreIndicator() } }
@@ -64,6 +75,10 @@ internal fun ColumnScope.ExploreTabContent(
         ExploreTab.COMMUNITY -> {
             val communityListState = rememberLazyListState()
             LoadMoreEffect(state = communityListState, onLoadMore = { onAction(ExploreAction.OnCommunityLoadMore) })
+
+            LaunchedEffect(state.communitySort) {
+                communityListState.scrollToItem(0)
+            }
 
             if (state.isCommunityLoading) {
                 LazyColumn(

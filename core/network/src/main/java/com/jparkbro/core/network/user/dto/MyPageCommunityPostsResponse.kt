@@ -1,8 +1,8 @@
 package com.jparkbro.core.network.user.dto
 
 import com.jparkbro.core.model.community.CommunityPost
-import com.jparkbro.core.network.BuildConfig
 import com.jparkbro.core.network.common.CursorResponse
+import com.jparkbro.core.network.image.toImageUrl
 import kotlinx.serialization.Serializable
 
 /** 마이페이지 "내가 쓴 게시글" 목록 응답 */
@@ -36,7 +36,7 @@ fun MyPageCommunityPostResponse.toCommunityPost(): CommunityPost = CommunityPost
     animeCoverImageUrl = animeCoverImageUrl,
     title = title,
     content = content,
-    thumbnailImageUrl = thumbnailImageId?.let { "${BuildConfig.BASE_URL}/image/$it" },
+    thumbnailImageUrl = thumbnailImageId?.toImageUrl(),
     isSpoiler = isSpoiler,
     viewCount = viewCount,
     likeCount = likeCount,

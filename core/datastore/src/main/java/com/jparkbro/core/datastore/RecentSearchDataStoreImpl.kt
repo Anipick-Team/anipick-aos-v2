@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.recentSearchDataStore: DataStore<Preferences> by preferencesDataStore(name = "recent_search_preferences")
@@ -26,8 +25,6 @@ class RecentSearchDataStoreImpl(
 
     override val recentSearches: Flow<List<String>> =
         context.recentSearchDataStore.data.map { it.toRecentSearches() }
-
-    override suspend fun getRecentSearches(): List<String> = recentSearches.first()
 
     /** 이미 있던 검색어면 지우고 맨 앞에 다시 추가해서 최신순을 유지하고, [MAX_RECENT_SEARCHES]개를 넘으면 오래된 것부터 지운다. */
     override suspend fun saveRecentSearch(query: String) {

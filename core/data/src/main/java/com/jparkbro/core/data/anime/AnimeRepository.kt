@@ -52,9 +52,9 @@ interface AnimeRepository {
     /** 애니 상세 "정보" 탭의 추천 작품 미리보기 - `GET /animes/{animeId}/detail/recommendation`. */
     suspend fun getAnimeDetailRecommendations(animeId: Long): Result<List<Anime>, DataError.Network>
 
-    /** 애니 찜하기 - `POST /animes/{animeId}/like`. */
+    /** 애니 찜하기 - `POST /animes/{animeId}/like`. 성공하면 `UserRepository.myPageProfile`도 재조회해서 갱신한다. */
     suspend fun likeAnime(animeId: Long): Result<Unit, DataError.Network>
 
-    /** 애니 찜 취소 - `DELETE /animes/{animeId}/like`. */
+    /** 애니 찜 취소 - `DELETE /animes/{animeId}/like`. 성공하면 `UserRepository.myPageProfile`도 재조회해서 갱신한다. */
     suspend fun unlikeAnime(animeId: Long): Result<Unit, DataError.Network>
 }

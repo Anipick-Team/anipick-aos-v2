@@ -19,6 +19,10 @@ import com.jparkbro.core.network.community.dto.toCommunityBoard
 import com.jparkbro.core.network.community.dto.toCommunityComment
 import com.jparkbro.core.network.community.dto.toCommunityPost
 import com.jparkbro.core.network.image.ImageNetworkDataSource
+import com.jparkbro.core.network.image.toImageId
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -119,9 +123,34 @@ class CommunityRepositoryImpl(
         return communityNetworkDataSource.getCommunityPosts(seriesId, request).map { response ->
             CursorPage(
                 cursor = response.cursor.toCursor(),
-                items = response.posts?.map { it.toCommunityPost() },
+                items = response.posts?.map { it.toCommunityPost() }?.withThumbnailBytes(),
             )
         }
+    }
+
+    /** 썸네일 이미지는 인증이 필요해서 URL을 바로 못 쓴다 - id를 뽑아 병렬로 바이트를 채워 넣는다 */
+    private suspend fun List<CommunityPost>.withThumbnailBytes(): List<CommunityPost> = coroutineScope {
+        map { post ->
+            async {
+                val imageId = post.thumbnailImageUrl?.toImageId() ?: return@async post
+                val bytes = (imageNetworkDataSource.getImage(imageId) as? Result.Success)?.data
+                post.copy(thumbnailImageBytes = bytes)
+            }
+        }.awaitAll()
+    }
+
+    /** 첨부 이미지도 인증이 필요해서 URL을 바로 못 쓴다 - id를 뽑아 병렬로 바이트를 채워 넣는다 */
+    private suspend fun CommunityPost.withImageBytes(): CommunityPost {
+        val urls = imageUrls ?: return this
+        val bytesList = coroutineScope {
+            urls.map { url ->
+                async {
+                    val imageId = url.toImageId() ?: return@async null
+                    (imageNetworkDataSource.getImage(imageId) as? Result.Success)?.data
+                }
+            }.awaitAll()
+        }
+        return copy(imageBytesList = bytesList)
     }
 
     override suspend fun uploadPostImage(
@@ -145,7 +174,7 @@ class CommunityRepositoryImpl(
     }
 
     override suspend fun getPostDetail(postId: Long): Result<CommunityPost, DataError.Network> {
-        return communityNetworkDataSource.getPostDetail(postId).map { it.toCommunityPost() }
+        return communityNetworkDataSource.getPostDetail(postId).map { it.toCommunityPost().withImageBytes() }
     }
 
     override suspend fun updatePost(

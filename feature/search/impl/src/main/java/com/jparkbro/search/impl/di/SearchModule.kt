@@ -12,6 +12,7 @@ val searchModule = module {
         SearchDetailViewModel(
             query = params.get(),
             searchRepository = get(),
+            logRepository = get(),
         )
     }
 }

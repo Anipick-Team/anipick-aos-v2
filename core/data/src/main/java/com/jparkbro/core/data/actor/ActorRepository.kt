@@ -13,9 +13,9 @@ interface ActorRepository {
         size: Int = 18,
     ): Result<ActorDetailPage, DataError.Network>
 
-    /** 배우 찜하기 - `POST /persons/{personId}/like`. */
+    /** 배우 찜하기 - `POST /persons/{personId}/like`. 성공하면 `UserRepository.myPageProfile`도 재조회해서 갱신한다. */
     suspend fun likeActor(personId: Long): Result<Unit, DataError.Network>
 
-    /** 배우 찜 취소 - `DELETE /persons/{personId}/like`. */
+    /** 배우 찜 취소 - `DELETE /persons/{personId}/like`. 성공하면 `UserRepository.myPageProfile`도 재조회해서 갱신한다. */
     suspend fun unlikeActor(personId: Long): Result<Unit, DataError.Network>
 }

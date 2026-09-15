@@ -38,7 +38,7 @@ internal fun PreferenceSetupHeader(
         }
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "좋아하는 애니메이션을 편가해주세요.\n취향에 맞는 작품을 추천할게요.",
+            text = "좋아하는 애니메이션을 평가해주세요.\n취향에 맞는 작품을 추천할게요.",
             style = AniPickTheme.typography.h1,
             color = AniPickTheme.colors.black,
         )

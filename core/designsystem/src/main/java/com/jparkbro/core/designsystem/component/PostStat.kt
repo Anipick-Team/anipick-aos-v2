@@ -1,4 +1,4 @@
-package com.jparkbro.community.impl.components
+package com.jparkbro.core.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,12 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jparkbro.core.designsystem.icon.Comment
+import com.jparkbro.core.designsystem.icon.HeartOutlined
+import com.jparkbro.core.designsystem.icon.VisibilityOn
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/** 조회수/좋아요/댓글 수 같은 통계 하나 - 아이콘 + 숫자. 게시글 목록/상세에서 함께 쓴다. */
+/** 조회수/좋아요/댓글 수 같은 통계 하나 - 아이콘 + 숫자. 게시글 목록/상세, 마이페이지 내 콘텐츠 등에서 함께 쓴다. */
 @Composable
-internal fun PostStat(icon: ImageVector, count: Int?, modifier: Modifier = Modifier) {
+fun AniPickPostStat(icon: ImageVector, count: Int?, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -38,13 +42,28 @@ internal fun PostStat(icon: ImageVector, count: Int?, modifier: Modifier = Modif
     }
 }
 
-/** [PostStat] 사이를 구분하는 세로 구분선. */
+/** [AniPickPostStat] 사이를 구분하는 세로 구분선. */
 @Composable
-internal fun PostStatDivider() {
+fun AniPickPostStatDivider() {
     Box(
         modifier = Modifier
             .width(1.dp)
             .height(10.dp)
             .background(AniPickTheme.colors.textGray),
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AniPickPostStatPreview() {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AniPickPostStat(icon = VisibilityOn, count = 102)
+        AniPickPostStatDivider()
+        AniPickPostStat(icon = HeartOutlined, count = 32)
+        AniPickPostStatDivider()
+        AniPickPostStat(icon = Comment, count = 8)
+    }
 }

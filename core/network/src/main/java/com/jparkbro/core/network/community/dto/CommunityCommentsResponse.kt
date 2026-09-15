@@ -1,8 +1,8 @@
 package com.jparkbro.core.network.community.dto
 
 import com.jparkbro.core.model.community.CommunityComment
-import com.jparkbro.core.network.BuildConfig
 import com.jparkbro.core.network.common.CursorResponse
+import com.jparkbro.core.network.image.toImageUrl
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -32,7 +32,7 @@ fun CommunityCommentResponse.toCommunityComment(): CommunityComment = CommunityC
     commentId = commentId,
     userId = userId,
     nickname = nickname,
-    profileImageUrl = profileImageId?.let { "${BuildConfig.BASE_URL}/image/$it" },
+    profileImageUrl = profileImageId?.toImageUrl(),
     content = content,
     likeCount = likeCount,
     isLiked = isLiked,

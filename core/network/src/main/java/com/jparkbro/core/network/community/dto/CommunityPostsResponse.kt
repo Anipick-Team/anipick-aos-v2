@@ -1,8 +1,8 @@
 package com.jparkbro.core.network.community.dto
 
 import com.jparkbro.core.model.community.CommunityPost
-import com.jparkbro.core.network.BuildConfig
 import com.jparkbro.core.network.common.CursorResponse
+import com.jparkbro.core.network.image.toImageUrl
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,6 +21,7 @@ data class CommunityPostResponse(
     val title: String? = null,
     val content: String? = null,
     val thumbnailImageId: Long? = null,
+    val imageCount: Int? = null,
     val isSpoiler: Boolean? = null,
     val viewCount: Int? = null,
     val likeCount: Int? = null,
@@ -32,10 +33,11 @@ fun CommunityPostResponse.toCommunityPost(): CommunityPost = CommunityPost(
     postId = postId,
     userId = userId,
     nickname = nickname,
-    profileImageUrl = profileImageId?.let { "${BuildConfig.BASE_URL}/image/$it" },
+    profileImageUrl = profileImageId?.toImageUrl(),
     title = title,
     content = content,
-    thumbnailImageUrl = thumbnailImageId?.let { "${BuildConfig.BASE_URL}/image/$it" },
+    thumbnailImageUrl = thumbnailImageId?.toImageUrl(),
+    imageCount = imageCount,
     isSpoiler = isSpoiler,
     viewCount = viewCount,
     likeCount = likeCount,

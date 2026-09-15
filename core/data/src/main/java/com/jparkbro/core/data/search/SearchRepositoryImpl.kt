@@ -106,8 +106,6 @@ class SearchRepositoryImpl(
         }
     }
 
-    override suspend fun getRecentSearches(): List<String> = recentSearchDataStore.getRecentSearches()
-
     override suspend fun saveRecentSearch(query: String) = recentSearchDataStore.saveRecentSearch(query)
 
     override suspend fun removeRecentSearch(query: String) = recentSearchDataStore.removeRecentSearch(query)

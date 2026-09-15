@@ -21,7 +21,13 @@ val catalogModule = module {
             globalSnackbarManager = get(),
         )
     }
-    viewModel { params -> CatalogActorViewModel(personId = params.get(), actorRepository = get()) }
+    viewModel { params ->
+        CatalogActorViewModel(
+            personId = params.get(),
+            actorRepository = get(),
+            globalSnackbarManager = get(),
+        )
+    }
     viewModel { params -> CatalogCharacterViewModel(animeId = params.get(), characterRepository = get()) }
     viewModel { params -> CatalogStudioViewModel(studioId = params.get(), studioRepository = get()) }
     viewModel { params -> CatalogSeriesViewModel(animeId = params.get(), animeTitle = params.get(), seriesRepository = get()) }

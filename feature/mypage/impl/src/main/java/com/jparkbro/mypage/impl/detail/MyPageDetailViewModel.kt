@@ -12,6 +12,9 @@ import com.jparkbro.mypage.api.MyPageDetailType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,6 +28,17 @@ class MyPageDetailViewModel(
 
     init {
         load(resetCursor = true)
+        observeMyPageProfileChanges()
+    }
+
+    /** [UserRepository.myPageProfile] 변경 시 1페이지부터 재조회 - MyContent는 구독 제외 */
+    private fun observeMyPageProfileChanges() {
+        if (type == MyPageDetailType.MyContent) return
+
+        userRepository.myPageProfile
+            .drop(1)
+            .onEach { load(resetCursor = true) }
+            .launchIn(viewModelScope)
     }
 
     fun onAction(action: MyPageDetailAction) {

@@ -11,7 +11,7 @@ data class CommunityMainState(
     val boardCoverImageUrl: String? = null,
     val boardGenres: List<String> = emptyList(),
     val postFilter: CommunityPostFilter = CommunityPostFilter.ALL,
-    val isSpoilerVisible: Boolean = true,
+    val isSpoilerVisible: Boolean = false,
     val posts: List<CommunityPost> = emptyList(),
     val postsCursor: Cursor? = null,
     val postsEndReached: Boolean = false,

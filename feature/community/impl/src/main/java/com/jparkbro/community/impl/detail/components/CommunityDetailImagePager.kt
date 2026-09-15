@@ -23,10 +23,10 @@ import coil3.compose.AsyncImage
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 
-/** 게시글 첨부 이미지 슬라이드 - 페이지 인디케이터 포함. */
+/** 게시글 첨부 이미지 슬라이드 - 페이지 인디케이터 포함. 각 원소는 [ByteArray](인증 조회 완료) 또는 [String](URL, 폴백). */
 @Composable
 internal fun CommunityDetailImagePager(
-    images: List<String>,
+    images: List<Any>,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
@@ -41,8 +41,7 @@ internal fun CommunityDetailImagePager(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .height(220.dp),
             )
         }
         if (images.size > 1) {

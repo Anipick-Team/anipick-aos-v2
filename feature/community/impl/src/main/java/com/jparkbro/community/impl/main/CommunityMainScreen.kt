@@ -14,6 +14,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,6 +75,12 @@ private fun CommunityMainScreen(
         onAction(CommunityMainAction.OnLoadMorePosts)
     }
 
+    // 필터(정렬) 바뀌면 내용은 완전히 새로 불러오는데 스크롤 위치는 그대로 남아있어서, 이전 스크롤
+    // 위치에 새 목록이 겹쳐 보이는 문제가 있었다 - 필터 바뀔 때마다 맨 위로 되돌린다.
+    LaunchedEffect(state.postFilter) {
+        listState.scrollToItem(0)
+    }
+
     Scaffold(
         topBar = {
             AniPickTitleTopAppBar(
@@ -120,8 +127,6 @@ private fun CommunityMainScreen(
                 )
             }
             if (state.isPostsLoading) {
-                // 필터 변경 등으로 이미 있던 목록을 다시 부르는 중에도 스켈레톤을 우선 보여준다 - 실패하면
-                // `posts`는 갱신되지 않은 채라(레포지토리 캐시가 유지) 이전 목록으로 그대로 돌아간다.
                 items(POST_SKELETON_ITEM_COUNT) {
                     CommunityPostItemSkeleton(modifier = Modifier.padding(horizontal = 20.dp))
                 }
@@ -171,6 +176,8 @@ private fun CommunityMainScreenPreview() {
                     likeCount = 32,
                     commentCount = 8,
                     createdAt = "2025. 04. 03",
+                    thumbnailImageUrl = "",
+                    imageCount = 4,
                 ),
                 CommunityPost(
                     postId = 2L,

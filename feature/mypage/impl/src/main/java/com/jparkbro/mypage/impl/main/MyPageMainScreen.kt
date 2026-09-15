@@ -1,5 +1,6 @@
 package com.jparkbro.mypage.impl.main
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,8 +10,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.mypage.api.MyPageDetailType
@@ -29,6 +32,7 @@ internal fun MyPageMainRoot(
     viewModel: MyPageMainViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     MyPageMainScreen(
         state = state,
@@ -41,6 +45,13 @@ internal fun MyPageMainRoot(
                     is MyPageMainAction.OnPersonClick -> onNavigateToActorDetail(action.personId)
                     MyPageMainAction.OnSettingClick -> onNavigateToSetting()
                     MyPageMainAction.OnRatedAnimesClick -> onNavigateToRatedAnimes()
+                    MyPageMainAction.OnFeedbackClick -> {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            "https://docs.google.com/forms/d/e/1FAIpQLSdV4UANNQuVanRQ99JLJ1PU9ElXMN2iKx9gPaBXAb0QkVreDg/viewform".toUri()
+                        )
+                        context.startActivity(intent)
+                    }
                 }
                 else -> viewModel.onAction(action)
             }
@@ -57,7 +68,7 @@ private fun MyPageMainScreen(
     Scaffold(
         topBar = {
             MyPageTopAppBar(
-                profileImage = state.profileImageUrl,
+                profileImage = state.profileImageBytes,
                 onSettingClick = { onAction(MyPageMainAction.OnSettingClick) },
                 onProfileImageSelected = { image -> onAction(MyPageMainAction.OnChangeProfileImage(image)) },
             )

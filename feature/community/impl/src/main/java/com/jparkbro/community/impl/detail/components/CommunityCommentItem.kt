@@ -171,7 +171,7 @@ private fun CommentBody(
                         Text(
                             text = "좋아요",
                             style = AniPickTheme.typography.caption1,
-                            color = AniPickTheme.colors.textGray,
+                            color = if (isLiked) AniPickTheme.colors.point else AniPickTheme.colors.textGray,
                         )
                     }
                     if (onReplyClick != null) {

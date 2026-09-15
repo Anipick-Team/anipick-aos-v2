@@ -14,4 +14,6 @@ sealed interface SearchDetailAction {
     data class OnAnimeClick(val animeId: Long) : Navigation
     data class OnActorClick(val personId: Long) : Navigation
     data class OnStudioClick(val studioId: Long) : Navigation
+    data class OnAnimeClickLog(val url: String) : SearchDetailAction
+    data class OnAnimeImpressionLog(val url: String) : SearchDetailAction
 }

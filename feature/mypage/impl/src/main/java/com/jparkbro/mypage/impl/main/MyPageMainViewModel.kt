@@ -13,6 +13,8 @@ import com.jparkbro.core.model.mypage.WatchCounts
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -26,27 +28,41 @@ class MyPageMainViewModel(
     val state: StateFlow<MyPageMainState> = _state.asStateFlow()
 
     init {
-        loadMyPage()
+        collectMyPageProfile()
+        initDataLoad()
     }
 
-    private fun loadMyPage() {
+    /** [UserRepository.myPageProfile] 구독 - 값 변경 시 자동 반영, 프로필 이미지 바이트도 함께 내려옴 */
+    private fun collectMyPageProfile() {
+        userRepository.myPageProfile
+            .onEach { profile ->
+                _state.update {
+                    it.copy(
+                        nickname = profile?.nickname,
+                        profileImageUrl = profile?.profileImageUrl,
+                        profileImageBytes = profile?.profileImageBytes,
+                        watchCounts = profile?.watchCounts ?: WatchCounts(),
+                        likedAnimes = profile?.likedAnimes ?: emptyList(),
+                        likedPersons = profile?.likedPersons ?: emptyList(),
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    /** 캐시 있으면 그대로 쓰고, 없을 때만(최초 진입) 서버에서 불러온다 - 실제 state 반영은 [collectMyPageProfile]이 한다. */
+    private fun initDataLoad() {
         viewModelScope.launch {
+            val start = System.currentTimeMillis()
             _state.update { it.copy(isLoading = true, error = null) }
 
-            userRepository.getMyPage()
-                .onSuccess { profile ->
-                    _state.update {
-                        it.copy(
-                            nickname = profile.nickname,
-                            profileImageUrl = profile.profileImageUrl,
-                            watchCounts = profile.watchCounts ?: WatchCounts(),
-                            likedAnimes = profile.likedAnimes ?: emptyList(),
-                            likedPersons = profile.likedPersons ?: emptyList(),
-                            isLoading = false,
-                        )
-                    }
+            userRepository.loadMyPage()
+                .onSuccess {
+                    Timber.d("[MyPageLoad] initDataLoad 총 ${System.currentTimeMillis() - start}ms")
+                    _state.update { it.copy(isLoading = false) }
                 }
                 .onFailure { error ->
+                    Timber.d("[MyPageLoad] initDataLoad 실패 ${System.currentTimeMillis() - start}ms error=$error")
                     _state.update { it.copy(isLoading = false, error = error.toDisplayMessage()) }
                 }
         }
@@ -59,11 +75,9 @@ class MyPageMainViewModel(
         }
     }
 
-    /** 업로드 성공 시 기존 URL의 마지막 경로 조각(id)만 새 imageId로 교체, 기존 URL 없으면 새로 불러옴 */
     private fun changeProfileImage(image: Uri) {
         viewModelScope.launch {
             val imageBytes = readBytes(image) ?: return@launch
-
             val mimeType = context.contentResolver.getType(image) ?: "image/jpeg"
             val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: "jpg"
 
@@ -71,16 +85,7 @@ class MyPageMainViewModel(
                 imageBytes = imageBytes,
                 fileName = "profile_image.$extension",
                 mimeType = mimeType,
-            ).onSuccess { imageId ->
-                val currentUrl = _state.value.profileImageUrl
-                if (currentUrl == null) {
-                    loadMyPage()
-                } else {
-                    _state.update {
-                        it.copy(profileImageUrl = currentUrl.substringBeforeLast('/') + "/" + imageId)
-                    }
-                }
-            }
+            )
         }
     }
 

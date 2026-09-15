@@ -72,7 +72,9 @@ fun AniPickTitleTopAppBar(
     modifier: Modifier = Modifier,
     title: String? = null,
     onBackClick: () -> Unit,
-    actions: (@Composable RowScope.() -> Unit)? = null
+    actions: (@Composable RowScope.() -> Unit)? = null,
+    /** [title] 대신 가운데에 넣을 임의 콘텐츠 - 둘 다 주어지면 이쪽 우선 */
+    titleContent: (@Composable () -> Unit)? = null,
 ) {
     Box(
         modifier = modifier
@@ -93,14 +95,20 @@ fun AniPickTitleTopAppBar(
                     onClick = onBackClick
                 )
         )
-        title?.let { title ->
-            Text(
-                text = title,
-                style = AniPickTheme.typography.h3,
-                color = AniPickTheme.colors.black,
-                modifier = Modifier
-                    .align(Alignment.Center)
-            )
+        if (titleContent != null) {
+            Box(modifier = Modifier.align(Alignment.Center)) {
+                titleContent()
+            }
+        } else {
+            title?.let { title ->
+                Text(
+                    text = title,
+                    style = AniPickTheme.typography.h3,
+                    color = AniPickTheme.colors.black,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                )
+            }
         }
         actions?.let { actionsContent ->
             Row(

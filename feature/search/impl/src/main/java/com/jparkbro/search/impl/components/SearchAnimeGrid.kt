@@ -13,7 +13,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.component.AniPickEmptyState
@@ -38,6 +40,8 @@ internal fun SearchAnimeGrid(
     modifier: Modifier = Modifier,
     isLoadingMore: Boolean = false,
     onLoadMore: (() -> Unit)? = null,
+    onAnimeClickLog: (String) -> Unit = {},
+    onAnimeImpression: (String) -> Unit = {},
     header: (LazyGridScope.() -> Unit)? = null,
     emptyMessage: String? = null,
     onRetryClick: (() -> Unit)? = null,
@@ -50,6 +54,18 @@ internal fun SearchAnimeGrid(
 
         if (onLoadMore != null) {
             LoadMoreEffect(state = gridState, threshold = layout.columns + 1, onLoadMore = onLoadMore)
+        }
+
+        val loggedImpressionIds = remember { mutableSetOf<Long>() }
+        LaunchedEffect(gridState, animes) {
+            snapshotFlow { gridState.layoutInfo.visibleItemsInfo.mapNotNull { it.key as? Long } }
+                .collect { visibleIds ->
+                    visibleIds.forEach { id ->
+                        if (loggedImpressionIds.add(id)) {
+                            animes.find { it.animeId == id }?.impressionLog?.let(onAnimeImpression)
+                        }
+                    }
+                }
         }
 
         LazyVerticalGrid(
@@ -85,7 +101,10 @@ internal fun SearchAnimeGrid(
                     AniPickAnimeCard(
                         anime = anime,
                         cardWidth = layout.cardWidth,
-                        onClick = { anime.animeId?.let(onAnimeClick) },
+                        onClick = {
+                            anime.animeId?.let(onAnimeClick)
+                            anime.clickLog?.let(onAnimeClickLog)
+                        },
                         background = AniPickCardBackground.GRAY,
                     )
                 }

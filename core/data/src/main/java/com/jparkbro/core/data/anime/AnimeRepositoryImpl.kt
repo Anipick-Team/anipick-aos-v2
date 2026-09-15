@@ -3,6 +3,8 @@ package com.jparkbro.core.data.anime
 import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
+import com.jparkbro.core.common.result.onSuccess
+import com.jparkbro.core.data.user.UserRepository
 import com.jparkbro.core.datastore.RecentAnimeDataStore
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.AnimeDetail
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.Flow
 class AnimeRepositoryImpl(
     private val animeNetworkDataSource: AnimeNetworkDataSource,
     private val recentAnimeDataStore: RecentAnimeDataStore,
+    private val userRepository: UserRepository,
 ) : AnimeRepository {
 
     override val recentAnimeId: Flow<Long?> = recentAnimeDataStore.recentAnimeId
@@ -106,9 +109,11 @@ class AnimeRepositoryImpl(
 
     override suspend fun likeAnime(animeId: Long): Result<Unit, DataError.Network> {
         return animeNetworkDataSource.likeAnime(animeId)
+            .onSuccess { userRepository.refreshMyPage() }
     }
 
     override suspend fun unlikeAnime(animeId: Long): Result<Unit, DataError.Network> {
         return animeNetworkDataSource.unlikeAnime(animeId)
+            .onSuccess { userRepository.refreshMyPage() }
     }
 }

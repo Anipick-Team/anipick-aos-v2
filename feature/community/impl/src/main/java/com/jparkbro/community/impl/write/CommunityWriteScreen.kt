@@ -1,5 +1,6 @@
 package com.jparkbro.community.impl.write
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,8 +61,14 @@ private fun CommunityWriteScreen(
     val pickPhoto = rememberPhotoPickerWithPermission { uri ->
         onAction(CommunityWriteAction.OnImageAdd(uri))
     }
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { focusManager.clearFocus() })
+            },
         topBar = {
             AniPickTitleTopAppBar(
                 title = if (state.isEditMode) "글 수정" else "글 작성",

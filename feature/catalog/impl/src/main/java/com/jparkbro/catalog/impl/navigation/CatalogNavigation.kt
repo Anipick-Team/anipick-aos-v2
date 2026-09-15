@@ -13,7 +13,7 @@ import com.jparkbro.community.api.CommunityNavKey
 import com.jparkbro.core.navigation.Navigator
 import com.jparkbro.review.api.ReviewNavKey
 
-/** [CatalogNavKey]의 각 키별 contentKey - 다른 모듈(app의 탭 전환 애니메이션 판단 등)에서도 참조할 수 있게 공개. */
+/** [CatalogNavKey]의 각 키별 contentKey 접두어 - 실제 contentKey는 여기에 식별자(animeId 등)를 붙여서 만든다 */
 const val CATALOG_ANIME_CONTENT_KEY = "CatalogNavKey.Anime"
 const val CATALOG_ACTOR_CONTENT_KEY = "CatalogNavKey.Actor"
 const val CATALOG_CHARACTER_CONTENT_KEY = "CatalogNavKey.Character"
@@ -24,7 +24,7 @@ const val CATALOG_RECOMMENDATION_CONTENT_KEY = "CatalogNavKey.Recommendation"
 fun EntryProviderScope<NavKey>.catalogEntry(
     navigator: Navigator,
 ) {
-    entry<CatalogNavKey.Anime>(clazzContentKey = { CATALOG_ANIME_CONTENT_KEY }) { key ->
+    entry<CatalogNavKey.Anime>(clazzContentKey = { key -> "$CATALOG_ANIME_CONTENT_KEY-${key.animeId}" }) { key ->
         CatalogAnimeRoot(
             animeId = key.animeId,
             onBackClick = navigator::goBack,
@@ -43,29 +43,35 @@ fun EntryProviderScope<NavKey>.catalogEntry(
                 }
             },
             onNavigateToReviewWrite = { animeId -> navigator.navigate(ReviewNavKey.Write(animeId)) },
+            onNavigateToCharacterList = { animeId -> navigator.navigate(CatalogNavKey.Character(animeId)) },
+            onNavigateToActorDetail = { personId -> navigator.navigate(CatalogNavKey.Actor(personId)) },
+            onNavigateToSeries = { animeId, animeTitle -> navigator.navigate(CatalogNavKey.Series(animeId, animeTitle)) },
+            onNavigateToRecommendation = { animeId -> navigator.navigate(CatalogNavKey.Recommendation(animeId)) },
+            onNavigateToAnimeDetail = { animeId -> navigator.navigate(CatalogNavKey.Anime(animeId)) },
         )
     }
-    entry<CatalogNavKey.Actor>(clazzContentKey = { CATALOG_ACTOR_CONTENT_KEY }) { key ->
+    entry<CatalogNavKey.Actor>(clazzContentKey = { key -> "$CATALOG_ACTOR_CONTENT_KEY-${key.personId}" }) { key ->
         CatalogActorRoot(
             personId = key.personId,
             onBackClick = navigator::goBack,
             onNavigateToAnimeDetail = { animeId -> navigator.navigate(CatalogNavKey.Anime(animeId)) },
         )
     }
-    entry<CatalogNavKey.Character>(clazzContentKey = { CATALOG_CHARACTER_CONTENT_KEY }) { key ->
+    entry<CatalogNavKey.Character>(clazzContentKey = { key -> "$CATALOG_CHARACTER_CONTENT_KEY-${key.animeId}" }) { key ->
         CatalogCharacterRoot(
             animeId = key.animeId,
             onBackClick = navigator::goBack,
+            onNavigateToActorDetail = { personId -> navigator.navigate(CatalogNavKey.Actor(personId)) },
         )
     }
-    entry<CatalogNavKey.Studio>(clazzContentKey = { CATALOG_STUDIO_CONTENT_KEY }) { key ->
+    entry<CatalogNavKey.Studio>(clazzContentKey = { key -> "$CATALOG_STUDIO_CONTENT_KEY-${key.studioId}" }) { key ->
         CatalogStudioRoot(
             studioId = key.studioId,
             onBackClick = navigator::goBack,
             onNavigateToAnimeDetail = { animeId -> navigator.navigate(CatalogNavKey.Anime(animeId)) },
         )
     }
-    entry<CatalogNavKey.Series>(clazzContentKey = { CATALOG_SERIES_CONTENT_KEY }) { key ->
+    entry<CatalogNavKey.Series>(clazzContentKey = { key -> "$CATALOG_SERIES_CONTENT_KEY-${key.animeId}" }) { key ->
         CatalogSeriesRoot(
             animeId = key.animeId,
             animeTitle = key.animeTitle,
@@ -73,7 +79,7 @@ fun EntryProviderScope<NavKey>.catalogEntry(
             onNavigateToAnimeDetail = { animeId -> navigator.navigate(CatalogNavKey.Anime(animeId)) },
         )
     }
-    entry<CatalogNavKey.Recommendation>(clazzContentKey = { CATALOG_RECOMMENDATION_CONTENT_KEY }) { key ->
+    entry<CatalogNavKey.Recommendation>(clazzContentKey = { key -> "$CATALOG_RECOMMENDATION_CONTENT_KEY-${key.basedOnAnimeId}" }) { key ->
         CatalogRecommendationRoot(
             basedOnAnimeId = key.basedOnAnimeId,
             onBackClick = navigator::goBack,

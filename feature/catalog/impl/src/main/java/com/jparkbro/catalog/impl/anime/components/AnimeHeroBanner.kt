@@ -1,29 +1,40 @@
 package com.jparkbro.catalog.impl.anime.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.component.AniPickShimmerBox
 import com.jparkbro.core.designsystem.icon.ChevronLeft
+import com.jparkbro.core.designsystem.icon.Expand
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.ui.util.orNullIfDefaultCover
 
@@ -39,6 +50,9 @@ internal fun AnimeHeroBanner(
     modifier: Modifier = Modifier,
 ) {
     val dimmedColor = AniPickTheme.colors.dimmed
+    // 배너 이미지가 없으면 커버 이미지로 대신 보여준다 - 화면에 실제로 뭐가 떠 있는지 기준으로 클릭 가능 여부를 정한다.
+    val resolvedBannerUrl = bannerImageUrl.orNullIfDefaultCover() ?: coverImageUrl.orNullIfDefaultCover()
+    val hasBannerImage = resolvedBannerUrl != null
 
     Box(
         modifier = modifier
@@ -46,14 +60,14 @@ internal fun AnimeHeroBanner(
             .height(BANNER_HEIGHT),
     ) {
         AsyncImage(
-            model = bannerImageUrl,
+            model = resolvedBannerUrl,
             contentDescription = "$title 배너 이미지",
             error = painterResource(R.drawable.banner_default_img),
             placeholder = painterResource(R.drawable.banner_default_img),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .clickable(onClick = onBannerClick)
+                .clickable(enabled = hasBannerImage, onClick = onBannerClick)
                 .drawWithContent {
                     drawContent()
                     drawRect(color = dimmedColor)
@@ -71,20 +85,42 @@ internal fun AnimeHeroBanner(
                 tint = AniPickTheme.colors.white,
             )
         }
-        AsyncImage(
-            model = coverImageUrl.orNullIfDefaultCover(),
-            contentDescription = "$title 커버 이미지",
-            error = painterResource(R.drawable.portrait_default_img),
-            placeholder = painterResource(R.drawable.portrait_default_img),
-            contentScale = ContentScale.Crop,
+        val hasCoverImage = coverImageUrl.orNullIfDefaultCover() != null
+
+        Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(end = 20.dp, top = 36.dp)
                 .width(132.dp)
                 .aspectRatio(132f / 152f)
-                .clip(RoundedCornerShape(8.dp))
-                .clickable(onClick = onCoverClick),
-        )
+                .clickable(enabled = hasCoverImage, onClick = onCoverClick)
+        ) {
+            AsyncImage(
+                model = coverImageUrl.orNullIfDefaultCover(),
+                contentDescription = "$title 커버 이미지",
+                error = painterResource(R.drawable.portrait_default_img),
+                placeholder = painterResource(R.drawable.portrait_default_img),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .width(132.dp)
+                    .aspectRatio(132f / 152f)
+                    .clip(RoundedCornerShape(8.dp)),
+            )
+            if (hasCoverImage) {
+                Icon(
+                    imageVector = Expand,
+                    contentDescription = "커버 이미지 확대 아이콘",
+                    tint = AniPickTheme.colors.white,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(8.dp)
+                        .shadow(elevation = 4.dp, shape = CircleShape)
+                        .clip(CircleShape)
+                        .background(AniPickTheme.colors.primary)
+                        .padding(6.dp),
+                )
+            }
+        }
     }
 }
 
@@ -126,6 +162,55 @@ internal fun AnimeHeroBannerSkeleton(
     }
 }
 
+/** 배너/커버 이미지 탭 시 확대해서 보여주는 다이얼로그 - [Dialog]가 배경 dim을 알아서 그려준다. */
+@Composable
+internal fun ImagePreviewDialog(
+    title: String,
+    imageUrl: String?,
+    onDismissRequest: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        // 이미지 높이에 maxHeight 기준 상한을 둔다
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+        ) {
+            val maxImageHeight = maxHeight * 0.6f
+
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(AniPickTheme.colors.white)
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
+                AsyncImage(
+                    model = imageUrl.orNullIfDefaultCover(),
+                    contentDescription = "$title 이미지 확대",
+                    error = painterResource(R.drawable.portrait_default_img),
+                    placeholder = painterResource(R.drawable.portrait_default_img),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = maxImageHeight)
+                        .clip(RoundedCornerShape(4.dp)),
+                )
+                Text(
+                    text = "닫기",
+                    style = AniPickTheme.typography.body2,
+                    color = AniPickTheme.colors.primary,
+                    modifier = Modifier.clickable(onClick = onDismissRequest),
+                )
+            }
+        }
+    }
+}
+
 @Composable
 @Preview(showBackground = true)
 private fun AnimeHeroBannerPreview() {
@@ -143,4 +228,14 @@ private fun AnimeHeroBannerPreview() {
 @Preview(showBackground = true)
 private fun AnimeHeroBannerSkeletonPreview() {
     AnimeHeroBannerSkeleton(onBackClick = {})
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun ImagePreviewDialogPreview() {
+    ImagePreviewDialog(
+        title = "샘플 애니메이션",
+        imageUrl = "",
+        onDismissRequest = {},
+    )
 }

@@ -11,8 +11,6 @@ sealed interface CatalogAnimeAction {
     data object OnBackClick : Navigation
     data object OnShareClick : Navigation
     data object OnLikeClick : CatalogAnimeAction
-    data object OnBannerImageClick : CatalogAnimeAction
-    data object OnCoverImageClick : CatalogAnimeAction
     data class OnStudioClick(val studioId: Long) : Navigation
     data class OnWatchStatusClick(val status: String) : CatalogAnimeAction
     data class OnTabChanged(val tab: CatalogAnimeTab) : CatalogAnimeAction
@@ -33,4 +31,9 @@ sealed interface CatalogAnimeAction {
     data class OnReviewDeleteClick(val reviewId: Long) : CatalogAnimeAction
     data object OnReviewDeleteConfirm : CatalogAnimeAction
     data object OnReviewDeleteDismiss : CatalogAnimeAction
+    data object OnCastMoreClick : Navigation
+    data class OnCastClick(val personId: Long) : Navigation
+    data object OnSeriesMoreClick : Navigation
+    data object OnRecommendationMoreClick : Navigation
+    data class OnAnimeClick(val animeId: Long) : Navigation
 }
