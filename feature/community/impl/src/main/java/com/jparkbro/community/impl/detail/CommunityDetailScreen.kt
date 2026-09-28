@@ -1,5 +1,6 @@
 package com.jparkbro.community.impl.detail
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
@@ -20,10 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jparkbro.community.impl.BuildConfig
 import com.jparkbro.community.impl.detail.components.CommunityCommentInputBar
 import com.jparkbro.community.impl.detail.components.CommunityCommentItem
 import com.jparkbro.community.impl.detail.components.CommunityCommentItemSkeleton
@@ -54,6 +57,7 @@ internal fun CommunityDetailRoot(
     viewModel: CommunityDetailViewModel = koinViewModel(parameters = { parametersOf(postId) }),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
@@ -70,6 +74,13 @@ internal fun CommunityDetailRoot(
                     CommunityDetailAction.OnEditClick -> {
                         val seriesId = state.post.seriesId
                         if (seriesId != null) onNavigateToEdit(seriesId, postId)
+                    }
+                    CommunityDetailAction.OnShareClick -> {
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, "${BuildConfig.DEEP_LINK_BASE_URL}/community/post/$postId")
+                        }
+                        context.startActivity(Intent.createChooser(intent, null))
                     }
                 }
                 else -> viewModel.onAction(action)

@@ -65,6 +65,9 @@ internal fun Project.configureBuildTypes(
     }
 }
 
+/** API BASE_URL과 딥링크 BASE_URL이 같은 도메인을 쓰므로 한 곳에서만 관리한다. */
+private const val ANIPICK_HOST = "anipick.p-e.kr"
+
 private fun BuildType.configureDebugBuildType(
     appVersion: String,
     webClientId: String,
@@ -73,7 +76,8 @@ private fun BuildType.configureDebugBuildType(
     buildConfigField("String", "APP_VERSION", "\"$appVersion\"")
     buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
     buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
-    buildConfigField("String", "BASE_URL", "\"https://anipick.p-e.kr/api\"")
+    buildConfigField("String", "BASE_URL", "\"https://$ANIPICK_HOST/api\"")
+    buildConfigField("String", "DEEP_LINK_BASE_URL", "\"https://$ANIPICK_HOST/app\"")
 
     manifestPlaceholders["KAKAO_APP_KEY"] = kakaoAppKey
 }
@@ -87,7 +91,8 @@ private fun BuildType.configureReleaseBuildType(
     buildConfigField("String", "APP_VERSION", "\"$appVersion\"")
     buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
     buildConfigField("String", "KAKAO_APP_KEY", "\"$kakaoAppKey\"")
-    buildConfigField("String", "BASE_URL", "\"https://anipick.p-e.kr/api\"")
+    buildConfigField("String", "BASE_URL", "\"https://$ANIPICK_HOST/api\"")
+    buildConfigField("String", "DEEP_LINK_BASE_URL", "\"https://$ANIPICK_HOST/app\"")
 
     manifestPlaceholders["KAKAO_APP_KEY"] = kakaoAppKey
 

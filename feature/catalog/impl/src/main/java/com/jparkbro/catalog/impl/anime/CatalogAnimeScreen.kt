@@ -27,6 +27,7 @@ import com.jparkbro.catalog.impl.anime.components.animeHeroSection
 import com.jparkbro.catalog.impl.anime.components.animeInfoTabContent
 import com.jparkbro.catalog.impl.anime.components.animeInfoTabSkeleton
 import com.jparkbro.catalog.impl.anime.components.animeReviewTabContent
+import com.jparkbro.catalog.impl.BuildConfig
 import com.jparkbro.core.designsystem.component.AniPickDialog
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.community.CommunityBoard
@@ -69,7 +70,7 @@ internal fun CatalogAnimeRoot(
                     CatalogAnimeAction.OnShareClick -> {
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, state.animeDetail.title)
+                            putExtra(Intent.EXTRA_TEXT, "${BuildConfig.DEEP_LINK_BASE_URL}/anime/detail/$animeId")
                         }
                         context.startActivity(Intent.createChooser(intent, null))
                     }

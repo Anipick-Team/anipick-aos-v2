@@ -53,9 +53,8 @@ class CommunityDetailViewModel(
         when (action) {
             is CommunityDetailAction.Navigation -> Unit // Root에서 처리한다.
 
-            // TODO: 댓글 아이콘/공유 기능 API가 추가되면 연동한다. 지금은 자리만 잡아둔다.
+            // TODO: 댓글 아이콘 기능 API가 추가되면 연동한다. 지금은 자리만 잡아둔다.
             CommunityDetailAction.OnCommentIconClick -> Unit
-            CommunityDetailAction.OnShareClick -> Unit
             is CommunityDetailAction.OnCommentReplyClick -> onCommentReplyClick(action.commentId)
             CommunityDetailAction.OnReplyTargetCancelClick -> _state.update { it.copy(replyTargetComment = null) }
             is CommunityDetailAction.OnCommentEditClick -> onCommentEditClick(action.commentId)

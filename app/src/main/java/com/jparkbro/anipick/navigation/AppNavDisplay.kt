@@ -14,6 +14,8 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.ui.NavDisplay
+import com.jparkbro.anipick.deeplink.DeepLinkViewModel
+import com.jparkbro.anipick.deeplink.parseDeepLink
 import com.jparkbro.auth.api.navigateToLogin
 import com.jparkbro.auth.impl.navigation.authEntry
 import com.jparkbro.catalog.impl.navigation.catalogEntry
@@ -22,6 +24,7 @@ import com.jparkbro.core.navigation.NavigationState
 import com.jparkbro.core.navigation.Navigator
 import com.jparkbro.core.navigation.toEntries
 import com.jparkbro.explore.impl.navigation.exploreEntry
+import com.jparkbro.home.api.navigateToHomeMain
 import com.jparkbro.home.impl.navigation.homeEntry
 import com.jparkbro.mypage.impl.navigation.myPageEntry
 import com.jparkbro.ranking.impl.navigation.rankingEntry
@@ -51,11 +54,24 @@ fun AppNavDisplay(
     bottomNavigation: @Composable () -> Unit,
     navigationState: NavigationState,
     navigator: Navigator,
+    deepLinkViewModel: DeepLinkViewModel,
     modifier: Modifier = Modifier
 ) {
     SharedTransitionLayout(modifier = modifier) {
         val entryProvider = entryProvider<NavKey> {
-            splashEntry(navigator, sharedTransitionScope = this@SharedTransitionLayout)
+            splashEntry(
+                navigator = navigator,
+                sharedTransitionScope = this@SharedTransitionLayout,
+                onNavigateToHome = {
+                    // 홈으로 먼저 진입(top-level 전환)한 다음에 딥링크 타겟을 push해야
+                    // Splash의 서브스택이 아니라 Home 서브스택에 쌓인다 - 뒤로가기 시 홈으로 돌아옴.
+                    navigator.navigateToHomeMain()
+                    deepLinkViewModel.state.value.pendingUri
+                        ?.let(::parseDeepLink)
+                        ?.let(navigator::navigate)
+                    deepLinkViewModel.consumeDeepLink()
+                },
+            )
             authEntry(navigator, sharedTransitionScope = this@SharedTransitionLayout)
             homeEntry(navigator, bottomNavigation)
             rankingEntry(navigator, bottomNavigation)

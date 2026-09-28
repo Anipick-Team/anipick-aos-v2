@@ -9,7 +9,7 @@ sealed interface CommunityDetailAction {
 
     data object OnBackClick : Navigation
     data object OnCommentIconClick : CommunityDetailAction
-    data object OnShareClick : CommunityDetailAction
+    data object OnShareClick : Navigation
     data class OnCommentReplyClick(val commentId: Long) : CommunityDetailAction
     data object OnReplyTargetCancelClick : CommunityDetailAction
     data object OnRetryClick : CommunityDetailAction
