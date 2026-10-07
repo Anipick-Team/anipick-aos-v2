@@ -6,6 +6,7 @@ import com.jparkbro.core.common.result.map
 import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.data.image.compressImage
+import com.jparkbro.core.data.util.runUncancellable
 import com.jparkbro.core.model.community.CommunityBoard
 import com.jparkbro.core.model.community.CommunityComment
 import com.jparkbro.core.model.community.CommunityPost
@@ -180,9 +181,11 @@ class CommunityRepositoryImpl(
         isSpoiler: Boolean,
         imageIds: List<Long>,
     ): Result<Long, DataError.Network> {
-        return communityNetworkDataSource.createPost(seriesId, title, content, isSpoiler, imageIds)
-            .map { it.postId }
-            .onSuccess { userRepository.refreshMyCommunityPosts() }
+        return runUncancellable {
+            communityNetworkDataSource.createPost(seriesId, title, content, isSpoiler, imageIds)
+                .map { it.postId }
+                .onSuccess { userRepository.refreshMyCommunityPosts() }
+        }
     }
 
     override suspend fun getPostDetail(postId: Long): Result<CommunityPost, DataError.Network> {
@@ -196,16 +199,20 @@ class CommunityRepositoryImpl(
         isSpoiler: Boolean,
         imageIds: List<Long>,
     ): Result<Unit, DataError.Network> {
-        return communityNetworkDataSource.updatePost(postId, title, content, isSpoiler, imageIds)
-            .onSuccess {
-                userRepository.refreshMyCommunityPosts()
-                _updatedPostId.emit(postId)
-            }
+        return runUncancellable {
+            communityNetworkDataSource.updatePost(postId, title, content, isSpoiler, imageIds)
+                .onSuccess {
+                    userRepository.refreshMyCommunityPosts()
+                    _updatedPostId.emit(postId)
+                }
+        }
     }
 
     override suspend fun deletePost(postId: Long): Result<Unit, DataError.Network> {
-        return communityNetworkDataSource.deletePost(postId)
-            .onSuccess { userRepository.refreshMyCommunityPosts() }
+        return runUncancellable {
+            communityNetworkDataSource.deletePost(postId)
+                .onSuccess { userRepository.refreshMyCommunityPosts() }
+        }
     }
 
     override suspend fun likePost(postId: Long): Result<Unit, DataError.Network> {
@@ -234,19 +241,25 @@ class CommunityRepositoryImpl(
         content: String,
         parentCommentId: Long?,
     ): Result<Long, DataError.Network> {
-        return communityNetworkDataSource.createComment(postId, content, parentCommentId)
-            .map { it.commentId }
-            .onSuccess { userRepository.refreshMyCommunityComments() }
+        return runUncancellable {
+            communityNetworkDataSource.createComment(postId, content, parentCommentId)
+                .map { it.commentId }
+                .onSuccess { userRepository.refreshMyCommunityComments() }
+        }
     }
 
     override suspend fun updateComment(commentId: Long, content: String): Result<Unit, DataError.Network> {
-        return communityNetworkDataSource.updateComment(commentId, content)
-            .onSuccess { userRepository.refreshMyCommunityComments() }
+        return runUncancellable {
+            communityNetworkDataSource.updateComment(commentId, content)
+                .onSuccess { userRepository.refreshMyCommunityComments() }
+        }
     }
 
     override suspend fun deleteComment(commentId: Long): Result<Unit, DataError.Network> {
-        return communityNetworkDataSource.deleteComment(commentId)
-            .onSuccess { userRepository.refreshMyCommunityComments() }
+        return runUncancellable {
+            communityNetworkDataSource.deleteComment(commentId)
+                .onSuccess { userRepository.refreshMyCommunityComments() }
+        }
     }
 
     override suspend fun likeComment(commentId: Long): Result<Unit, DataError.Network> {

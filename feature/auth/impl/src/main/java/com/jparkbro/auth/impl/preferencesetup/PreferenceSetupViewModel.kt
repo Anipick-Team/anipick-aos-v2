@@ -13,6 +13,7 @@ import com.jparkbro.core.data.review.ReviewRepository
 import com.jparkbro.core.model.anime.AnimeRating
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +31,8 @@ class PreferenceSetupViewModel(
 
     private val _state = MutableStateFlow(PreferenceSetupState())
     val state: StateFlow<PreferenceSetupState> = _state.asStateFlow()
+
+    private var searchJob: Job? = null
 
     private val _events = Channel<PreferenceSetupEvent>()
     val events = _events.receiveAsFlow()
@@ -103,10 +106,11 @@ class PreferenceSetupViewModel(
     }
 
     private fun searchAnimes(resetCursor: Boolean) {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             _state.update {
                 if (resetCursor) {
-                    it.copy(isSearchLoading = true, isSearchError = false)
+                    it.copy(isSearchLoading = true, isLoadingMore = false, isSearchError = false)
                 } else {
                     it.copy(isLoadingMore = true)
                 }

@@ -4,6 +4,8 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.network.anime.dto.AnimeDetailResponse
 import com.jparkbro.core.network.anime.dto.AnimeSummaryResponse
+import com.jparkbro.core.network.anime.dto.AnimesByDayRequest
+import com.jparkbro.core.network.anime.dto.AnimesByDayResponse
 import com.jparkbro.core.network.anime.dto.ComingSoonAnimesDetailResponse
 import com.jparkbro.core.network.anime.dto.ComingSoonAnimesRequest
 import com.jparkbro.core.network.anime.dto.PreferenceSetupSearchRequest
@@ -51,6 +53,20 @@ class KtorAnimeNetworkDataSource(
                 "sort" to request.sort,
                 "lastId" to request.lastId,
                 "lastValue" to request.lastValue,
+                "size" to request.size,
+            ),
+        )
+    }
+
+    override suspend fun getAnimesByDay(
+        request: AnimesByDayRequest,
+    ): Result<AnimesByDayResponse, DataError.Network> {
+        return httpClient.get(
+            route = "/animes",
+            queryParameters = mapOf(
+                "day" to request.day,
+                "sort" to request.sort,
+                "lastId" to request.lastId,
                 "size" to request.size,
             ),
         )

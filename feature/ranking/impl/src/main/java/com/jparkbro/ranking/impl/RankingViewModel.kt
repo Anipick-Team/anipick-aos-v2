@@ -12,6 +12,7 @@ import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.metadata.FilterType
 import com.jparkbro.core.model.pagination.Cursor
 import com.jparkbro.core.ui.GlobalSnackbarManager
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,8 @@ class RankingViewModel(
 
     private val _state = MutableStateFlow(RankingState())
     val state: StateFlow<RankingState> = _state.asStateFlow()
+
+    private var loadJob: Job? = null
 
     init {
         fetchMetadata()
@@ -86,10 +89,11 @@ class RankingViewModel(
     }
 
     private fun loadRankings(resetCursor: Boolean) {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             val current = _state.value
             _state.update {
-                if (resetCursor) it.copy(isLoading = true, error = null) else it.copy(isLoadingMore = true)
+                if (resetCursor) it.copy(isLoading = true, isLoadingMore = false, error = null) else it.copy(isLoadingMore = true)
             }
 
             val lastId = if (resetCursor) null else current.cursor?.lastId

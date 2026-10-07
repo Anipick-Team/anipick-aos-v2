@@ -10,6 +10,9 @@ import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
@@ -18,14 +21,28 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import timber.log.Timber
 
 /** 토큰 무효를 뜻하는 응답 code */
 private const val TOKEN_INVALID_CODE = 119
 
 /** 토큰 만료를 뜻하는 응답 code - accessToken이 순수 시간 만료로 죽었을 때 이 code로 내려온다 */
 private const val TOKEN_EXPIRED_CODE = 121
+
+/** Ktor 기본 Logger는 Android에서 SLF4J no-op이라 출력되지 않는다. Timber로 연결하고, DebugTree는 debug 빌드에서만 심긴다. */
+private val TimberLogger = object : Logger {
+    override fun log(message: String) {
+        Timber.tag("Ktor").d(message)
+    }
+}
+
+/** 모든 클라이언트가 공유하는 JSON 설정 - `coerceInputValues`는 켜지 않는다(dto-model-nullability 참고) */
+private val ApiJson = Json {
+    ignoreUnknownKeys = true
+}
 
 /** 앱 전역 [HttpClient] 생성 팩토리 */
 class HttpClientFactory(
@@ -39,11 +56,7 @@ class HttpClientFactory(
     private val refreshHttpClient: HttpClient by lazy {
         HttpClient(CIO) {
             install(ContentNegotiation) {
-                json(
-                    json = Json {
-                        ignoreUnknownKeys = true
-                    }
-                )
+                json(ApiJson)
             }
 
             defaultRequest {
@@ -54,12 +67,15 @@ class HttpClientFactory(
 
     fun build(): HttpClient {
         return HttpClient(CIO) {
+            if (BuildConfig.DEBUG) {
+                install(Logging) {
+                    logger = TimberLogger
+                    level = LogLevel.ALL
+                }
+            }
+
             install(ContentNegotiation) {
-                json(
-                    json = Json {
-                        ignoreUnknownKeys = true
-                    }
-                )
+                json(ApiJson)
             }
 
             install(Auth) {
@@ -72,6 +88,7 @@ class HttpClientFactory(
                     val code = try {
                         response.body<ApiResponse<JsonElement>>().code
                     } catch (e: Exception) {
+                        if (e is CancellationException) throw e
                         return@reAuthorizeOnResponse false
                     }
 

@@ -8,6 +8,7 @@ import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.review.ReviewRepository
 import com.jparkbro.core.data.user.UserRepository
 import com.jparkbro.core.ui.GlobalSnackbarManager
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,8 @@ class RatedReviewViewModel(
 
     private val _state = MutableStateFlow(RatedReviewState())
     val state: StateFlow<RatedReviewState> = _state.asStateFlow()
+
+    private var loadJob: Job? = null
 
     init {
         load(resetCursor = true)
@@ -84,9 +87,10 @@ class RatedReviewViewModel(
 
     /** "리뷰만 보기"는 재조회 없이 [RatedReviewState.reviewOnly]로 클라이언트에서만 필터링한다 - API에는 넘기지 않는다. */
     private fun load(resetCursor: Boolean) {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _state.update {
-                if (resetCursor) it.copy(isLoading = true, error = null) else it.copy(isLoadingMore = true)
+                if (resetCursor) it.copy(isLoading = true, isLoadingMore = false, error = null) else it.copy(isLoadingMore = true)
             }
 
             val current = _state.value

@@ -9,6 +9,7 @@ import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.log.LogRepository
 import com.jparkbro.core.data.search.SearchRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,8 @@ class SearchDetailViewModel(
 
     private val _state = MutableStateFlow(SearchDetailState(searchFieldState = TextFieldState(query)))
     val state: StateFlow<SearchDetailState> = _state.asStateFlow()
+
+    private var searchJob: Job? = null
 
     init {
         search(resetCursor = true)
@@ -86,12 +89,13 @@ class SearchDetailViewModel(
     }
 
     private fun searchAnimes(resetCursor: Boolean) {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             val current = _state.value
             val result = current.animeResult
 
             _state.update {
-                if (resetCursor) it.copy(isLoading = true, error = null) else it.copy(isLoadingMore = true)
+                if (resetCursor) it.copy(isLoading = true, isLoadingMore = false, error = null) else it.copy(isLoadingMore = true)
             }
 
             val query = current.searchFieldState.text.toString()
@@ -124,12 +128,13 @@ class SearchDetailViewModel(
     }
 
     private fun searchActors(resetCursor: Boolean) {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             val current = _state.value
             val result = current.actorResult
 
             _state.update {
-                if (resetCursor) it.copy(isLoading = true, error = null) else it.copy(isLoadingMore = true)
+                if (resetCursor) it.copy(isLoading = true, isLoadingMore = false, error = null) else it.copy(isLoadingMore = true)
             }
 
             val query = current.searchFieldState.text.toString()
@@ -160,12 +165,13 @@ class SearchDetailViewModel(
     }
 
     private fun searchStudios(resetCursor: Boolean) {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             val current = _state.value
             val result = current.studioResult
 
             _state.update {
-                if (resetCursor) it.copy(isLoading = true, error = null) else it.copy(isLoadingMore = true)
+                if (resetCursor) it.copy(isLoading = true, isLoadingMore = false, error = null) else it.copy(isLoadingMore = true)
             }
 
             val query = current.searchFieldState.text.toString()

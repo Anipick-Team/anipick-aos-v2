@@ -5,6 +5,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.url
 import io.ktor.utils.io.CancellationException
+import timber.log.Timber
 
 class KtorLogNetworkDataSource(
     private val httpClient: HttpClient,
@@ -16,7 +17,7 @@ class KtorLogNetworkDataSource(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
         }
     }
 }

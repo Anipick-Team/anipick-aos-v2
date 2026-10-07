@@ -4,6 +4,8 @@ import com.jparkbro.core.common.result.DataError
 import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.network.anime.dto.AnimeDetailResponse
 import com.jparkbro.core.network.anime.dto.AnimeSummaryResponse
+import com.jparkbro.core.network.anime.dto.AnimesByDayRequest
+import com.jparkbro.core.network.anime.dto.AnimesByDayResponse
 import com.jparkbro.core.network.anime.dto.ComingSoonAnimesDetailResponse
 import com.jparkbro.core.network.anime.dto.ComingSoonAnimesRequest
 import com.jparkbro.core.network.anime.dto.PreferenceSetupSearchRequest
@@ -25,6 +27,11 @@ interface AnimeNetworkDataSource {
     suspend fun getComingSoonAnimesDetail(
         request: ComingSoonAnimesRequest,
     ): Result<ComingSoonAnimesDetailResponse, DataError.Network>
+
+    /** 요일별 애니 목록 - `GET /animes`. */
+    suspend fun getAnimesByDay(
+        request: AnimesByDayRequest,
+    ): Result<AnimesByDayResponse, DataError.Network>
 
     /** 애니 상세 "정보" 탭 - `GET /animes/{animeId}/detail/info`. */
     suspend fun getAnimeDetailInfo(animeId: Long): Result<AnimeDetailResponse, DataError.Network>

@@ -11,6 +11,7 @@ import com.jparkbro.core.data.user.MyCommunityPostsState
 import com.jparkbro.core.data.user.UserRepository
 import com.jparkbro.core.model.anime.AnimeWatchStatus
 import com.jparkbro.mypage.api.MyPageDetailType
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,8 @@ class MyPageDetailViewModel(
 
     private val _state = MutableStateFlow(MyPageDetailState(type = type))
     val state: StateFlow<MyPageDetailState> = _state.asStateFlow()
+
+    private var loadJob: Job? = null
 
     init {
         load(resetCursor = true)
@@ -123,9 +126,10 @@ class MyPageDetailViewModel(
             return
         }
 
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _state.update {
-                if (resetCursor) it.copy(isLoading = true, error = null) else it.copy(isLoadingMore = true)
+                if (resetCursor) it.copy(isLoading = true, isLoadingMore = false, error = null) else it.copy(isLoadingMore = true)
             }
 
             val lastId = if (resetCursor) null else _state.value.cursor?.lastId

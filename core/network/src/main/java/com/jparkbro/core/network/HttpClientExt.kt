@@ -135,11 +135,11 @@ suspend fun HttpClient.getImageBytes(route: String): Result<ByteArray, DataError
             Result.Failure(DataError.Network.Api(code = response.status.value, message = null, reason = null))
         }
     } catch (e: UnresolvedAddressException) {
-        e.printStackTrace()
+        Timber.e(e)
         Result.Failure(DataError.Network.NO_INTERNET)
     } catch (e: Exception) {
         if (e is CancellationException) throw e
-        e.printStackTrace()
+        Timber.e(e)
         Result.Failure(DataError.Network.UNKNOWN)
     }
 }
@@ -149,14 +149,14 @@ suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, 
     return try {
         responseToResult(execute())
     } catch (e: UnresolvedAddressException) {
-        e.printStackTrace()
+        Timber.e(e)
         Result.Failure(DataError.Network.NO_INTERNET)
     } catch (e: SerializationException) {
-        e.printStackTrace()
+        Timber.e(e)
         Result.Failure(DataError.Network.SERIALIZATION)
     } catch (e: Exception) {
         if (e is CancellationException) throw e
-        e.printStackTrace()
+        Timber.e(e)
         Result.Failure(DataError.Network.UNKNOWN)
     }
 }

@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +23,10 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -158,27 +161,66 @@ internal fun AnimeCardRow(
     }
 }
 
+internal const val RECOMMENDATION_EMPTY_MESSAGE = "아직 추천할 콘텐츠가 없어요.\n먼저 평가를 진행해주세요."
+
+internal const val WEEKLY_EMPTY_MESSAGE = "이 요일에 방영하는 신작이 없어요.\n다른 요일을 확인해 보세요!"
+
+internal const val SIMILAR_EMPTY_MESSAGE = "아직 찾아본 애니가 없어요.\n다양한 애니를 탐색해 보세요!"
+
+/** 안내 배너의 배경과 마스코트 한 세트 - 색과 높이가 서로 맞춰져 있어 섞어 쓰지 않는다. */
+internal enum class EmptyBannerStyle(
+    @DrawableRes val backgroundRes: Int,
+    @DrawableRes val imageRes: Int,
+) {
+    Type1(R.drawable.recommendation_empty_bg, R.drawable.recommendation_empty_img),
+    Type2(R.drawable.recommendation_empty_bg2, R.drawable.recommendation_empty_img2),
+}
+
 /**
- * 추천 애니 목록이 비었을 때 [HomeSection]째로 대신 넣는 안내 이미지
+ * 목록이 비었을 때 [HomeSection]째로 대신 넣는 안내 배너
+ * 높이는 [style] 배경의 원래 높이를 따르고, 너비가 좁으면 배경 좌우가 잘린다.
  */
 @Composable
-internal fun EmptyRecommendationImage(
-    @DrawableRes imageRes: Int,
+internal fun EmptyRecommendationBanner(
+    message: String,
+    style: EmptyBannerStyle,
     modifier: Modifier = Modifier,
 ) {
+    val backgroundRes = style.backgroundRes
+    val imageRes = style.imageRes
+    val background = painterResource(backgroundRes)
+    val backgroundHeight = with(LocalDensity.current) { background.intrinsicSize.height.toDp() }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
-        contentAlignment = Alignment.Center,
+            .height(backgroundHeight)
+            .clip(RoundedCornerShape(8.dp)),
     ) {
         Image(
-            painter = painterResource(imageRes),
-            contentDescription = "추천 애니 목록이 비었을 때 안내 이미지",
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 362.dp)
+            painter = background,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
         )
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp, vertical = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = message,
+                style = AniPickTheme.typography.body2,
+                color = AniPickTheme.colors.white,
+                modifier = Modifier.weight(1f),
+            )
+            Image(
+                painter = painterResource(imageRes),
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.CenterVertically),
+            )
+        }
     }
 }
 
@@ -248,9 +290,43 @@ internal fun RecentReviewCard(
 }
 
 @Composable
+@Preview(showBackground = true)
+private fun EmptyRecommendationBannerType1Preview() {
+    EmptyRecommendationBanner(
+        message = RECOMMENDATION_EMPTY_MESSAGE,
+        style = EmptyBannerStyle.Type1,
+        modifier = Modifier.padding(horizontal = 20.dp),
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun EmptyRecommendationBannerType2Preview() {
+    EmptyRecommendationBanner(
+        message = SIMILAR_EMPTY_MESSAGE,
+        style = EmptyBannerStyle.Type2,
+        modifier = Modifier.padding(horizontal = 20.dp),
+    )
+}
+
+@Composable
+@Preview(showBackground = true, widthDp = 320)
+private fun EmptyRecommendationBannerNarrowPreview() {
+    EmptyRecommendationBanner(
+        message = RECOMMENDATION_EMPTY_MESSAGE,
+        style = EmptyBannerStyle.Type1,
+        modifier = Modifier.padding(horizontal = 20.dp),
+    )
+}
+
+@Composable
 @Preview(showBackground = true, widthDp = 600)
-private fun EmptyRecommendationImagePreview() {
-    EmptyRecommendationImage(imageRes = R.drawable.empty_recommend_image)
+private fun EmptyRecommendationBannerWidePreview() {
+    EmptyRecommendationBanner(
+        message = RECOMMENDATION_EMPTY_MESSAGE,
+        style = EmptyBannerStyle.Type1,
+        modifier = Modifier.padding(horizontal = 20.dp),
+    )
 }
 
 @Composable

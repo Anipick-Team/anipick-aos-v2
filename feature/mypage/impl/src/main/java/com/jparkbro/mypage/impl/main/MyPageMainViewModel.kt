@@ -10,6 +10,7 @@ import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.user.UserRepository
 import com.jparkbro.core.model.mypage.WatchCounts
+import com.jparkbro.core.ui.util.readBytesOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -77,7 +78,7 @@ class MyPageMainViewModel(
 
     private fun changeProfileImage(image: Uri) {
         viewModelScope.launch {
-            val imageBytes = readBytes(image) ?: return@launch
+            val imageBytes = context.readBytesOrNull(image) ?: return@launch
             val mimeType = context.contentResolver.getType(image) ?: "image/jpeg"
             val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) ?: "jpg"
 
@@ -86,15 +87,6 @@ class MyPageMainViewModel(
                 fileName = "profile_image.$extension",
                 mimeType = mimeType,
             )
-        }
-    }
-
-    private fun readBytes(image: Uri): ByteArray? {
-        return try {
-            context.contentResolver.openInputStream(image)?.use { it.readBytes() }
-        } catch (e: Exception) {
-            Timber.e(e, "프로필 이미지 읽기 실패: $image")
-            null
         }
     }
 }

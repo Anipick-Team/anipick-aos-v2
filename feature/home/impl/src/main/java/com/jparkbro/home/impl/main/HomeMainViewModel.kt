@@ -9,6 +9,7 @@ import com.jparkbro.core.data.anime.AnimeRepository
 import com.jparkbro.core.data.home.HomeRepository
 import com.jparkbro.core.data.user.UserRepository
 import com.jparkbro.core.model.anime.RecommendationResult
+import com.jparkbro.home.impl.components.toDayCode
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -107,14 +108,17 @@ class HomeMainViewModel(
         return result is Result.Success
     }
 
-    // TODO: 요일별 신작 API 미완성(백엔드 준비 안 됨, 지금 연동해도 정상 응답 아님) - 완성되면 주석 풀고 연동.
-    // 그 전까진 weeklyAnimes를 빈 목록으로 둬서 "요일별 신작" 섹션 자체가 안 보이게 한다
-    // (HomeMainSections.homeMainSections의 `if (state.weeklyAnimes.isNotEmpty())` 가드).
-    // 아무 통신도 안 하니 refresh()의 "전부 실패했는지" 판정에서는 항상 성공(true) 취급한다.
+    /** 요일을 빠르게 연타하면 이전 요일 응답이 늦게 도착할 수 있어서, 응답 시점에 선택된 요일이
+     *  여전히 [day]일 때만 반영한다. */
     private suspend fun loadWeeklyAnimes(day: String): Boolean {
-        // homeRepository.getWeeklyAnimes(day)
-        //     .onSuccess { animes -> _state.update { it.copy(weeklyAnimes = animes) } }
-        return true
+        _state.update { it.copy(isWeeklyLoading = true) }
+
+        val result = animeRepository.getAnimesByDay(day = day.toDayCode(), size = WEEKLY_PAGE_SIZE)
+        val animes = (result as? Result.Success)?.data?.items ?: emptyList()
+        _state.update {
+            if (it.selectedDayOfWeek == day) it.copy(weeklyAnimes = animes, isWeeklyLoading = false) else it
+        }
+        return result is Result.Success
     }
 
     private suspend fun loadRecommendationAnimes(): Boolean {
@@ -171,5 +175,6 @@ class HomeMainViewModel(
 
     companion object {
         private const val REFRESH_INTERVAL_MS = 300_000L
+        private const val WEEKLY_PAGE_SIZE = 10L
     }
 }

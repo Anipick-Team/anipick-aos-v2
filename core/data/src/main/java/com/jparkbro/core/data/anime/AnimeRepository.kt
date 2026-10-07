@@ -40,6 +40,14 @@ interface AnimeRepository {
         size: Long = 18,
     ): Result<ComingSoonResult, DataError.Network>
 
+    /** 요일별 애니 목록 - `GET /animes`. [day]는 MON, TUE, WED, THU, FRI, SAT, SUN. */
+    suspend fun getAnimesByDay(
+        day: String,
+        sort: String? = null,
+        lastId: Long? = null,
+        size: Long = 18,
+    ): Result<CursorPage<Anime>, DataError.Network>
+
     /** 애니 상세 "정보" 탭 - `GET /animes/{animeId}/detail/info`. */
     suspend fun getAnimeDetailInfo(animeId: Long): Result<AnimeDetail, DataError.Network>
 

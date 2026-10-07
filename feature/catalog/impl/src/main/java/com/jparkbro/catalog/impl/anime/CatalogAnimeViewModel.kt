@@ -18,6 +18,7 @@ import com.jparkbro.core.ui.GlobalSnackbarManager
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,6 +38,8 @@ class CatalogAnimeViewModel(
 
     private val _state = MutableStateFlow(CatalogAnimeState(animeId = animeId))
     val state: StateFlow<CatalogAnimeState> = _state.asStateFlow()
+
+    private var reviewsJob: Job? = null
 
     private val _events = Channel<CatalogAnimeEvent>()
     val events = _events.receiveAsFlow()
@@ -351,11 +354,12 @@ class CatalogAnimeViewModel(
     }
 
     private fun loadReviews(resetCursor: Boolean) {
-        viewModelScope.launch {
+        reviewsJob?.cancel()
+        reviewsJob = viewModelScope.launch {
             val current = _state.value
 
             _state.update {
-                if (resetCursor) it.copy(isReviewsLoading = true, error = null) else it.copy(isLoadingMoreReviews = true)
+                if (resetCursor) it.copy(isReviewsLoading = true, isLoadingMoreReviews = false, error = null) else it.copy(isLoadingMoreReviews = true)
             }
 
             val lastId = if (resetCursor) null else current.reviewsCursor?.lastId

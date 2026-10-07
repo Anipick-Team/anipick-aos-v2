@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,10 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.jparkbro.core.designsystem.R
+import com.jparkbro.core.designsystem.component.AniPickGenreTag
 import com.jparkbro.core.designsystem.component.AniPickPostStat
 import com.jparkbro.core.designsystem.component.AniPickShimmerBox
 import com.jparkbro.core.designsystem.icon.HeartOutlined
 import com.jparkbro.core.designsystem.theme.AniPickTheme
+import com.jparkbro.core.model.metadata.Genre
 import com.jparkbro.core.model.mypage.MyCommunityComment
 import com.jparkbro.core.ui.util.orNullIfDefaultCover
 
@@ -58,13 +61,25 @@ internal fun MyPageCommentItem(
                 modifier = Modifier.size(width = 116.dp, height = 108.dp),
                 contentScale = ContentScale.Crop,
             )
-            Text(
-                text = comment.animeTitle ?: "-",
-                style = AniPickTheme.typography.body2,
-                color = AniPickTheme.colors.black,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = comment.animeTitle ?: "-",
+                    style = AniPickTheme.typography.body2,
+                    color = AniPickTheme.colors.black,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                comment.genres?.takeIf { it.isNotEmpty() }?.let { genres ->
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        genres.forEach { genre ->
+                            genre.name?.let { AniPickGenreTag(genre = it) }
+                        }
+                    }
+                }
+            }
         }
         comment.createdAt?.let {
             Text(
@@ -124,6 +139,7 @@ private fun MyPageCommentItemPreview() {
             postId = 1L,
             animeTitle = "샘플 애니메이션",
             animeCoverImageUrl = "",
+            genres = listOf(Genre(1, "액션"), Genre(2, "판타지")),
             postTitle = "이번 화 진짜 미쳤다",
             content = "저도 이번 화 보고 소름 돋았어요 ㅋㅋ",
             likeCount = 4,

@@ -68,6 +68,7 @@ internal fun DetailHeader(
             DayOfWeekSelector(
                 selectedDay = state.selectedDayOfWeek,
                 onDaySelected = { day -> onAction(HomeDetailAction.OnDaySelected(day)) },
+                modifier = modifier,
             )
         }
         HomeDetailType.ComingSoon -> {

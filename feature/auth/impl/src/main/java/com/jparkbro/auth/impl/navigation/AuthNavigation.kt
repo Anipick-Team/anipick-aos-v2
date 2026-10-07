@@ -62,7 +62,7 @@ fun EntryProviderScope<NavKey>.authEntry(
     entry<AuthNavKey.Password.Reset>(clazzContentKey = { PASSWORD_RESET_CONTENT_KEY }) { key ->
         PasswordResetRoot(
             email = key.email,
-            onNavigateToEmailLogin = { navigator.navigateAndClearStack(AuthNavKey.Email.Login) },
+            onNavigateToEmailLogin = { navigator.popTo(AuthNavKey.Email.Login) },
             onBackClick = navigator::goBack,
         )
     }

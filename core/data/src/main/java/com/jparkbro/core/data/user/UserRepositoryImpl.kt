@@ -8,6 +8,7 @@ import com.jparkbro.core.common.result.onFailure
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.data.auth.AuthRepository
 import com.jparkbro.core.data.image.compressImage
+import com.jparkbro.core.data.util.runUncancellable
 import com.jparkbro.core.datastore.UserDataStore
 import com.jparkbro.core.model.actor.Actor
 import com.jparkbro.core.model.anime.Anime
@@ -127,24 +128,32 @@ class UserRepositoryImpl(
     ): Result<Unit, DataError.Network> {
         val compressed = imageBytes.compressImage(mimeType)
         val compressedFileName = fileName.substringBeforeLast('.', fileName) + "." + compressed.extension
-        return imageNetworkDataSource.updateProfileImage(compressed.bytes, compressedFileName, compressed.mimeType)
-            .onSuccess { refreshMyPage() }
-            .asEmptyDataResult()
+        return runUncancellable {
+            imageNetworkDataSource.updateProfileImage(compressed.bytes, compressedFileName, compressed.mimeType)
+                .onSuccess { refreshMyPage() }
+                .asEmptyDataResult()
+        }
     }
 
     override suspend fun addAnimeStatus(animeId: Long, status: AnimeWatchStatus): Result<Unit, DataError.Network> {
-        return userNetworkDataSource.addAnimeStatus(animeId, status)
-            .onSuccess { refreshMyPage() }
+        return runUncancellable {
+            userNetworkDataSource.addAnimeStatus(animeId, status)
+                .onSuccess { refreshMyPage() }
+        }
     }
 
     override suspend fun updateAnimeStatus(animeId: Long, status: AnimeWatchStatus): Result<Unit, DataError.Network> {
-        return userNetworkDataSource.updateAnimeStatus(animeId, status)
-            .onSuccess { refreshMyPage() }
+        return runUncancellable {
+            userNetworkDataSource.updateAnimeStatus(animeId, status)
+                .onSuccess { refreshMyPage() }
+        }
     }
 
     override suspend fun deleteAnimeStatus(animeId: Long): Result<Unit, DataError.Network> {
-        return userNetworkDataSource.deleteAnimeStatus(animeId)
-            .onSuccess { refreshMyPage() }
+        return runUncancellable {
+            userNetworkDataSource.deleteAnimeStatus(animeId)
+                .onSuccess { refreshMyPage() }
+        }
     }
 
     override suspend fun getMyPageAnimes(

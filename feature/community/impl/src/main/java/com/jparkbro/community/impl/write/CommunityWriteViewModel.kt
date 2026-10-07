@@ -13,6 +13,7 @@ import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.common.result.toDisplayMessage
 import com.jparkbro.core.data.community.CommunityRepository
 import com.jparkbro.core.ui.GlobalSnackbarManager
+import com.jparkbro.core.ui.util.readBytesOrNull
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +23,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class CommunityWriteViewModel(
     seriesId: Long,
@@ -161,7 +161,7 @@ class CommunityWriteViewModel(
 
     /** 이미지 1장을 업로드하고 imageId를 돌려준다 - 여러 장이면 [onSubmitClick]에서 이 함수를 순차 호출한다. */
     private suspend fun uploadImage(uri: Uri): Long? {
-        val bytes = readBytes(uri)
+        val bytes = context.readBytesOrNull(uri)
         if (bytes == null) {
             globalSnackbarManager.showSnackbar("이미지를 불러오지 못했습니다.")
             return null
@@ -179,14 +179,5 @@ class CommunityWriteViewModel(
             .onSuccess { uploadedId = it }
             .onFailure { error -> globalSnackbarManager.showSnackbar(error.toDisplayMessage()) }
         return uploadedId
-    }
-
-    private fun readBytes(uri: Uri): ByteArray? {
-        return try {
-            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-        } catch (e: Exception) {
-            Timber.e(e, "게시글 이미지 읽기 실패: $uri")
-            null
-        }
     }
 }

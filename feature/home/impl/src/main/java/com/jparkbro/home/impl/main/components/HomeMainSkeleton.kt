@@ -42,14 +42,21 @@ private fun HomeSectionSkeleton(modifier: Modifier = Modifier) {
                 .width(140.dp)
                 .height(20.dp),
         )
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            userScrollEnabled = false,
-        ) {
-            items(10) {
-                AniPickAnimeCardSkeleton(cardWidth = 128.dp)
-            }
+        AnimeCardRowSkeleton()
+    }
+}
+
+/** [AnimeCardRow]가 로딩 중일 때 대신 넣는 스켈레톤 */
+@Composable
+internal fun AnimeCardRowSkeleton(modifier: Modifier = Modifier) {
+    LazyRow(
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        userScrollEnabled = false,
+    ) {
+        items(10) {
+            AniPickAnimeCardSkeleton(cardWidth = 128.dp)
         }
     }
 }

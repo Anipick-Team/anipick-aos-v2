@@ -15,6 +15,7 @@ import com.jparkbro.core.model.community.CommunityBoard
 import com.jparkbro.core.model.pagination.Cursor
 import com.jparkbro.core.ui.GlobalSnackbarManager
 import com.jparkbro.explore.api.ExploreEntryFilter
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,18 +33,23 @@ class ExploreViewModel(
     private val _state = MutableStateFlow(ExploreState())
     val state: StateFlow<ExploreState> = _state.asStateFlow()
 
+    private var animesJob: Job? = null
+    private var communityJob: Job? = null
+
     init {
         val entryFilter = ExploreEntryFilter.consume()
-        _state.update { it.copy(year = entryFilter?.year) }
-
-        val initialSeasonId = entryFilter?.season
-        if (initialSeasonId != null) {
-            fetchMetadataAndApplyInitialSeason(initialSeasonId)
+        if (entryFilter != null) {
+            applyEntryFilter(entryFilter)
         } else {
             fetchMetadata()
             loadAnimes(resetCursor = true)
         }
         loadCommunityBoards(resetCursor = true)
+
+        // 탭이 유지돼 ViewModel이 살아 있는 상태에서 들어오는 필터
+        viewModelScope.launch {
+            ExploreEntryFilter.filters.collect(::applyEntryFilter)
+        }
     }
 
     fun onAction(action: ExploreAction) {
@@ -135,10 +141,11 @@ class ExploreViewModel(
 
     /** [resetCursor]가 true면 첫 페이지(정렬/필터 변경 포함), false면 무한스크롤로 이어붙인다. */
     private fun loadAnimes(resetCursor: Boolean) {
-        viewModelScope.launch {
+        animesJob?.cancel()
+        animesJob = viewModelScope.launch {
             val current = _state.value
             _state.update {
-                if (resetCursor) it.copy(isLoading = true, error = null) else it.copy(isLoadingMore = true)
+                if (resetCursor) it.copy(isLoading = true, isLoadingMore = false, error = null) else it.copy(isLoadingMore = true)
             }
 
             val lastId = if (resetCursor) null else current.cursor?.lastId
@@ -187,7 +194,8 @@ class ExploreViewModel(
 
     /** [resetCursor]가 true면 첫 페이지(정렬/검색어 변경 포함), false면 무한스크롤로 이어붙인다. */
     private fun loadCommunityBoards(resetCursor: Boolean) {
-        viewModelScope.launch {
+        communityJob?.cancel()
+        communityJob = viewModelScope.launch {
             val current = _state.value
             _state.update {
                 if (resetCursor) it.copy(isCommunityLoading = true, communityError = null) else it.copy(isCommunityLoadingMore = true)
@@ -244,9 +252,37 @@ class ExploreViewModel(
         }
     }
 
+    /** 다른 화면에서 넘어온 년도/분기만 적용하고 나머지 필터는 초기화한 뒤 검색한다. */
+    private fun applyEntryFilter(filter: ExploreEntryFilter.Filter) {
+        _state.update {
+            it.copy(
+                tab = ExploreTab.ANIME,
+                year = filter.year,
+                season = null,
+                genres = emptyList(),
+                type = null,
+                activeFilterSheet = null,
+            )
+        }
+
+        val seasonId = filter.season
+        if (seasonId != null) {
+            fetchMetadataAndApplyInitialSeason(seasonId)
+        } else {
+            if (_state.value.metadata.seasons == null) fetchMetadata()
+            loadAnimes(resetCursor = true)
+        }
+    }
+
     /** [ExploreEntryFilter]로 넘어온 분기(id)는 이름이 없어 메타데이터의 [Season] 목록에서 찾아 채운
      *  다음에야 검색을 시작할 수 있다 - 다른 화면에서 넘어온 진입 경로에서만 타는 분기. */
     private fun fetchMetadataAndApplyInitialSeason(seasonId: Int) {
+        _state.value.metadata.seasons?.let { seasons ->
+            _state.update { it.copy(season = seasons.find { season -> season.id == seasonId }) }
+            loadAnimes(resetCursor = true)
+            return
+        }
+
         viewModelScope.launch {
             _state.update { it.copy(isMetadataError = false) }
 

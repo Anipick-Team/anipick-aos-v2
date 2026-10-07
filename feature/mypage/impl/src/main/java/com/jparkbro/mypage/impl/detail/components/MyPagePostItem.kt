@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +33,7 @@ import com.jparkbro.core.designsystem.icon.HeartOutlined
 import com.jparkbro.core.designsystem.icon.VisibilityOn
 import com.jparkbro.core.designsystem.theme.AniPickTheme
 import com.jparkbro.core.model.community.CommunityPost
+import com.jparkbro.core.model.metadata.Genre
 import com.jparkbro.core.ui.util.orNullIfDefaultCover
 
 /** 마이페이지 "내 게시글" 목록 한 건 - 항상 내 글이라 프로필/닉네임은 표시하지 않는다. */
@@ -62,13 +64,25 @@ internal fun MyPagePostItem(
                 modifier = Modifier.size(width = 116.dp, height = 108.dp),
                 contentScale = ContentScale.Crop,
             )
-            Text(
-                text = post.seriesTitle ?: "-",
-                style = AniPickTheme.typography.body2,
-                color = AniPickTheme.colors.black,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = post.seriesTitle ?: "-",
+                    style = AniPickTheme.typography.body2,
+                    color = AniPickTheme.colors.black,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                post.genres?.takeIf { it.isNotEmpty() }?.let { genres ->
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        genres.forEach { genre ->
+                            genre.name?.let { AniPickGenreTag(genre = it) }
+                        }
+                    }
+                }
+            }
         }
         post.createdAt?.let {
             Text(
@@ -151,6 +165,7 @@ private fun MyPagePostItemPreview() {
             postId = 1L,
             seriesTitle = "장송의 프리렌",
             animeCoverImageUrl = "",
+            genres = listOf(Genre(1, "액션"), Genre(2, "판타지")),
             title = "이번 화 진짜 미쳤다",
             content = "이번 화 전개 보고 소름 돋았음... 다들 봤어?",
             isSpoiler = true,

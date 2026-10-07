@@ -10,7 +10,10 @@ import com.jparkbro.core.data.recommendation.RecommendationRepository
 import com.jparkbro.core.data.user.UserRepository
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.pagination.Cursor
+import com.jparkbro.core.model.pagination.CursorPage
 import com.jparkbro.home.api.HomeDetailType
+import com.jparkbro.home.impl.components.toDayCode
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +29,8 @@ class HomeDetailViewModel(
 
     private val _state = MutableStateFlow(HomeDetailState(type = type))
     val state: StateFlow<HomeDetailState> = _state.asStateFlow()
+
+    private var weeklyJob: Job? = null
 
     init {
         when (type) {
@@ -89,7 +94,7 @@ class HomeDetailViewModel(
         when (val currentType = current.type) {
             is HomeDetailType.Recommendation -> loadMoreRecommendation(currentType, cursor)
             HomeDetailType.ComingSoon -> loadMoreComingSoon(cursor)
-            HomeDetailType.Weekly -> Unit
+            HomeDetailType.Weekly -> loadMoreWeekly(cursor)
         }
     }
 
@@ -177,21 +182,35 @@ class HomeDetailViewModel(
         }
     }
 
-    // TODO: 요일별 신작 API 미완성(백엔드 준비 안 됨, 지금 연동해도 정상 응답 아님) - 완성되면 주석 풀고 연동.
-    // Main의 "요일별 신작" 섹션이 안 보이는 동안은 이 타입으로 진입할 방법 자체가 없다(HomeMainViewModel 참고).
     private fun loadWeekly(day: String) {
-        // viewModelScope.launch {
-        //     _state.update { it.copy(isLoading = true, error = null) }
-        //
-        //     homeRepository.getWeeklyAnimes(day)
-        //         .onSuccess { animes ->
-        //             _state.update { it.copy(animes = animes, isLoading = false, endReached = true) }
-        //         }
-        //         .onFailure { error ->
-        //             _state.update { it.copy(isLoading = false, error = error.toDisplayMessage()) }
-        //         }
-        // }
+        weeklyJob?.cancel()
+        weeklyJob = viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, isLoadingMore = false, error = null) }
+
+            animeRepository.getAnimesByDay(day = day.toDayCode(), size = PAGE_SIZE.toLong())
+                .onSuccess { page -> applyLoadedPage(page.items ?: emptyList(), page.weeklyCursor(), append = false) }
+                .onFailure { error ->
+                    _state.update { it.copy(isLoading = false, animes = emptyList(), error = error.toDisplayMessage()) }
+                }
+        }
     }
+
+    private fun loadMoreWeekly(cursor: Cursor) {
+        val day = _state.value.selectedDayOfWeek
+        weeklyJob?.cancel()
+        weeklyJob = viewModelScope.launch {
+            _state.update { it.copy(isLoadingMore = true) }
+
+            animeRepository.getAnimesByDay(day = day.toDayCode(), lastId = cursor.lastId, size = PAGE_SIZE.toLong())
+                .onSuccess { page -> applyLoadedPage(page.items ?: emptyList(), page.weeklyCursor(), append = true) }
+                .onFailure { error ->
+                    _state.update { it.copy(isLoadingMore = false, error = error.toDisplayMessage()) }
+                }
+        }
+    }
+
+    /** 요일별 응답은 `lastId`가 null이면 마지막 페이지 - 커서 자체를 null로 바꿔 [applyLoadedPage]가 끝으로 보게 한다. */
+    private fun CursorPage<Anime>.weeklyCursor(): Cursor? = cursor?.takeIf { it.lastId != null }
 
     companion object {
         private const val PAGE_SIZE = 18

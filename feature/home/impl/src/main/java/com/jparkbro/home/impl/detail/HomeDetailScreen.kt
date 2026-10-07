@@ -16,6 +16,7 @@ import com.jparkbro.core.ui.component.AniPickAnimeGridSkeleton
 import com.jparkbro.core.ui.util.DevicePreviews
 import com.jparkbro.home.api.HomeDetailType
 import com.jparkbro.home.impl.detail.components.AnimeGridContent
+import com.jparkbro.home.impl.detail.components.WeeklyDetailContent
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -57,6 +58,13 @@ private fun DetailScreen(
         containerColor = AniPickTheme.colors.white,
     ) { innerPadding ->
         when {
+            state.type == HomeDetailType.Weekly -> WeeklyDetailContent(
+                state = state,
+                onAction = onAction,
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(top = BottomEdgeShadowClearance),
+            )
             state.isLoading -> AniPickAnimeGridSkeleton(
                 modifier = Modifier.padding(innerPadding),
                 itemCount = 18,
@@ -88,6 +96,24 @@ private val previewAnimes = (1..15).map { id ->
 private fun DetailScreenAnimeGridPreview() {
     DetailScreen(
         state = HomeDetailState(type = HomeDetailType.Recommendation(), animes = previewAnimes),
+        onAction = {},
+    )
+}
+
+@DevicePreviews
+@Composable
+private fun DetailScreenWeeklyPreview() {
+    DetailScreen(
+        state = HomeDetailState(type = HomeDetailType.Weekly, animes = previewAnimes),
+        onAction = {},
+    )
+}
+
+@DevicePreviews
+@Composable
+private fun DetailScreenWeeklyEmptyPreview() {
+    DetailScreen(
+        state = HomeDetailState(type = HomeDetailType.Weekly),
         onAction = {},
     )
 }

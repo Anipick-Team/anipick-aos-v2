@@ -5,6 +5,7 @@ import com.jparkbro.core.common.result.Result
 import com.jparkbro.core.common.result.map
 import com.jparkbro.core.common.result.onSuccess
 import com.jparkbro.core.data.user.UserRepository
+import com.jparkbro.core.data.util.runUncancellable
 import com.jparkbro.core.datastore.RecentAnimeDataStore
 import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.AnimeDetail
@@ -13,6 +14,7 @@ import com.jparkbro.core.model.pagination.CursorPage
 import com.jparkbro.core.model.anime.UpcomingSeasonResult
 import com.jparkbro.core.model.character.AnimeCharacter
 import com.jparkbro.core.network.anime.AnimeNetworkDataSource
+import com.jparkbro.core.network.anime.dto.AnimesByDayRequest
 import com.jparkbro.core.network.anime.dto.ComingSoonAnimesRequest
 import com.jparkbro.core.network.anime.dto.PreferenceSetupSearchRequest
 import com.jparkbro.core.network.anime.dto.toAnime
@@ -85,6 +87,22 @@ class AnimeRepositoryImpl(
         }
     }
 
+    override suspend fun getAnimesByDay(
+        day: String,
+        sort: String?,
+        lastId: Long?,
+        size: Long,
+    ): Result<CursorPage<Anime>, DataError.Network> {
+        val request = AnimesByDayRequest(day = day, sort = sort, lastId = lastId, size = size)
+        return animeNetworkDataSource.getAnimesByDay(request).map { response ->
+            CursorPage(
+                cursor = response.cursor.toCursor(),
+                items = response.animes?.map { it.toAnime() },
+                count = response.count,
+            )
+        }
+    }
+
     override suspend fun getAnimeDetailInfo(animeId: Long): Result<AnimeDetail, DataError.Network> {
         return animeNetworkDataSource.getAnimeDetailInfo(animeId).map { it.toAnimeDetail() }
     }
@@ -108,12 +126,16 @@ class AnimeRepositoryImpl(
     }
 
     override suspend fun likeAnime(animeId: Long): Result<Unit, DataError.Network> {
-        return animeNetworkDataSource.likeAnime(animeId)
-            .onSuccess { userRepository.refreshMyPage() }
+        return runUncancellable {
+            animeNetworkDataSource.likeAnime(animeId)
+                .onSuccess { userRepository.refreshMyPage() }
+        }
     }
 
     override suspend fun unlikeAnime(animeId: Long): Result<Unit, DataError.Network> {
-        return animeNetworkDataSource.unlikeAnime(animeId)
-            .onSuccess { userRepository.refreshMyPage() }
+        return runUncancellable {
+            animeNetworkDataSource.unlikeAnime(animeId)
+                .onSuccess { userRepository.refreshMyPage() }
+        }
     }
 }

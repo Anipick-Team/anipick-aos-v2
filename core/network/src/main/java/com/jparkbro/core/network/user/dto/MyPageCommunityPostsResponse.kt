@@ -1,7 +1,9 @@
 package com.jparkbro.core.network.user.dto
 
 import com.jparkbro.core.model.community.CommunityPost
+import com.jparkbro.core.model.metadata.Genre
 import com.jparkbro.core.network.common.CursorResponse
+import com.jparkbro.core.network.common.MetadataItemResponse
 import com.jparkbro.core.network.image.toImageUrl
 import kotlinx.serialization.Serializable
 
@@ -19,6 +21,7 @@ data class MyPageCommunityPostResponse(
     val seriesId: Long? = null,
     val animeTitle: String? = null,
     val animeCoverImageUrl: String? = null,
+    val genres: List<MetadataItemResponse>? = null,
     val title: String? = null,
     val content: String? = null,
     val thumbnailImageId: Long? = null,
@@ -34,6 +37,7 @@ fun MyPageCommunityPostResponse.toCommunityPost(): CommunityPost = CommunityPost
     seriesId = seriesId,
     seriesTitle = animeTitle,
     animeCoverImageUrl = animeCoverImageUrl,
+    genres = genres?.map { Genre(id = it.id, name = it.name) },
     title = title,
     content = content,
     thumbnailImageUrl = thumbnailImageId?.toImageUrl(),

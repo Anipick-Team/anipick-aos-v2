@@ -4,13 +4,16 @@ import com.jparkbro.core.model.anime.Anime
 import com.jparkbro.core.model.anime.RecommendationResult
 import com.jparkbro.core.model.anime.UpcomingSeasonResult
 import com.jparkbro.core.model.review.Review
+import com.jparkbro.home.impl.components.todayDayOfWeek
 
 data class HomeMainState(
     val nickname: String? = null,
     val trendingAnimes: List<Anime> = emptyList(),
     val recommendation: RecommendationResult = RecommendationResult(),
-    val selectedDayOfWeek: String = "월",
+    val selectedDayOfWeek: String = todayDayOfWeek(),
     val weeklyAnimes: List<Anime> = emptyList(),
+    /** 요일별 신작만 따로 조회하는 중인지 - 요일을 바꿀 때 목록 자리에 스켈레톤을 보여준다. */
+    val isWeeklyLoading: Boolean = false,
     val recentReviews: List<Review> = emptyList(),
     val recentAnimeRecommendationAnimeId: Long? = null,
     val recentAnimeRecommendation: RecommendationResult = RecommendationResult(),

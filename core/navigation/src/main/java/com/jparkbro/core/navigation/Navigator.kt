@@ -49,15 +49,20 @@ class Navigator(val state: NavigationState) {
         }
     }
 
+    /** 현재 탭 서브스택에서 [key]가 맨 위가 될 때까지 위의 화면들을 제거. [key]는 남는다.
+     *  스택에 [key]가 없으면 아무것도 하지 않는다. */
+    fun popTo(key: NavKey) {
+        val stack = state.currentSubStack
+        val index = stack.lastIndexOf(key)
+        if (index == -1) return
+        if (index + 1 < stack.size) stack.subList(index + 1, stack.size).clear()
+    }
+
     /** 이전 화면으로 돌아가기
      *  갈 곳 있음: true, 더 갈 곳 없음: false */
     fun goBack(): Boolean {
         if (state.currentSubStack.size > 1) {
             state.currentSubStack.removeLastOrNull()
-            return true
-        }
-        if (state.topLevelStack.size > 1) {
-            state.topLevelStack.removeLastOrNull()
             return true
         }
         return false

@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.jparkbro.core.designsystem.R
 import com.jparkbro.core.designsystem.theme.AniPickTheme
-import com.jparkbro.home.impl.components.DayOfWeekSelector
+import com.jparkbro.home.impl.components.DayOfWeekScrollableSelector
 import com.jparkbro.home.impl.main.HomeMainAction
 import com.jparkbro.home.impl.main.HomeMainState
 
@@ -61,7 +61,11 @@ internal fun LazyListScope.homeMainSections(
     // 추천 ( 평가기반 Recommendation Animes )
     item {
         if (state.recommendation.animes.isNullOrEmpty()) {
-            EmptyRecommendationImage(imageRes = R.drawable.empty_recommend_image)
+            EmptyRecommendationBanner(
+                message = RECOMMENDATION_EMPTY_MESSAGE,
+                style = EmptyBannerStyle.Type1,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
         } else {
             HomeSection(
                 title = {
@@ -83,21 +87,26 @@ internal fun LazyListScope.homeMainSections(
     }
 
     // 요일별 신작 ( Weekly Animes )
-    if (state.weeklyAnimes.isNotEmpty()) {
-        item {
-            HomeSection(
-                title = "요일별 신작",
-                titlePadding = PaddingValues(horizontal = 20.dp),
-                onMoreClick = { onAction(HomeMainAction.OnWeeklyMoreClick) },
-                subContent = {
-                    DayOfWeekSelector(
-                        selectedDay = state.selectedDayOfWeek,
-                        onDaySelected = { day -> onAction(HomeMainAction.OnDaySelected(day)) },
-                        modifier = Modifier.padding(horizontal = 20.dp),
-                    )
-                },
-            ) {
-                AnimeCardRow(
+    item {
+        HomeSection(
+            title = "요일별 신작",
+            titlePadding = PaddingValues(horizontal = 20.dp),
+            onMoreClick = { onAction(HomeMainAction.OnWeeklyMoreClick) },
+            subContent = {
+                DayOfWeekScrollableSelector(
+                    selectedDay = state.selectedDayOfWeek,
+                    onDaySelected = { day -> onAction(HomeMainAction.OnDaySelected(day)) },
+                )
+            },
+        ) {
+            when {
+                state.isWeeklyLoading -> AnimeCardRowSkeleton()
+                state.weeklyAnimes.isEmpty() -> EmptyRecommendationBanner(
+                    message = WEEKLY_EMPTY_MESSAGE,
+                    style = EmptyBannerStyle.Type1,
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                )
+                else -> AnimeCardRow(
                     animes = state.weeklyAnimes,
                     onAnimeClick = { onAction(HomeMainAction.OnAnimeClick(it)) },
                 )
@@ -164,7 +173,11 @@ internal fun LazyListScope.homeMainSections(
     // 추천 애니 ( 최근 확인 애니 기반 Similar Animes )
     item {
         if (state.recentAnimeRecommendation.animes.isNullOrEmpty()) {
-            EmptyRecommendationImage(imageRes = R.drawable.empty_similar_image)
+            EmptyRecommendationBanner(
+                message = SIMILAR_EMPTY_MESSAGE,
+                style = EmptyBannerStyle.Type2,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
         } else {
             HomeSection(
                 title = {
